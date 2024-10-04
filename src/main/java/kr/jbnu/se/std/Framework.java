@@ -1,8 +1,6 @@
 package kr.jbnu.se.std;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -11,6 +9,8 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
  * kr.jbnu.se.std.Framework that controls the game (kr.jbnu.se.std.Game.java) that created it, update it and draw it on the screen.
@@ -55,10 +55,12 @@ public class Framework extends Canvas {
      * Possible states of the game
      */
     public static enum GameState{STARTING, VISUALIZING, GAME_CONTENT_LOADING, MAIN_MENU, OPTIONS, PLAYING, GAMEOVER, DESTROYED}
+    public static enum GameStage{STAGE1, STAGE2, STAGE3, STAGE4, STAGE5}
     /**
      * Current state of the game
      */
     public static GameState gameState;
+    public static GameStage gameStage;
     
     /**
      * Elapsed game time in nanoseconds.
@@ -74,7 +76,8 @@ public class Framework extends Canvas {
     /**
      * Image for menu.
      */
-    private BufferedImage shootTheDuckMenuImg;    
+    private BufferedImage shootTheDuckMenuImg;
+    private BufferedImage stageBackgroundImg;
     
     
     public Framework ()
@@ -87,7 +90,17 @@ public class Framework extends Canvas {
         Thread gameThread = new Thread() {
             @Override
             public void run(){
-                GameLoop();
+                try {
+                    GameLoop();
+                } catch (UnsupportedAudioFileException e) {
+                    throw new RuntimeException(e);
+                } catch (LineUnavailableException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
         gameThread.start();
@@ -113,6 +126,8 @@ public class Framework extends Canvas {
         {
             URL shootTheDuckMenuImgUrl = this.getClass().getResource("/images/menu.jpg");
             shootTheDuckMenuImg = ImageIO.read(shootTheDuckMenuImgUrl);
+            URL stageBackgroundImgUrl = this.getClass().getResource("/images/stage_background.png");
+            stageBackgroundImg = ImageIO.read(stageBackgroundImgUrl);
         }
         catch (IOException ex) {
             Logger.getLogger(Framework.class.getName()).log(Level.SEVERE, null, ex);
@@ -122,8 +137,7 @@ public class Framework extends Canvas {
     /**
      * In specific intervals of time (GAME_UPDATE_PERIOD) the game/logic is updated and then the game is drawn on the screen.
      */
-    private void GameLoop()
-    {
+    private void GameLoop() throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
         // This two variables are used in VISUALIZING state of the game. We used them to wait some time so that we get correct frame/window resolution.
         long visualizingTime = 0, lastVisualizingTime = System.nanoTime();
         
@@ -217,11 +231,24 @@ public class Framework extends Canvas {
             break;
             case MAIN_MENU:
                 g2d.drawImage(shootTheDuckMenuImg, 0, 0, frameWidth, frameHeight, null);
-                g2d.drawString("Use left mouse button to shot the duck.", frameWidth / 2 - 83, (int)(frameHeight * 0.65));   
-                g2d.drawString("Click with left mouse button to start the game.", frameWidth / 2 - 100, (int)(frameHeight * 0.67));                
-                g2d.drawString("Press ESC any time to exit the game.", frameWidth / 2 - 75, (int)(frameHeight * 0.70));
                 g2d.setColor(Color.white);
+                g2d.drawString("Use left mouse button to shot the duck.", frameWidth / 2 - 123, (int)(frameHeight * 0.94));
+                g2d.drawString("Click with left mouse button to start the game.", frameWidth / 2 - 140, (int)(frameHeight * 0.96));
+                g2d.drawString("Press ESC any time to exit the game.", frameWidth / 2 - 115, (int)(frameHeight * 0.98));
                 g2d.drawString("WWW.GAMETUTORIAL.NET", 7, frameHeight - 5);
+                g2d.drawImage(stageBackgroundImg, frameWidth / 2 - 150, frameHeight / 2 - 220, 300, 100, null);
+                g2d.drawImage(stageBackgroundImg, frameWidth / 2 - 150, frameHeight / 2 - 120, 300, 100, null);
+                g2d.drawImage(stageBackgroundImg, frameWidth / 2 - 150, frameHeight / 2 - 20, 300, 100, null);
+                g2d.drawImage(stageBackgroundImg, frameWidth / 2 - 150, frameHeight / 2 + 80, 300, 100, null);
+                g2d.drawImage(stageBackgroundImg, frameWidth / 2 - 150, frameHeight / 2 + 180, 300, 100, null);
+                g2d.setFont(new Font("TimesRoman", Font.PLAIN, 40));
+                g2d.drawString("Stage 1", frameWidth / 2 - 60, frameHeight / 2 - 160);
+                g2d.drawString("Stage 2", frameWidth / 2 - 60, frameHeight / 2 - 60);
+                g2d.drawString("Stage 3", frameWidth / 2 - 60, frameHeight / 2 + 40);
+                g2d.drawString("Stage 4", frameWidth / 2 - 60, frameHeight / 2 + 140);
+                g2d.drawString("Stage 5", frameWidth / 2 - 60, frameHeight / 2 + 240);
+                g2d.setFont(new Font("TimesRoman", Font.PLAIN, 80));
+                g2d.drawString("Shoot The Duck", frameWidth / 2 - 240, (int)(frameHeight * 0.2));
             break;
             case OPTIONS:
                 //...
@@ -236,13 +263,19 @@ public class Framework extends Canvas {
     /**
      * Starts new game.
      */
-    private void newGame()
+    private void newGame(int stage)
     {
         // We set gameTime to zero and lastTime to current time for later calculations.
         gameTime = 0;
         lastTime = System.nanoTime();
-        
-        game = new Game();
+
+        switch (stage) {
+            case 1:
+                game = new Stage1();
+                break;
+            case 2:
+                break;
+        }
     }
     
     /**
@@ -294,16 +327,23 @@ public class Framework extends Canvas {
         switch (gameState)
         {
             case GAMEOVER:
-                if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
-                    System.exit(0);
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    game = null;
+                    gameState = GameState.MAIN_MENU;
+                }
                 else if(e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_ENTER)
                     restartGame();
-            break;
+                break;
             case PLAYING:
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    game = null;
+                    gameState = GameState.MAIN_MENU;
+                }
+                break;
             case MAIN_MENU:
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
                     System.exit(0);
-            break;
+                break;
         }
     }
     
@@ -318,8 +358,25 @@ public class Framework extends Canvas {
         switch (gameState)
         {
             case MAIN_MENU:
-                if(e.getButton() == MouseEvent.BUTTON1)
-                    newGame();
+                if(e.getButton() == MouseEvent.BUTTON1) {
+                    int x = mousePosition().x;
+                    int y = mousePosition().y;
+
+                    if (490 <= x && x <= 707 && 220 <= y && y <= 710) {
+                        if (y <= 308) {
+                            newGame(1);
+                            System.out.println("Stage 1");
+                        } else if (y <= 406) {
+                            System.out.println("Stage 2");
+                        } else if (y <= 504) {
+                            System.out.println("Stage 3");
+                        } else if (y <= 602) {
+                            System.out.println("Stage 4");
+                        } else {
+                            System.out.println("Stage 5");
+                        }
+                    }
+                }
             break;
         }
     }

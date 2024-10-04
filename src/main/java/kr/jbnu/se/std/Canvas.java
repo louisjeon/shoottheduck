@@ -40,8 +40,8 @@ public abstract class Canvas extends JPanel implements KeyListener, MouseListene
         if(true)
         {
             BufferedImage blankCursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-            Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(blankCursorImg, new Point(0, 0), null);
-            this.setCursor(blankCursor);
+//            Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(blankCursorImg, new Point(0, 0), null);
+//            this.setCursor(blankCursor);
         }
         
         // Adds the keyboard listener to JPanel to receive key events from this component.

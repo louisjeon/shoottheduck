@@ -21,51 +21,51 @@ import javax.sound.sampled.*;
 
 /**
  * Actual game.
- * 
+ *
  * @author www.gametutorial.net
  */
 
-public class Game {
-    
+public class Stage1 extends Game {
+
     /**
      * We use this to generate a random number.
      */
     private Random random;
-    
+
     /**
      * Font that we will use to write statistic to the screen.
      */
     private Font font;
-    
+
     /**
      * Array list of the ducks.
      */
     private ArrayList<MovingObject> movingObjects;
-    
+
     /**
      * How many ducks leave the screen alive?
      */
     private int runawayObjects;
-    
-   /**
+
+    /**
      * How many ducks the player killed?
      */
     private int killedObjects;
-    
+
     /**
      * For each killed duck, the player gets points.
      */
     private int score;
-    
-   /**
+
+    /**
      * How many times a player is shot?
      */
     private int shoots;
-    
+
     /**
      * Last time of the shoot.
      */
-    private long lastTimeShoot;    
+    private long lastTimeShoot;
     /**
      * The time which must elapse between shots.
      */
@@ -75,22 +75,22 @@ public class Game {
      * kr.jbnu.se.std.Game background image.
      */
     private BufferedImage backgroundImg;
-    
+
     /**
      * Bottom grass.
      */
     private BufferedImage grassImg;
-    
+
     /**
      * kr.jbnu.se.std.Duck image.
      */
     private BufferedImage movingObjectImg;
-    
+
     /**
      * Shotgun sight image.
      */
     private BufferedImage sightImg;
-    
+
     /**
      * Middle width of the sight image.
      */
@@ -99,12 +99,12 @@ public class Game {
      * Middle height of the sight image.
      */
     private int sightImgMiddleHeight;
-    
 
-    public Game()
+
+    public Stage1()
     {
         Framework.gameState = Framework.GameState.GAME_CONTENT_LOADING;
-        
+
         Thread threadForInitGame = new Thread() {
             @Override
             public void run(){
@@ -112,33 +112,33 @@ public class Game {
                 Initialize();
                 // Load game files (images, sounds, ...)
                 LoadContent();
-                
+
                 Framework.gameState = Framework.GameState.PLAYING;
             }
         };
         threadForInitGame.start();
     }
-    
-    
-   /**
+
+
+    /**
      * Set variables and objects for the game.
      */
     private void Initialize()
     {
-        random = new Random();        
+        random = new Random();
         font = new Font("monospaced", Font.BOLD, 18);
-        
+
         movingObjects = new ArrayList<MovingObject>();
-        
+
         runawayObjects = 0;
         killedObjects = 0;
         score = 0;
         shoots = 0;
-        
+
         lastTimeShoot = 0;
         timeBetweenShots = Framework.secInNanosec / 3;
     }
-    
+
     /**
      * Load game files - images, sounds, ...
      */
@@ -148,13 +148,13 @@ public class Game {
         {
             URL backgroundImgUrl = this.getClass().getResource("/images/background.jpg");
             backgroundImg = ImageIO.read(backgroundImgUrl);
-            
+
             URL grassImgUrl = this.getClass().getResource("/images/grass.png");
             grassImg = ImageIO.read(grassImgUrl);
-            
+
             URL objectImgUrl = this.getClass().getResource("/images/duck.png");
             movingObjectImg = ImageIO.read(objectImgUrl);
-            
+
             URL sightImgUrl = this.getClass().getResource("/images/sight.png");
             sightImg = ImageIO.read(sightImgUrl);
             sightImgMiddleWidth = sightImg.getWidth() / 2;
@@ -164,8 +164,8 @@ public class Game {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
+
+
     /**
      * Restart game - reset some variables.
      */
@@ -173,22 +173,22 @@ public class Game {
     {
         // Removes all of the ducks from this list.
         movingObjects.clear();
-        
+
         // We set last duckt time to zero.
         MovingObject.lastObjectTime = 0;
-        
+
         runawayObjects = 0;
         killedObjects = 0;
         score = 0;
         shoots = 0;
-        
+
         lastTimeShoot = 0;
     }
-    
-    
+
+
     /**
      * Update game logic.
-     * 
+     *
      * @param gameTime gameTime of the game.
      * @param mousePosition current mouse position.
      */
@@ -198,21 +198,21 @@ public class Game {
         {
             // Here we create new duck and add it to the array list.
             movingObjects.add(new Duck(Duck.objectLines[Duck.nextObjectLines][0] + random.nextInt(200), Duck.objectLines[Duck.nextObjectLines][1], Duck.objectLines[Duck.nextObjectLines][2], Duck.objectLines[Duck.nextObjectLines][3], movingObjectImg));
-            
+
             // Here we increase nextDuckLines so that next duck will be created in next line.
             Duck.nextObjectLines++;
             if(Duck.nextObjectLines >= Duck.objectLines.length)
                 Duck.nextObjectLines = 0;
-            
+
             Duck.lastObjectTime = System.nanoTime();
         }
-        
+
         // Update all of the ducks.
         for(int i = 0; i < movingObjects.size(); i++)
         {
             // Move the duck.
             movingObjects.get(i).Update();
-            
+
             // Checks if the duck leaves the screen and remove it if it does.
             if(movingObjects.get(i).x < 0 - movingObjectImg.getWidth())
             {
@@ -220,7 +220,7 @@ public class Game {
                 runawayObjects++;
             }
         }
-        
+
         // Does player shoots?
         if(Canvas.mouseButtonState(MouseEvent.BUTTON1))
         {
@@ -245,74 +245,74 @@ public class Game {
 //                clip.close();
 
                 shoots++;
-                
+
                 // We go over all the ducks and we look if any of them was shoot.
                 for(int i = 0; i < movingObjects.size(); i++)
                 {
                     // We check, if the mouse was over ducks head or body, when player has shot.
                     if(new Rectangle(movingObjects.get(i).x + 18, movingObjects.get(i).y     , 27, 30).contains(mousePosition) ||
-                       new Rectangle(movingObjects.get(i).x + 30, movingObjects.get(i).y + 30, 100, 35).contains(mousePosition))
+                            new Rectangle(movingObjects.get(i).x + 30, movingObjects.get(i).y + 30, 100, 35).contains(mousePosition))
                     {
                         killedObjects++;
                         score += movingObjects.get(i).score;
-                        
+
                         // Remove the duck from the array list.
                         movingObjects.remove(i);
-                        
+
                         // We found the duck that player shoot so we can leave the for loop.
                         break;
                     }
                 }
-                
+
                 lastTimeShoot = System.nanoTime();
             }
         }
-        
+
         // When 200 ducks runaway, the game ends.
         if(runawayObjects >= 200)
             Framework.gameState = Framework.GameState.GAMEOVER;
     }
-    
+
     /**
      * Draw the game to the screen.
-     * 
+     *
      * @param g2d Graphics2D
      * @param mousePosition current mouse position.
      */
     public void Draw(Graphics2D g2d, Point mousePosition)
     {
         g2d.drawImage(backgroundImg, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
-        
+
         // Here we draw all the ducks.
         for(int i = 0; i < movingObjects.size(); i++)
         {
             movingObjects.get(i).Draw(g2d);
         }
-        
+
         g2d.drawImage(grassImg, 0, Framework.frameHeight - grassImg.getHeight(), Framework.frameWidth, grassImg.getHeight(), null);
-        
+
         g2d.drawImage(sightImg, mousePosition.x - sightImgMiddleWidth, mousePosition.y - sightImgMiddleHeight, null);
-        
+
         g2d.setFont(font);
         g2d.setColor(Color.darkGray);
-        
+
         g2d.drawString("RUNAWAY: " + runawayObjects, 10, 21);
         g2d.drawString("KILLS: " + killedObjects, 160, 21);
         g2d.drawString("SHOOTS: " + shoots, 299, 21);
         g2d.drawString("SCORE: " + score, 440, 21);
     }
-    
-    
+
+
     /**
      * Draw the game over screen.
-     * 
+     *
      * @param g2d Graphics2D
      * @param mousePosition Current mouse position.
      */
     public void DrawGameOver(Graphics2D g2d, Point mousePosition)
     {
         Draw(g2d, mousePosition);
-        
+
         // The first text is used for shade.
         g2d.setColor(Color.black);
         g2d.drawString("kr.jbnu.se.std.Game Over", Framework.frameWidth / 2 - 39, (int)(Framework.frameHeight * 0.65) + 1);

@@ -5,39 +5,34 @@ import java.awt.image.BufferedImage;
 
 /**
  * The duck class.
- * 
+ *
  * @author www.gametutorial.net
  */
 
-public class Duck extends MovingObject {
-    
+public abstract class MovingObject {
+
     /**
      * How much time must pass in order to create a new duck?
      */
-    public static long timeBetweenObjects = Framework.secInNanosec / 2;
+    public static long timeBetweenObjects;
     /**
      * Last time when the duck was created.
      */
-    public static long lastObjectTime = 0;
-    
+    public static long lastObjectTime;
+
     /**
      * kr.jbnu.se.std.Duck lines.
      * Where is starting location for the duck?
      * Speed of the duck?
      * How many points is a duck worth?
      */
-    public static int[][] objectLines = {
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.60), -2, 20},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.65), -3, 30},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.70), -4, 40},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.78), -5, 50}
-                                      };
+    public static int[][] objectLines;
     /**
      * Indicate which is next duck line.
      */
-    public static int nextObjectLines = 0;
-    
-    
+    public static int nextObjectLines;
+
+
     /**
      * X coordinate of the duck.
      */
@@ -46,34 +41,59 @@ public class Duck extends MovingObject {
      * Y coordinate of the duck.
      */
     public int y;
-    
+
     /**
      * How fast the duck should move? And to which direction?
      */
     private int speed;
-    
+
     /**
      * How many points this duck is worth?
      */
     public int score;
-    
+
     /**
      * kr.jbnu.se.std.Duck image.
      */
     private BufferedImage objectImg;
-    
-    
+
+
     /**
      * Creates new duck.
-     * 
+     *
      * @param x Starting x coordinate.
      * @param y Starting y coordinate.
      * @param speed The speed of this duck.
      * @param score How many points this duck is worth?
      * @param objectImg Image of the duck.
      */
-    public Duck(int x, int y, int speed, int score, BufferedImage objectImg)
+    public MovingObject(int x, int y, int speed, int score, BufferedImage objectImg)
     {
-        super(x, y, speed, score, objectImg);
+        this.x = x;
+        this.y = y;
+
+        this.speed = speed;
+
+        this.score = score;
+
+        this.objectImg = objectImg;
+    }
+
+
+    /**
+     * Move the duck.
+     */
+    public void Update()
+    {
+        x += speed;
+    }
+
+    /**
+     * Draw the duck to the screen.
+     * @param g2d Graphics2D
+     */
+    public void Draw(Graphics2D g2d)
+    {
+        g2d.drawImage(objectImg, x, y, null);
     }
 }
