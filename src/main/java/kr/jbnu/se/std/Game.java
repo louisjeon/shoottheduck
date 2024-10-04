@@ -231,7 +231,7 @@ public class Game {
                 {
                     // We check, if the mouse was over ducks head or body, when player has shot.
                     if(new Rectangle(ducks.get(i).x + 18, ducks.get(i).y     , 27, 30).contains(mousePosition) ||
-                       new Rectangle(ducks.get(i).x + 30, ducks.get(i).y + 30, 88, 25).contains(mousePosition))
+                       new Rectangle(ducks.get(i).x + 30, ducks.get(i).y + 30, 100, 35).contains(mousePosition))
                     {
                         killedDucks++;
                         score += ducks.get(i).score;
