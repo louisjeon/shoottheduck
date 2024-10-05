@@ -29,15 +29,11 @@ public class Duck extends MovingObject {
                                       };
     /**
      * Creates new duck.
-     * 
-     * @param x Starting x coordinate.
-     * @param y Starting y coordinate.
-     * @param speed The speed of this duck.
-     * @param score How many points this duck is worth?
+     *
      * @param objectImg Image of the duck.
      */
-    public Duck(int x, int y, int speed, int score, BufferedImage objectImg)
+    public Duck(BufferedImage objectImg)
     {
-        super(x, y, speed, score, objectImg);
+        super(objectLines, objectImg);
     }
 }

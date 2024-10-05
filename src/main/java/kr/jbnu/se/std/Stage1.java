@@ -55,10 +55,26 @@ public class Stage1 extends Game {
         Duck.lastObjectTime = 0;
     }
 
+     protected void CheckShot(Point mousePosition) {
+        for(int i = 0; i < movingDucks.size(); i++)
+        {
+            if(new Rectangle(movingDucks.get(i).x + 18, movingDucks.get(i).y     , 27, 30).contains(mousePosition) ||
+                    new Rectangle(movingDucks.get(i).x + 30, movingDucks.get(i).y + 30, 100, 35).contains(mousePosition))
+            {
+                killedObjects++;
+                score += movingDucks.get(i).score;
+
+                movingDucks.remove(i);
+
+                break;
+            }
+        }
+    }
+
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         if(System.nanoTime() - Duck.lastObjectTime >= Duck.timeBetweenObjects)
         {
-            movingDucks.add(new Duck(Duck.objectLines[Duck.nextObjectLines][0] + random.nextInt(200), Duck.objectLines[Duck.nextObjectLines][1], Duck.objectLines[Duck.nextObjectLines][2], Duck.objectLines[Duck.nextObjectLines][3], duckImg));
+            movingDucks.add(new Duck(duckImg));
 
             Duck.nextObjectLines++;
             if(Duck.nextObjectLines >= Duck.objectLines.length)
@@ -101,19 +117,7 @@ public class Stage1 extends Game {
 
                 shoots++;
 
-                for(int i = 0; i < movingDucks.size(); i++)
-                {
-                    if(new Rectangle(movingDucks.get(i).x + 18, movingDucks.get(i).y     , 27, 30).contains(mousePosition) ||
-                            new Rectangle(movingDucks.get(i).x + 30, movingDucks.get(i).y + 30, 100, 35).contains(mousePosition))
-                    {
-                        killedObjects++;
-                        score += movingDucks.get(i).score;
-
-                        movingDucks.remove(i);
-
-                        break;
-                    }
-                }
+                CheckShot(mousePosition);
 
                 lastTimeShoot = System.nanoTime();
             }

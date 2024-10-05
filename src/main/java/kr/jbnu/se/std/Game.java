@@ -148,8 +148,7 @@ public abstract class Game {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
+
     /**
      * Restart game - reset some variables.
      */

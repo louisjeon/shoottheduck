@@ -2,6 +2,7 @@ package kr.jbnu.se.std;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 /**
  * The duck class.
@@ -10,19 +11,12 @@ import java.awt.image.BufferedImage;
  */
 
 public abstract class MovingObject {
-
-    /**
-     * kr.jbnu.se.std.Duck lines.
-     * Where is starting location for the duck?
-     * Speed of the duck?
-     * How many points is a duck worth?
-     */
-    public static int[][] objectLines;
     /**
      * Indicate which is next duck line.
      */
-    public static int nextObjectLines;
-
+    public static int nextObjectLines = 0;
+    public static long timeBetweenObjects;
+    public static Random random;
 
     /**
      * X coordinate of the duck.
@@ -36,7 +30,7 @@ public abstract class MovingObject {
     /**
      * How fast the duck should move? And to which direction?
      */
-    private final int speed;
+    int speed;
 
     /**
      * How many points this duck is worth?
@@ -46,26 +40,21 @@ public abstract class MovingObject {
     /**
      * kr.jbnu.se.std.Duck image.
      */
-    private final BufferedImage objectImg;
-
+    BufferedImage objectImg;
 
     /**
      * Creates new duck.
-     *
-     * @param x Starting x coordinate.
-     * @param y Starting y coordinate.
-     * @param speed The speed of this duck.
-     * @param score How many points this duck is worth?
      * @param objectImg Image of the duck.
      */
-    public MovingObject(int x, int y, int speed, int score, BufferedImage objectImg)
+    public MovingObject(int[][] objectLines, BufferedImage objectImg)
     {
-        this.x = x;
-        this.y = y;
+        random = new Random();
+        this.x = objectLines[nextObjectLines][0] + random.nextInt(200);
+        this.y = objectLines[nextObjectLines][1];
 
-        this.speed = speed;
+        this.speed = objectLines[nextObjectLines][2];
 
-        this.score = score;
+        this.score = objectLines[nextObjectLines][3];
 
         this.objectImg = objectImg;
     }
