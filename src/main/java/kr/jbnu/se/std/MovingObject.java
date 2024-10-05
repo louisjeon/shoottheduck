@@ -14,8 +14,6 @@ public abstract class MovingObject {
     /**
      * Indicate which is next duck line.
      */
-    public static int nextObjectLines = 0;
-    public static long timeBetweenObjects;
     public static Random random;
 
     /**
@@ -46,7 +44,7 @@ public abstract class MovingObject {
      * Creates new duck.
      * @param objectImg Image of the duck.
      */
-    public MovingObject(int[][] objectLines, BufferedImage objectImg)
+    public MovingObject(int[][] objectLines,int nextObjectLines, BufferedImage objectImg)
     {
         random = new Random();
         this.x = objectLines[nextObjectLines][0] + random.nextInt(200);

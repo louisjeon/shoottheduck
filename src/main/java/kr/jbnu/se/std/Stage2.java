@@ -16,8 +16,8 @@ import java.util.logging.Logger;
 public class Stage2 extends Stage1 {
     private BufferedImage hawkImg;
     private BufferedImage eagleImg;
-    private ArrayList<Hawk> movingHawks;
-    private ArrayList<Eagle> movingEagles;
+    protected ArrayList<Hawk> movingHawks;
+    protected ArrayList<Eagle> movingEagles;
 
     public Stage2(){}
 
@@ -34,6 +34,9 @@ public class Stage2 extends Stage1 {
         {
             URL backgroundImgUrl = this.getClass().getResource("/images/background2.jpg");
             this.backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
+
+            URL grassImgUrl = this.getClass().getResource("/images/grass2.png");
+            this.grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
 
             URL hawkImgUrl = this.getClass().getResource("/images/hawk.png");
             hawkImg = ImageIO.read(Objects.requireNonNull(hawkImgUrl));
@@ -85,9 +88,51 @@ public class Stage2 extends Stage1 {
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         // Creates a new duck, if it's the time, and add it to the array list.
+        if(System.nanoTime() - Hawk.lastObjectTime >= Hawk.timeBetweenObjects)
+        {
+            movingHawks.add(new Hawk(hawkImg));
+
+            Hawk.nextObjectLines++;
+            if(Hawk.nextObjectLines >= Hawk.objectLines.length)
+                Hawk.nextObjectLines = 0;
+
+            Hawk.lastObjectTime = System.nanoTime();
+        }
+
+        for(int i = 0; i < movingHawks.size(); i++)
+        {
+            movingHawks.get(i).Update();
+
+            if(movingHawks.get(i).x < -hawkImg.getWidth())
+            {
+                movingHawks.remove(i);
+                runawayObjects++;
+            }
+        }
+
+        if(System.nanoTime() - Eagle.lastObjectTime >= Eagle.timeBetweenObjects)
+        {
+            movingEagles.add(new Eagle(eagleImg));
+
+            Eagle.nextObjectLines++;
+            if(Eagle.nextObjectLines >= Eagle.objectLines.length)
+                Eagle.nextObjectLines = 0;
+
+            Eagle.lastObjectTime = System.nanoTime();
+        }
+
+        for(int i = 0; i < movingEagles.size(); i++)
+        {
+            movingEagles.get(i).Update();
+
+            if(movingEagles.get(i).x < -eagleImg.getWidth())
+            {
+                movingEagles.remove(i);
+                runawayObjects++;
+            }
+        }
+
         super.UpdateGame(gameTime, mousePosition);
-        System.out.println(Duck.class);
-//        addObject(, movingHawks, hawkImg);
     }
 
     public void Draw(Graphics2D g2d, Point mousePosition)
@@ -95,6 +140,9 @@ public class Stage2 extends Stage1 {
         super.DrawBack(g2d);
         for (Duck duck : this.movingDucks) {
             duck.Draw(g2d);
+        }
+        for (Hawk hawk : movingHawks) {
+            hawk.Draw(g2d);
         }
         for (Eagle eagle : movingEagles) {
             eagle.Draw(g2d);

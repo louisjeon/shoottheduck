@@ -14,7 +14,8 @@ public class Duck extends MovingObject {
      * How much time must pass in order to create a new duck?
      */
     public static long timeBetweenObjects = Framework.secInNanosec / 2;
-    
+
+    public static int nextObjectLines = 0;
     /**
      * kr.jbnu.se.std.Duck lines.
      * Where is starting location for the duck?
@@ -34,6 +35,6 @@ public class Duck extends MovingObject {
      */
     public Duck(BufferedImage objectImg)
     {
-        super(objectLines, objectImg);
+        super(objectLines, nextObjectLines, objectImg);
     }
 }

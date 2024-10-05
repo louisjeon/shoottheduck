@@ -15,6 +15,7 @@ public class Hawk extends MovingObject {
      */
     public static long timeBetweenObjects = Framework.secInNanosec * 3;
 
+    public static int nextObjectLines = 0;
     /**
      * kr.jbnu.se.std.Duck lines.
      * Where is starting location for the duck?
@@ -22,10 +23,10 @@ public class Hawk extends MovingObject {
      * How many points is a duck worth?
      */
     public static int[][] objectLines = {
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.02), -10, 50},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.04), -15, 50},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.06), -12, 50},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.08), -17, 50}
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.20), -17, 50},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.25), -16, 50},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.30), -15, 50},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.35), -14, 50}
                                       };
     /**
      * Creates new duck.
@@ -33,6 +34,6 @@ public class Hawk extends MovingObject {
      */
     public Hawk(BufferedImage objectImg)
     {
-        super(objectLines, objectImg);
+        super(objectLines, nextObjectLines, objectImg);
     }
 }
