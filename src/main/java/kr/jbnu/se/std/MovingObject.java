@@ -12,15 +12,6 @@ import java.awt.image.BufferedImage;
 public abstract class MovingObject {
 
     /**
-     * How much time must pass in order to create a new duck?
-     */
-    public static long timeBetweenObjects;
-    /**
-     * Last time when the duck was created.
-     */
-    public static long lastObjectTime;
-
-    /**
      * kr.jbnu.se.std.Duck lines.
      * Where is starting location for the duck?
      * Speed of the duck?
@@ -45,7 +36,7 @@ public abstract class MovingObject {
     /**
      * How fast the duck should move? And to which direction?
      */
-    private int speed;
+    private final int speed;
 
     /**
      * How many points this duck is worth?
@@ -55,7 +46,7 @@ public abstract class MovingObject {
     /**
      * kr.jbnu.se.std.Duck image.
      */
-    private BufferedImage objectImg;
+    private final BufferedImage objectImg;
 
 
     /**

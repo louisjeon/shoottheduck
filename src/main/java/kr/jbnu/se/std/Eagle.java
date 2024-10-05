@@ -8,13 +8,13 @@ import java.awt.image.BufferedImage;
  * @author www.gametutorial.net
  */
 
-public class Duck extends MovingObject {
+public class Eagle extends MovingObject {
     public static long lastObjectTime;
     /**
-     * How much time must pass in order to create a new duck?
+     * How much time must pass in order to create a new eagle?
      */
-    public static long timeBetweenObjects = Framework.secInNanosec / 2;
-    
+    public static long timeBetweenObjects = Framework.secInNanosec * 5;
+
     /**
      * kr.jbnu.se.std.Duck lines.
      * Where is starting location for the duck?
@@ -22,21 +22,21 @@ public class Duck extends MovingObject {
      * How many points is a duck worth?
      */
     public static int[][] objectLines = {
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.60), -2, 20},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.65), -3, 30},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.70), -4, 40},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.78), -5, 50}
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.02), -10, 200},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.04), -10, 200},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.06), -10, 200},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.08), -10, 200}
                                       };
     /**
      * Creates new duck.
-     * 
+     *
      * @param x Starting x coordinate.
      * @param y Starting y coordinate.
      * @param speed The speed of this duck.
      * @param score How many points this duck is worth?
      * @param objectImg Image of the duck.
      */
-    public Duck(int x, int y, int speed, int score, BufferedImage objectImg)
+    public Eagle(int x, int y, int speed, int score, BufferedImage objectImg)
     {
         super(x, y, speed, score, objectImg);
     }

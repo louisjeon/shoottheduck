@@ -274,6 +274,7 @@ public class Framework extends Canvas {
                 game = new Stage1();
                 break;
             case 2:
+                game = new Stage2();
                 break;
         }
     }
@@ -367,6 +368,7 @@ public class Framework extends Canvas {
                             newGame(1);
                             System.out.println("Stage 1");
                         } else if (y <= 406) {
+                            newGame(2);
                             System.out.println("Stage 2");
                         } else if (y <= 504) {
                             System.out.println("Stage 3");
