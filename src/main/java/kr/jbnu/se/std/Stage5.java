@@ -55,6 +55,7 @@ public class Stage5 extends Stage1 {
              if(new Rectangle(movingUFOs.get(i).x, movingUFOs.get(i).y, 260, 200).contains(mousePosition))
              {
                  killedObjects++;
+                 feverCnt++;
                  score += movingUFOs.get(i).score;
 
                  movingUFOs.remove(i);
@@ -62,6 +63,7 @@ public class Stage5 extends Stage1 {
                  return;
              }
          }
+         feverCnt = 0;
     }
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {

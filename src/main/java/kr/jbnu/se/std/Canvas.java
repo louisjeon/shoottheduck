@@ -11,6 +11,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import javax.swing.JPanel;
 
 /**
@@ -52,14 +53,18 @@ public abstract class Canvas extends JPanel implements KeyListener, MouseListene
     
     
     // This method is overridden in kr.jbnu.se.std.Framework.java and is used for drawing to the screen.
-    public abstract void Draw(Graphics2D g2d);
+    public abstract void Draw(Graphics2D g2d) throws IOException;
     
     @Override
     public void paintComponent(Graphics g)
     {
         Graphics2D g2d = (Graphics2D)g;        
-        super.paintComponent(g2d);        
-        Draw(g2d);
+        super.paintComponent(g2d);
+        try {
+            Draw(g2d);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
        
     

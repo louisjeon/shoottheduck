@@ -54,7 +54,7 @@ public class Framework extends Canvas {
     /**
      * Possible states of the game
      */
-    public static enum GameState{STARTING, VISUALIZING, GAME_CONTENT_LOADING, MAIN_MENU, OPTIONS, PLAYING, GAMEOVER, DESTROYED}
+    public static enum GameState{STARTING, VISUALIZING, GAME_CONTENT_LOADING, MAIN_MENU, OPTIONS, PLAYING, GAMEOVER, DESTROYED, UPDATE_FEVER}
     public static enum GameStage{STAGE1, STAGE2, STAGE3, STAGE4, STAGE5}
     /**
      * Current state of the game
@@ -219,8 +219,7 @@ public class Framework extends Canvas {
      * Draw the game to the screen. It is called through repaint() method in GameLoop() method.
      */
     @Override
-    public void Draw(Graphics2D g2d)
-    {
+    public void Draw(Graphics2D g2d) throws IOException {
         switch (gameState)
         {
             case PLAYING:

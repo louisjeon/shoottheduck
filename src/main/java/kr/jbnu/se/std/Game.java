@@ -1,10 +1,6 @@
 package kr.jbnu.se.std;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -18,6 +14,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.print.attribute.standard.Media;
 import javax.sound.sampled.*;
+import javax.swing.*;
 
 /**
  * Actual game.
@@ -30,51 +27,54 @@ public abstract class Game {
     /**
      * We use this to generate a random number.
      */
-    Random random;
+    protected static Random random;
     
     /**
      * Font that we will use to write statistic to the screen.
      */
-    Font font;
+    private static Font font;
     
     /**
      * How many ducks leave the screen alive?
      */
-    int runawayObjects;
+    protected static int runawayObjects;
     
    /**
      * How many ducks the player killed?
      */
-   int killedObjects;
+   protected static int killedObjects;
     
     /**
      * For each killed duck, the player gets points.
      */
-    int score;
+    protected static int score;
     
    /**
      * How many times a player is shot?
      */
-   int shoots;
+   protected static int shoots;
+
+   protected static int feverCnt;
+   protected static int feverImgNum;
     
     /**
      * Last time of the shoot.
      */
-    long lastTimeShoot;
+    protected static long lastTimeShoot;
     /**
      * The time which must elapse between shots.
      */
-    long timeBetweenShots;
+    protected static long timeBetweenShots;
 
     /**
      * kr.jbnu.se.std.Game background image.
      */
-    BufferedImage backgroundImg;
+    protected static BufferedImage backgroundImg;
     
     /**
      * Bottom grass.
      */
-    BufferedImage grassImg;
+    protected static BufferedImage grassImg;
     
     /**
      * kr.jbnu.se.std.Duck image.
@@ -83,16 +83,19 @@ public abstract class Game {
     /**
      * Shotgun sight image.
      */
-    BufferedImage sightImg;
-    
+    protected static BufferedImage sightImg;
+    protected static BufferedImage feverBarImg;
+
+    protected static Image feverFireGif;
+
     /**
      * Middle width of the sight image.
      */
-    int sightImgMiddleWidth;
+    protected static int sightImgMiddleWidth;
     /**
      * Middle height of the sight image.
      */
-    int sightImgMiddleHeight;
+    protected static int sightImgMiddleHeight;
     
 
     public Game()
@@ -118,16 +121,17 @@ public abstract class Game {
      * Set variables and objects for the game.
      */
     protected void Initialize() {
-        this.random = new Random();
-        this.font = new Font("monospaced", Font.BOLD, 18);
+        random = new Random();
+        font = new Font("monospaced", Font.BOLD, 18);
 
-        this.runawayObjects = 0;
-        this.killedObjects = 0;
-        this.score = 0;
-        this.shoots = 0;
+        runawayObjects = 0;
+        killedObjects = 0;
+        score = 0;
+        shoots = 0;
+        feverCnt = 0;
 
-        this.lastTimeShoot = 0;
-        this.timeBetweenShots = Framework.secInNanosec / 3;
+        lastTimeShoot = 0;
+        timeBetweenShots = Framework.secInNanosec / 3;
     };
     
     /**
@@ -138,11 +142,14 @@ public abstract class Game {
         try
         {
             URL grassImgUrl = this.getClass().getResource("/images/grass.png");
-            this.grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
+            grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
             URL sightImgUrl = this.getClass().getResource("/images/sight.png");
-            this.sightImg = ImageIO.read(Objects.requireNonNull(sightImgUrl));
-            this.sightImgMiddleWidth = sightImg.getWidth() / 2;
-            this.sightImgMiddleHeight = sightImg.getHeight() / 2;
+            sightImg = ImageIO.read(Objects.requireNonNull(sightImgUrl));
+            sightImgMiddleWidth = sightImg.getWidth() / 2;
+            sightImgMiddleHeight = sightImg.getHeight() / 2;
+            URL feverBarImgUrl = this.getClass().getResource("/images/fever0.png");
+            feverBarImg = ImageIO.read(Objects.requireNonNull(feverBarImgUrl));
+            feverFireGif = null;
         }
         catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
@@ -158,6 +165,7 @@ public abstract class Game {
         score = 0;
         shoots = 0;
         lastTimeShoot = 0;
+        feverCnt = 0;
     };
     
     
@@ -174,19 +182,41 @@ public abstract class Game {
      * 
      * @param g2d Graphics2D
      */
-    public void DrawBack(Graphics2D g2d) {
+    protected void DrawBack(Graphics2D g2d) {
         g2d.setFont(font);
         g2d.setColor(Color.darkGray);
         g2d.drawImage(backgroundImg, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
     };
 
-    public void DrawFront(Graphics2D g2d, Point mousePosition) {
+    protected void DrawFront(Graphics2D g2d, Point mousePosition) {
         g2d.drawString("RUNAWAY: " + runawayObjects, 10, 21);
         g2d.drawString("KILLS: " + killedObjects, 160, 21);
         g2d.drawString("SHOOTS: " + shoots, 299, 21);
         g2d.drawString("SCORE: " + score, 440, 21);
         g2d.drawImage(grassImg, 0, Framework.frameHeight - grassImg.getHeight(), Framework.frameWidth, grassImg.getHeight(), null);
         g2d.drawImage(sightImg, mousePosition.x - sightImgMiddleWidth, mousePosition.y - sightImgMiddleHeight, null);
+        g2d.drawImage(feverBarImg, Framework.frameWidth - feverBarImg.getWidth(), 0, null);
+        if (feverFireGif != null) {
+            g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10, null);
+        }
+    }
+
+    protected void DrawFever() throws IOException {
+        feverImgNum = Math.min(feverCnt, 10);
+        URL feverImgUrl = this.getClass().getResource("/images/fever" + feverImgNum + ".png");
+        feverBarImg = ImageIO.read(Objects.requireNonNull(feverImgUrl));
+        if (feverCnt >= 7) {
+            URL feverFireGifUrl = this.getClass().getResource("/images/blue_fire.gif");
+            feverFireGif = new ImageIcon(Objects.requireNonNull(feverFireGifUrl)).getImage();
+        } else if (feverCnt >= 5) {
+            URL feverFireGifUrl = this.getClass().getResource("/images/red_fire.gif");
+            feverFireGif = new ImageIcon(Objects.requireNonNull(feverFireGifUrl)).getImage();
+        } else if (feverCnt >= 3) {
+            URL feverFireGifUrl = this.getClass().getResource("/images/yellow_fire.gif");
+            feverFireGif = new ImageIcon(Objects.requireNonNull(feverFireGifUrl)).getImage();
+        } else {
+            feverFireGif = null;
+        }
     }
 
     public void Draw(Graphics2D g2d, Point mousePosition) {

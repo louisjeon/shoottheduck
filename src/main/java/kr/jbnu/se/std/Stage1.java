@@ -62,13 +62,15 @@ public class Stage1 extends Game {
                     new Rectangle(movingDucks.get(i).x + 30, movingDucks.get(i).y + 30, 100, 35).contains(mousePosition))
             {
                 killedObjects++;
+                feverCnt++;
                 score += movingDucks.get(i).score;
 
                 movingDucks.remove(i);
 
-                break;
+                return;
             }
         }
+        feverCnt = 0;
     }
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
@@ -118,6 +120,7 @@ public class Stage1 extends Game {
                 shoots++;
 
                 CheckShot(mousePosition);
+                DrawFever();
 
                 lastTimeShoot = System.nanoTime();
             }
