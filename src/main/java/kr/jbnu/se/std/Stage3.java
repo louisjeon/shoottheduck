@@ -56,7 +56,9 @@ public class Stage3 extends Stage2 {
              {
                  killedObjects++;
                  feverCnt++;
-                 score += movingCrows.get(i).score;
+                 score += (int) Math.floor(movingCrows.get(i).score * scoreMultiplier);
+                 shotX = movingCrows.get(i).x;
+                 shotY = movingCrows.get(i).y;
 
                  movingCrows.remove(i);
 

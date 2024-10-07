@@ -23,10 +23,10 @@ public class Crow extends MovingObject {
      * How many points is a duck worth?
      */
     public static int[][] objectLines = {
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.20), -5, 25},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.25), -7, 25},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.30), -10, 25},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.35), -8, 25}
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.20), -5, 24},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.25), -7, 24},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.30), -10, 24},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.35), -8, 24}
                                       };
     /**
      * Creates new duck.

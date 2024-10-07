@@ -64,7 +64,9 @@ public class Stage4 extends Stage3 {
              {
                  killedObjects++;
                  feverCnt++;
-                 score += movingWitches.get(i).score;
+                 score += (int) Math.floor(movingWitches.get(i).score * scoreMultiplier);
+                 shotX = movingWitches.get(i).x;
+                 shotY = movingWitches.get(i).y;
 
                  movingWitches.remove(i);
 
@@ -77,7 +79,9 @@ public class Stage4 extends Stage3 {
              {
                  killedObjects++;
                  feverCnt++;
-                 score += movingBats.get(i).score;
+                 score += (int) Math.floor(movingBats.get(i).score * scoreMultiplier);
+                 shotX = movingBats.get(i).x;
+                 shotY = movingBats.get(i).y;
 
                  movingBats.remove(i);
 

@@ -65,7 +65,9 @@ public class Stage2 extends Stage1 {
              {
                  killedObjects++;
                  feverCnt++;
-                 score += movingHawks.get(i).score;
+                 score += (int) Math.floor(movingHawks.get(i).score * scoreMultiplier);
+                 shotX = movingHawks.get(i).x;
+                 shotY = movingHawks.get(i).y;
 
                  movingHawks.remove(i);
 
@@ -79,7 +81,9 @@ public class Stage2 extends Stage1 {
              {
                  killedObjects++;
                  feverCnt++;
-                 score += movingEagles.get(i).score;
+                 score += (int) Math.floor(movingEagles.get(i).score * scoreMultiplier);
+                 shotX = movingEagles.get(i).x;
+                 shotY = movingEagles.get(i).y;
 
                  movingEagles.remove(i);
 

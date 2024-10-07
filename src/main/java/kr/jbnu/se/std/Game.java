@@ -1,18 +1,16 @@
 package kr.jbnu.se.std;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.print.attribute.standard.Media;
 import javax.sound.sampled.*;
 import javax.swing.*;
 
@@ -48,6 +46,7 @@ public abstract class Game {
      * For each killed duck, the player gets points.
      */
     protected static int score;
+    protected static double scoreMultiplier;
     
    /**
      * How many times a player is shot?
@@ -56,6 +55,10 @@ public abstract class Game {
 
    protected static int feverCnt;
    protected static int feverImgNum;
+
+   protected static int shotX;
+   protected static int shotY;
+   protected static float alpha = 1.0f;
     
     /**
      * Last time of the shoot.
@@ -65,7 +68,6 @@ public abstract class Game {
      * The time which must elapse between shots.
      */
     protected static long timeBetweenShots;
-
     /**
      * kr.jbnu.se.std.Game background image.
      */
@@ -86,6 +88,10 @@ public abstract class Game {
     protected static BufferedImage sightImg;
     protected static BufferedImage feverBarImg;
 
+    protected static BufferedImage combo1stDigitImg;
+    protected static BufferedImage combo2ndDigitImg;
+    protected static BufferedImage combo3rdDigitImg;
+
     protected static Image feverFireGif;
 
     /**
@@ -96,6 +102,8 @@ public abstract class Game {
      * Middle height of the sight image.
      */
     protected static int sightImgMiddleHeight;
+
+    protected static ScheduledThreadPoolExecutor exec;
     
 
     public Game()
@@ -127,6 +135,7 @@ public abstract class Game {
         runawayObjects = 0;
         killedObjects = 0;
         score = 0;
+        scoreMultiplier = 1;
         shoots = 0;
         feverCnt = 0;
 
@@ -188,35 +197,83 @@ public abstract class Game {
         g2d.drawImage(backgroundImg, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
     };
 
+    protected void DrawCombo(Graphics2D g2d, Point mousePosition) {
+        if (combo1stDigitImg != null) {
+            g2d.drawImage(combo1stDigitImg, (int) mousePosition.getX() - 50, (int) mousePosition.getY() - 80, null);
+            g2d.drawImage(combo2ndDigitImg, (int) mousePosition.getX() - 20, (int) mousePosition.getY() - 80, null);
+            g2d.drawImage(combo3rdDigitImg, (int) mousePosition.getX() + 10, (int) mousePosition.getY() - 80, null);
+        } else if (combo2ndDigitImg != null) {
+            g2d.drawImage(combo2ndDigitImg, (int) mousePosition.getX() - 35, (int) mousePosition.getY() - 80, null);
+            g2d.drawImage(combo3rdDigitImg, (int) mousePosition.getX() -5, (int) mousePosition.getY() - 80, null);
+        } else if (combo3rdDigitImg != null) {
+            g2d.drawImage(combo3rdDigitImg, (int) mousePosition.getX()-20 , (int) mousePosition.getY() - 80, null);
+        }
+    }
+
     protected void DrawFront(Graphics2D g2d, Point mousePosition) {
         g2d.drawString("RUNAWAY: " + runawayObjects, 10, 21);
         g2d.drawString("KILLS: " + killedObjects, 160, 21);
         g2d.drawString("SHOOTS: " + shoots, 299, 21);
         g2d.drawString("SCORE: " + score, 440, 21);
+        g2d.drawString("FEVERx" + scoreMultiplier, Framework.frameWidth - feverBarImg.getWidth(), 80);
         g2d.drawImage(grassImg, 0, Framework.frameHeight - grassImg.getHeight(), Framework.frameWidth, grassImg.getHeight(), null);
         g2d.drawImage(sightImg, mousePosition.x - sightImgMiddleWidth, mousePosition.y - sightImgMiddleHeight, null);
         g2d.drawImage(feverBarImg, Framework.frameWidth - feverBarImg.getWidth(), 0, null);
+
         if (feverFireGif != null) {
             g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10, null);
         }
+
+        DrawCombo(g2d, mousePosition);
     }
 
     protected void DrawFever() throws IOException {
         feverImgNum = Math.min(feverCnt, 10);
         URL feverImgUrl = this.getClass().getResource("/images/fever" + feverImgNum + ".png");
         feverBarImg = ImageIO.read(Objects.requireNonNull(feverImgUrl));
-        if (feverCnt >= 7) {
+        URL combo3rdDigitUrl = this.getClass().getResource("/images/number" + feverCnt % 10 + ".png");
+        combo3rdDigitImg = ImageIO.read(Objects.requireNonNull(combo3rdDigitUrl));
+        if (feverCnt >= 100) {
+            URL combo1stDigitUrl = this.getClass().getResource("/images/number" + (int) (double) (feverCnt / 100) + ".png");
+            combo1stDigitImg = ImageIO.read(Objects.requireNonNull(combo1stDigitUrl));
+        } else {
+            combo1stDigitImg = null;
+        }
+        if (feverCnt >= 10) {
+            scoreMultiplier = 3;
+            URL combo2ndDigitUrl = this.getClass().getResource("/images/number" + (int) (double) ((feverCnt % 100) / 10) + ".png");
+            combo2ndDigitImg = ImageIO.read(Objects.requireNonNull(combo2ndDigitUrl));
+        } else {
+            combo2ndDigitImg = null;
+        }
+        if (feverCnt >= 9) {
+            scoreMultiplier = 2.5;
             URL feverFireGifUrl = this.getClass().getResource("/images/blue_fire.gif");
             feverFireGif = new ImageIcon(Objects.requireNonNull(feverFireGifUrl)).getImage();
-        } else if (feverCnt >= 5) {
+        } else if (feverCnt >= 6) {
+            scoreMultiplier = 2;
             URL feverFireGifUrl = this.getClass().getResource("/images/red_fire.gif");
             feverFireGif = new ImageIcon(Objects.requireNonNull(feverFireGifUrl)).getImage();
         } else if (feverCnt >= 3) {
+            scoreMultiplier = 1.5;
             URL feverFireGifUrl = this.getClass().getResource("/images/yellow_fire.gif");
             feverFireGif = new ImageIcon(Objects.requireNonNull(feverFireGifUrl)).getImage();
         } else {
+            scoreMultiplier = 1;
             feverFireGif = null;
+            if (feverCnt == 0) {
+                combo3rdDigitImg = null;
+            }
         }
+
+        exec = new ScheduledThreadPoolExecutor(1);
+        exec.schedule(new Runnable() {
+            public void run() {
+                combo1stDigitImg = null;
+                combo2ndDigitImg = null;
+                combo3rdDigitImg = null;
+            }
+            }, 500, TimeUnit.MILLISECONDS);
     }
 
     public void Draw(Graphics2D g2d, Point mousePosition) {

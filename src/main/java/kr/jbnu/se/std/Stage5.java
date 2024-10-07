@@ -56,7 +56,9 @@ public class Stage5 extends Stage1 {
              {
                  killedObjects++;
                  feverCnt++;
-                 score += movingUFOs.get(i).score;
+                 score += (int) Math.floor(movingUFOs.get(i).score * scoreMultiplier);
+                 shotX = movingUFOs.get(i).x;
+                 shotY = movingUFOs.get(i).y;
 
                  movingUFOs.remove(i);
 

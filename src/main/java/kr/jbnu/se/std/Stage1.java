@@ -63,7 +63,9 @@ public class Stage1 extends Game {
             {
                 killedObjects++;
                 feverCnt++;
-                score += movingDucks.get(i).score;
+                score += (int) Math.floor(movingDucks.get(i).score * scoreMultiplier);
+                shotX = movingDucks.get(i).x;
+                shotY = movingDucks.get(i).y;
 
                 movingDucks.remove(i);
 
