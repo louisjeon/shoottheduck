@@ -241,11 +241,23 @@ public abstract class Game {
     }
 
     protected void DrawFront(Graphics2D g2d, Point mousePosition) {
+        g2d.setColor(Color.white);
         g2d.drawString("RUNAWAY: " + runawayObjects, 10, 21);
         g2d.drawString("KILLS: " + killedObjects, 160, 21);
         g2d.drawString("SHOOTS: " + shoots, 299, 21);
         g2d.drawString("SCORE: " + score, 440, 21);
         g2d.drawString("FEVERx" + scoreMultiplier, Framework.frameWidth - feverBarImg.getWidth(), 80);
+        if (scoreMultiplier > 1) {
+            g2d.setFont(new Font("SanSerif", Font.BOLD, 30));
+            if (feverCnt >= 9) {
+                g2d.setColor(Color.RED);
+            } else if (feverCnt >= 6) {
+                g2d.setColor(Color.ORANGE);
+            } else {
+                g2d.setColor(Color.YELLOW);
+            }
+            g2d.drawString("x" + scoreMultiplier, mousePosition.x + 30, mousePosition.y);
+        }
         g2d.drawImage(grassImg, 0, Framework.frameHeight - grassImg.getHeight(), Framework.frameWidth, grassImg.getHeight(), null);
         g2d.drawImage(sightImg, mousePosition.x - sightImgMiddleWidth, mousePosition.y - sightImgMiddleHeight, null);
         g2d.drawImage(feverBarImg, Framework.frameWidth - feverBarImg.getWidth(), 0, null);
