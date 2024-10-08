@@ -34,6 +34,9 @@ public class Stage3 extends Stage2 {
             URL grassImgUrl = this.getClass().getResource("/images/grass3.png");
             this.grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
 
+            URL duckImgUrl = this.getClass().getResource("/images/duck3.png");
+            this.duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
+
             URL crowImgUrl = this.getClass().getResource("/images/crow.png");
             crowImg = ImageIO.read(Objects.requireNonNull(crowImgUrl));
         }

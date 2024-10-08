@@ -16,7 +16,7 @@ import javax.sound.sampled.*;
 
 public class Stage1 extends Game {
 
-    private BufferedImage duckImg;
+    protected BufferedImage duckImg;
     protected ArrayList<Duck> movingDucks;
 
     public Stage1() {}

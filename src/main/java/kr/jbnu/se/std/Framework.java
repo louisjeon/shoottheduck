@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -78,6 +79,12 @@ public class Framework extends Canvas {
      */
     private BufferedImage shootTheDuckMenuImg;
     private BufferedImage stageBackgroundImg;
+    private BufferedImage titleImg;
+    private  BufferedImage stage1BtnImg;
+    private  BufferedImage stage2BtnImg;
+    private  BufferedImage stage3BtnImg;
+    private  BufferedImage stage4BtnImg;
+    private  BufferedImage stage5BtnImg;
     
     
     public Framework ()
@@ -125,9 +132,21 @@ public class Framework extends Canvas {
         try
         {
             URL shootTheDuckMenuImgUrl = this.getClass().getResource("/images/menu.jpg");
-            shootTheDuckMenuImg = ImageIO.read(shootTheDuckMenuImgUrl);
+            shootTheDuckMenuImg = ImageIO.read(Objects.requireNonNull(shootTheDuckMenuImgUrl));
             URL stageBackgroundImgUrl = this.getClass().getResource("/images/stage_background.png");
-            stageBackgroundImg = ImageIO.read(stageBackgroundImgUrl);
+            stageBackgroundImg = ImageIO.read(Objects.requireNonNull(stageBackgroundImgUrl));
+            URL titleImgUrl = this.getClass().getResource("/images/title.png");
+            titleImg = ImageIO.read(Objects.requireNonNull(titleImgUrl));
+            URL stage1BtnImgUrl = this.getClass().getResource("/images/stage1.png");
+            stage1BtnImg = ImageIO.read(Objects.requireNonNull(stage1BtnImgUrl));
+            URL stage2BtnImgUrl = this.getClass().getResource("/images/stage2.png");
+            stage2BtnImg = ImageIO.read(Objects.requireNonNull(stage2BtnImgUrl));
+            URL stage3BtnImgUrl = this.getClass().getResource("/images/stage3.png");
+            stage3BtnImg = ImageIO.read(Objects.requireNonNull(stage3BtnImgUrl));
+            URL stage4BtnImgUrl = this.getClass().getResource("/images/stage4.png");
+            stage4BtnImg = ImageIO.read(Objects.requireNonNull(stage4BtnImgUrl));
+            URL stage5BtnImgUrl = this.getClass().getResource("/images/stage5.png");
+            stage5BtnImg = ImageIO.read(Objects.requireNonNull(stage5BtnImgUrl));
         }
         catch (IOException ex) {
             Logger.getLogger(Framework.class.getName()).log(Level.SEVERE, null, ex);
@@ -235,19 +254,12 @@ public class Framework extends Canvas {
                 g2d.drawString("Click with left mouse button to start the game.", frameWidth / 2 - 140, (int)(frameHeight * 0.96));
                 g2d.drawString("Press ESC any time to exit the game.", frameWidth / 2 - 115, (int)(frameHeight * 0.98));
                 g2d.drawString("WWW.GAMETUTORIAL.NET", 7, frameHeight - 5);
-                g2d.drawImage(stageBackgroundImg, frameWidth / 2 - 150, frameHeight / 2 - 220, 300, 100, null);
-                g2d.drawImage(stageBackgroundImg, frameWidth / 2 - 150, frameHeight / 2 - 120, 300, 100, null);
-                g2d.drawImage(stageBackgroundImg, frameWidth / 2 - 150, frameHeight / 2 - 20, 300, 100, null);
-                g2d.drawImage(stageBackgroundImg, frameWidth / 2 - 150, frameHeight / 2 + 80, 300, 100, null);
-                g2d.drawImage(stageBackgroundImg, frameWidth / 2 - 150, frameHeight / 2 + 180, 300, 100, null);
-                g2d.setFont(new Font("TimesRoman", Font.PLAIN, 40));
-                g2d.drawString("Stage 1", frameWidth / 2 - 60, frameHeight / 2 - 160);
-                g2d.drawString("Stage 2", frameWidth / 2 - 60, frameHeight / 2 - 60);
-                g2d.drawString("Stage 3", frameWidth / 2 - 60, frameHeight / 2 + 40);
-                g2d.drawString("Stage 4", frameWidth / 2 - 60, frameHeight / 2 + 140);
-                g2d.drawString("Stage 5", frameWidth / 2 - 60, frameHeight / 2 + 240);
-                g2d.setFont(new Font("TimesRoman", Font.PLAIN, 80));
-                g2d.drawString("Shoot The Duck", frameWidth / 2 - 240, (int)(frameHeight * 0.2));
+                g2d.drawImage(stage1BtnImg, frameWidth / 2 - stage1BtnImg.getWidth() / 2, frameHeight / 2 - 160, null);
+                g2d.drawImage(stage2BtnImg, frameWidth / 2 - stage2BtnImg.getWidth() / 2, frameHeight / 2 - 60, null);
+                g2d.drawImage(stage3BtnImg, frameWidth / 2 - stage3BtnImg.getWidth() / 2, frameHeight / 2 + 40, null);
+                g2d.drawImage(stage4BtnImg, frameWidth / 2 - stage4BtnImg.getWidth() / 2, frameHeight / 2 + 140, null);
+                g2d.drawImage(stage5BtnImg, frameWidth / 2 - stage5BtnImg.getWidth() / 2, frameHeight / 2 + 240, null);
+                g2d.drawImage(titleImg, frameWidth / 2 - titleImg.getWidth() / 2, -50,null);
             break;
             case OPTIONS:
                 //...
@@ -364,33 +376,23 @@ public class Framework extends Canvas {
     @Override
     public void mouseClicked(MouseEvent e)
     {
-        switch (gameState)
-        {
-            case MAIN_MENU:
-                if(e.getButton() == MouseEvent.BUTTON1) {
-                    int x = mousePosition().x;
-                    int y = mousePosition().y;
+        if (Objects.requireNonNull(gameState) == GameState.MAIN_MENU) {
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                int x = mousePosition().x;
+                int y = mousePosition().y;
 
-                    if (490 <= x && x <= 707 && 220 <= y && y <= 710) {
-                        if (y <= 308) {
-                            newGame(1);
-                            System.out.println("Stage 1");
-                        } else if (y <= 406) {
-                            newGame(2);
-                            System.out.println("Stage 2");
-                        } else if (y <= 504) {
-                            newGame(3);
-                            System.out.println("Stage 3");
-                        } else if (y <= 602) {
-                            newGame(4);
-                            System.out.println("Stage 4");
-                        } else {
-                            newGame(5);
-                            System.out.println("Stage 5");
-                        }
-                    }
+                if (new Rectangle(frameWidth / 2 - stage1BtnImg.getWidth() / 2, frameHeight / 2 - 160, stage1BtnImg.getWidth(), stage1BtnImg.getHeight()).contains(e.getPoint())) {
+                    newGame(1);
+                } else if (new Rectangle(frameWidth / 2 - stage2BtnImg.getWidth() / 2, frameHeight / 2 - 60, stage2BtnImg.getWidth(), stage2BtnImg.getHeight()).contains(e.getPoint())) {
+                    newGame(2);
+                } else if (new Rectangle(frameWidth / 2 - stage3BtnImg.getWidth() / 2, frameHeight / 2 + 40, stage3BtnImg.getWidth(), stage3BtnImg.getHeight()).contains(e.getPoint())) {
+                    newGame(3);
+                } else if (new Rectangle(frameWidth / 2 - stage4BtnImg.getWidth() / 2, frameHeight / 2 + 140, stage4BtnImg.getWidth(), stage4BtnImg.getHeight()).contains(e.getPoint())) {
+                    newGame(4);
+                } else if (new Rectangle(frameWidth / 2 - stage5BtnImg.getWidth() / 2, frameHeight / 2 + 240, stage5BtnImg.getWidth(), stage5BtnImg.getHeight()).contains(e.getPoint())) {
+                    newGame(5);
                 }
-            break;
+            }
         }
     }
 }

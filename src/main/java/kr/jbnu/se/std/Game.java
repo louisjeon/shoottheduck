@@ -1,6 +1,7 @@
 package kr.jbnu.se.std;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -57,8 +58,6 @@ public abstract class Game {
    protected static int feverCnt;
    protected static int feverImgNum;
 
-   protected static int shotX;
-   protected static int shotY;
    protected static boolean hit = false;
     
     /**
@@ -79,7 +78,6 @@ public abstract class Game {
      */
     protected static BufferedImage grassImg;
 
-    
     /**
      * Shotgun sight image.
      */
@@ -89,6 +87,9 @@ public abstract class Game {
     protected static BufferedImage combo1stDigitImg;
     protected static BufferedImage combo2ndDigitImg;
     protected static BufferedImage combo3rdDigitImg;
+
+    protected static BufferedImage frogImg;
+    protected static BufferedImage gunEffectImg;
 
     protected static Image feverFireGif;
 
@@ -102,6 +103,15 @@ public abstract class Game {
     protected static int sightImgMiddleHeight;
 
     protected static ScheduledThreadPoolExecutor exec;
+    protected static ScheduledThreadPoolExecutor exec2;
+
+    protected static double rotationCenterX;
+    protected static double rotationCenterY;
+    protected static double xDiff;
+    protected static double yDiff;
+
+    protected static AffineTransform old;
+    protected static boolean showShotEffect;
     
 
     public Game()
@@ -139,6 +149,8 @@ public abstract class Game {
 
         lastTimeShoot = 0;
         timeBetweenShots = Framework.secInNanosec / 3;
+
+        showShotEffect = false;
     };
     
     /**
@@ -148,7 +160,7 @@ public abstract class Game {
     {
         try
         {
-            URL grassImgUrl = this.getClass().getResource("/images/grass.png");
+            URL grassImgUrl = this.getClass().getResource("/images/ground.png");
             grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
             URL sightImgUrl = this.getClass().getResource("/images/sight.png");
             sightImg = ImageIO.read(Objects.requireNonNull(sightImgUrl));
@@ -157,6 +169,10 @@ public abstract class Game {
             URL feverBarImgUrl = this.getClass().getResource("/images/fever0.png");
             feverBarImg = ImageIO.read(Objects.requireNonNull(feverBarImgUrl));
             feverFireGif = null;
+            URL frogImgUrl = this.getClass().getResource("/images/frog_revolver.png");
+            frogImg = ImageIO.read(Objects.requireNonNull(frogImgUrl));
+            URL gunEffectImgUrl = this.getClass().getResource("/images/gun_effect.png");
+            gunEffectImg = ImageIO.read(Objects.requireNonNull(gunEffectImgUrl));
         }
         catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
@@ -165,11 +181,7 @@ public abstract class Game {
 
     protected void Shot(ArrayList<? extends MovingObject> arrayList, int i) {
         score += (int) Math.floor(arrayList.get(i).score * scoreMultiplier);
-        shotX = arrayList.get(i).x;
-        shotY = arrayList.get(i).y;
-
         arrayList.remove(i);
-
         hit = true;
     }
 
@@ -206,6 +218,16 @@ public abstract class Game {
     };
 
     protected void DrawCombo(Graphics2D g2d, Point mousePosition) {
+        if (showShotEffect) {
+            rotationCenterX = Framework.frameWidth;
+            rotationCenterY = Framework.frameHeight;
+            xDiff = rotationCenterX - mousePosition.x;
+            yDiff = rotationCenterY - mousePosition.y;
+            AffineTransform old = g2d.getTransform();
+            g2d.rotate(Math.atan2(yDiff, xDiff) - 0.53,rotationCenterX, rotationCenterY );
+            g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 25, Framework.frameHeight - frogImg.getHeight() - 10, null);
+            g2d.setTransform(old);
+        }
         if (combo1stDigitImg != null) {
             g2d.drawImage(combo1stDigitImg, (int) mousePosition.getX() - 50, (int) mousePosition.getY() - 80, null);
             g2d.drawImage(combo2ndDigitImg, (int) mousePosition.getX() - 20, (int) mousePosition.getY() - 80, null);
@@ -227,6 +249,15 @@ public abstract class Game {
         g2d.drawImage(grassImg, 0, Framework.frameHeight - grassImg.getHeight(), Framework.frameWidth, grassImg.getHeight(), null);
         g2d.drawImage(sightImg, mousePosition.x - sightImgMiddleWidth, mousePosition.y - sightImgMiddleHeight, null);
         g2d.drawImage(feverBarImg, Framework.frameWidth - feverBarImg.getWidth(), 0, null);
+
+        rotationCenterX = Framework.frameWidth;
+        rotationCenterY = Framework.frameHeight;
+        xDiff = rotationCenterX - mousePosition.x;
+        yDiff = rotationCenterY - mousePosition.y;
+        old = g2d.getTransform();
+        g2d.rotate(Math.atan2(yDiff, xDiff) - 0.53,rotationCenterX, rotationCenterY );
+        g2d.drawImage(frogImg, Framework.frameWidth - frogImg.getWidth() - 30, Framework.frameHeight - frogImg.getHeight(), null);
+        g2d.setTransform(old);
 
         if (feverFireGif != null) {
             g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10, null);
@@ -274,8 +305,17 @@ public abstract class Game {
             }
         }
 
+        showShotEffect = true;
+
         exec = new ScheduledThreadPoolExecutor(1);
         exec.schedule(new Runnable() {
+            public void run() {
+                showShotEffect = false;
+            }
+        }, 100, TimeUnit.MILLISECONDS);
+
+        exec2 = new ScheduledThreadPoolExecutor(1);
+        exec2.schedule(new Runnable() {
             public void run() {
                 combo1stDigitImg = null;
                 combo2ndDigitImg = null;
