@@ -15,6 +15,7 @@ public abstract class MovingObject {
      * Indicate which is next duck line.
      */
     public static Random random;
+    public static long timeBetweenObjects;
 
     /**
      * X coordinate of the duck.
@@ -24,6 +25,7 @@ public abstract class MovingObject {
      * Y coordinate of the duck.
      */
     public int y;
+    public static long lastObjectTime;
 
     /**
      * How fast the duck should move? And to which direction?

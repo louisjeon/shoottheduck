@@ -33,10 +33,10 @@ public class Stage2 extends Stage1 {
         try
         {
             URL backgroundImgUrl = this.getClass().getResource("/images/background2.jpg");
-            this.backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
+            backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
 
             URL grassImgUrl = this.getClass().getResource("/images/grass2.png");
-            this.grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
+            grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
 
             URL hawkImgUrl = this.getClass().getResource("/images/hawk.png");
             hawkImg = ImageIO.read(Objects.requireNonNull(hawkImgUrl));
@@ -63,14 +63,7 @@ public class Stage2 extends Stage1 {
          {
              if(new Rectangle(movingHawks.get(i).x, movingHawks.get(i).y, 200, 100).contains(mousePosition))
              {
-                 killedObjects++;
-                 feverCnt++;
-                 score += (int) Math.floor(movingHawks.get(i).score * scoreMultiplier);
-                 shotX = movingHawks.get(i).x;
-                 shotY = movingHawks.get(i).y;
-
-                 movingHawks.remove(i);
-
+                 Shot(movingHawks, i);
                  return;
              }
          }
@@ -79,18 +72,10 @@ public class Stage2 extends Stage1 {
              if(new Rectangle(movingEagles.get(i).x + 30, movingEagles.get(i).y + 120 , 270, 40).contains(mousePosition) ||
                      new Rectangle(movingEagles.get(i).x, movingEagles.get(i).y, 300, 200).contains(mousePosition))
              {
-                 killedObjects++;
-                 feverCnt++;
-                 score += (int) Math.floor(movingEagles.get(i).score * scoreMultiplier);
-                 shotX = movingEagles.get(i).x;
-                 shotY = movingEagles.get(i).y;
-
-                 movingEagles.remove(i);
-
+                 Shot(movingEagles, i);
                  return;
              }
          }
-         feverCnt = 0;
     }
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {

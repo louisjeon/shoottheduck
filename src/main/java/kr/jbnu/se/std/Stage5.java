@@ -48,24 +48,16 @@ public class Stage5 extends Stage1 {
         UFO.lastObjectTime = 0;
     }
 
-     protected void CheckShot(Point mousePosition) {
+    protected void CheckShot(Point mousePosition) {
         super.CheckShot(mousePosition);
-         for(int i = 0; i < movingUFOs.size(); i++)
-         {
-             if(new Rectangle(movingUFOs.get(i).x, movingUFOs.get(i).y, 260, 200).contains(mousePosition))
-             {
-                 killedObjects++;
-                 feverCnt++;
-                 score += (int) Math.floor(movingUFOs.get(i).score * scoreMultiplier);
-                 shotX = movingUFOs.get(i).x;
-                 shotY = movingUFOs.get(i).y;
-
-                 movingUFOs.remove(i);
-
-                 return;
-             }
-         }
-         feverCnt = 0;
+        for(int i = 0; i < movingUFOs.size(); i++)
+        {
+            if(new Rectangle(movingUFOs.get(i).x, movingUFOs.get(i).y, 260, 200).contains(mousePosition))
+            {
+                Shot(movingUFOs, i);
+                return;
+            }
+        }
     }
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {

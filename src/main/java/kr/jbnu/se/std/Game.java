@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -58,7 +59,7 @@ public abstract class Game {
 
    protected static int shotX;
    protected static int shotY;
-   protected static float alpha = 1.0f;
+   protected static boolean hit = false;
     
     /**
      * Last time of the shoot.
@@ -77,10 +78,7 @@ public abstract class Game {
      * Bottom grass.
      */
     protected static BufferedImage grassImg;
-    
-    /**
-     * kr.jbnu.se.std.Duck image.
-     */
+
     
     /**
      * Shotgun sight image.
@@ -163,6 +161,16 @@ public abstract class Game {
         catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    protected void Shot(ArrayList<? extends MovingObject> arrayList, int i) {
+        score += (int) Math.floor(arrayList.get(i).score * scoreMultiplier);
+        shotX = arrayList.get(i).x;
+        shotY = arrayList.get(i).y;
+
+        arrayList.remove(i);
+
+        hit = true;
     }
 
     /**

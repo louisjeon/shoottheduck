@@ -54,18 +54,10 @@ public class Stage3 extends Stage2 {
          {
              if(new Rectangle(movingCrows.get(i).x, movingCrows.get(i).y, 100, 100).contains(mousePosition))
              {
-                 killedObjects++;
-                 feverCnt++;
-                 score += (int) Math.floor(movingCrows.get(i).score * scoreMultiplier);
-                 shotX = movingCrows.get(i).x;
-                 shotY = movingCrows.get(i).y;
-
-                 movingCrows.remove(i);
-
+                 Shot(movingCrows, i);
                  return;
              }
          }
-         feverCnt = 0;
     }
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
