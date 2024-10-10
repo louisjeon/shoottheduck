@@ -58,6 +58,8 @@ public abstract class Game {
    protected static int feverCnt;
    protected static int feverImgNum;
 
+   protected static int health;
+
    protected static boolean hit = false;
     
     /**
@@ -82,6 +84,7 @@ public abstract class Game {
      * Shotgun sight image.
      */
     protected static BufferedImage sightImg;
+    protected static BufferedImage healthBarImg;
     protected static BufferedImage feverBarImg;
 
     protected static BufferedImage combo1stDigitImg;
@@ -146,6 +149,7 @@ public abstract class Game {
         scoreMultiplier = 1;
         shoots = 0;
         feverCnt = 0;
+        health = 100;
 
         lastTimeShoot = 0;
         timeBetweenShots = Framework.secInNanosec / 3;
@@ -166,6 +170,8 @@ public abstract class Game {
             sightImg = ImageIO.read(Objects.requireNonNull(sightImgUrl));
             sightImgMiddleWidth = sightImg.getWidth() / 2;
             sightImgMiddleHeight = sightImg.getHeight() / 2;
+            URL healthBarImgUrl = this.getClass().getResource("/images/health_bar.png");
+            healthBarImg = ImageIO.read(Objects.requireNonNull(healthBarImgUrl));
             URL feverBarImgUrl = this.getClass().getResource("/images/fever0.png");
             feverBarImg = ImageIO.read(Objects.requireNonNull(feverBarImgUrl));
             feverFireGif = null;
@@ -195,6 +201,7 @@ public abstract class Game {
         shoots = 0;
         lastTimeShoot = 0;
         feverCnt = 0;
+        health = 100;
     };
     
     
@@ -246,7 +253,7 @@ public abstract class Game {
         g2d.drawString("KILLS: " + killedObjects, 160, 21);
         g2d.drawString("SHOOTS: " + shoots, 299, 21);
         g2d.drawString("SCORE: " + score, 440, 21);
-        g2d.drawString("FEVERx" + scoreMultiplier, Framework.frameWidth - feverBarImg.getWidth(), 80);
+        g2d.drawString("FEVERx" + scoreMultiplier, Framework.frameWidth - feverBarImg.getWidth(), 80 + feverBarImg.getHeight());
         if (scoreMultiplier > 1) {
             g2d.setFont(new Font("SanSerif", Font.BOLD, 30));
             if (feverCnt >= 9) {
@@ -260,7 +267,10 @@ public abstract class Game {
         }
         g2d.drawImage(grassImg, 0, Framework.frameHeight - grassImg.getHeight(), Framework.frameWidth, grassImg.getHeight(), null);
         g2d.drawImage(sightImg, mousePosition.x - sightImgMiddleWidth, mousePosition.y - sightImgMiddleHeight, null);
-        g2d.drawImage(feverBarImg, Framework.frameWidth - feverBarImg.getWidth(), 0, null);
+        g2d.drawImage(healthBarImg, Framework.frameWidth - healthBarImg.getWidth(), 0, null);
+        g2d.drawImage(feverBarImg, Framework.frameWidth - feverBarImg.getWidth(), healthBarImg.getHeight() - 5, null);
+        g2d.setColor(Color.RED);
+        g2d.fillRect(Framework.frameWidth - healthBarImg.getWidth() + 58, 5, (healthBarImg.getWidth() - 63) * (health /100), healthBarImg.getHeight() - 10);
 
         rotationCenterX = Framework.frameWidth;
         rotationCenterY = Framework.frameHeight;
@@ -272,7 +282,7 @@ public abstract class Game {
         g2d.setTransform(old);
 
         if (feverFireGif != null) {
-            g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10, null);
+            g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
         }
 
         DrawCombo(g2d, mousePosition);
