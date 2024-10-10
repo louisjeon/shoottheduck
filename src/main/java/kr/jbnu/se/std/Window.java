@@ -2,6 +2,7 @@ package kr.jbnu.se.std;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import java.awt.*;
 
 /**
  * Creates frame and set its properties.
@@ -22,7 +23,7 @@ public class Window extends JFrame{
             // Disables decorations for this frame.
             this.setUndecorated(true);
             // Puts the frame to full screen.
-            this.setExtendedState(this.MAXIMIZED_BOTH);
+            this.setExtendedState(MAXIMIZED_BOTH);
         }
         else // kr.jbnu.se.std.Window mode
         {
