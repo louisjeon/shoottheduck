@@ -78,7 +78,6 @@ public class Framework extends Canvas {
      * Image for menu.
      */
     private BufferedImage shootTheDuckMenuImg;
-    private BufferedImage stageBackgroundImg;
     private BufferedImage titleImg;
     private  BufferedImage stage1BtnImg;
     private  BufferedImage stage2BtnImg;
@@ -133,8 +132,6 @@ public class Framework extends Canvas {
         {
             URL shootTheDuckMenuImgUrl = this.getClass().getResource("/images/menu.jpg");
             shootTheDuckMenuImg = ImageIO.read(Objects.requireNonNull(shootTheDuckMenuImgUrl));
-            URL stageBackgroundImgUrl = this.getClass().getResource("/images/stage_background.png");
-            stageBackgroundImg = ImageIO.read(Objects.requireNonNull(stageBackgroundImgUrl));
             URL titleImgUrl = this.getClass().getResource("/images/title.png");
             titleImg = ImageIO.read(Objects.requireNonNull(titleImgUrl));
             URL stage1BtnImgUrl = this.getClass().getResource("/images/stage1.png");

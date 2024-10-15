@@ -100,6 +100,7 @@ public abstract class Game {
 
     protected static BufferedImage frogImg;
     protected static BufferedImage gunEffectImg;
+    protected static BufferedImage weaponsImg;
 
     protected static Image feverFireGif;
 
@@ -192,6 +193,8 @@ public abstract class Game {
             frogImg = ImageIO.read(Objects.requireNonNull(frogImgUrl));
             URL gunEffectImgUrl = this.getClass().getResource("/images/gun_effect.png");
             gunEffectImg = ImageIO.read(Objects.requireNonNull(gunEffectImgUrl));
+            URL weaponsImgUrl = this.getClass().getResource("/images/weapons.png");
+            weaponsImg = ImageIO.read(Objects.requireNonNull(weaponsImgUrl));
         }
         catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
@@ -297,6 +300,7 @@ public abstract class Game {
         g2d.drawImage(sightImg, mousePosition.x - sightImgMiddleWidth, mousePosition.y - sightImgMiddleHeight, null);
         g2d.drawImage(healthBarImg, Framework.frameWidth - healthBarImg.getWidth(), 0, null);
         g2d.drawImage(feverBarImg, Framework.frameWidth - feverBarImg.getWidth(), healthBarImg.getHeight() - 5, null);
+        g2d.drawImage(weaponsImg, 0, 20, null);
         g2d.setColor(Color.RED);
         g2d.fillRect(Framework.frameWidth - healthBarImg.getWidth() + 58, 5, (healthBarImg.getWidth() - 63) * (health /100), healthBarImg.getHeight() - 10);
 
