@@ -237,8 +237,8 @@ public abstract class Game {
         health = 100;
     };
 
-    protected void ChangeWeapon(WeaponType weaponType) {
-        w
+    protected void ChangeWeapon(WeaponTypes weaponType) {
+
     }
     
     
