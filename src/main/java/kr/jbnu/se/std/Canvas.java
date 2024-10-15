@@ -20,7 +20,8 @@ import javax.swing.JPanel;
  * @author www.gametutorial.net
  */
 
-public abstract class Canvas extends JPanel implements KeyListener, MouseListener {
+public abstract class
+Canvas extends JPanel implements KeyListener, MouseListener {
     
     // Keyboard states - Here are stored states for keyboard keys - is it down or not.
     private static boolean[] keyboardState = new boolean[525];
