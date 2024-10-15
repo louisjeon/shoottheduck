@@ -57,6 +57,7 @@ public class Stage1 extends Game {
                     new Rectangle(movingDucks.get(i).x + 30, movingDucks.get(i).y + 30, 100, 35).contains(mousePosition))
             {
                 Shot(movingDucks, i);
+                PlaySound("quack", -18.0f);
                 return;
             }
         }
@@ -90,6 +91,7 @@ public class Stage1 extends Game {
             if(System.nanoTime() - lastTimeShoot >= timeBetweenShots)
             {
                 shoots++;
+                PlaySound("pistol", -30.0f);
                 CheckShot(mousePosition);
                 if (!hit) {
                     feverCnt = 0;

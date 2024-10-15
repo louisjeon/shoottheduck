@@ -3,6 +3,7 @@ package kr.jbnu.se.std;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -59,6 +60,12 @@ public abstract class Game {
    protected static int feverImgNum;
 
    protected static int health;
+
+   protected static int revolverCnt;
+   protected static int woodenCnt;
+   protected static int shortCnt;
+   protected static int ak47Cnt;
+   protected static int machinegunCnt;
 
    protected static boolean hit = false;
     
@@ -151,6 +158,12 @@ public abstract class Game {
         feverCnt = 0;
         health = 100;
 
+        revolverCnt = 6;
+        woodenCnt = 1;
+        shortCnt = 30;
+        ak47Cnt = 30;
+        machinegunCnt = 200;
+
         lastTimeShoot = 0;
         timeBetweenShots = Framework.secInNanosec / 3;
 
@@ -182,6 +195,21 @@ public abstract class Game {
         }
         catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    protected void PlaySound(String soundName, Float decibel) {
+        try {
+            File soundFile = new File("src/main/resources/audio/" + soundName + ".wav");
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            FloatControl gainControl =
+                    (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(decibel);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
         }
     }
 
