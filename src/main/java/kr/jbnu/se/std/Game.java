@@ -101,6 +101,8 @@ public abstract class Game {
     protected static BufferedImage frogImg;
     protected static BufferedImage gunEffectImg;
     protected static BufferedImage weaponsImg;
+    protected enum WeaponTypes{REVOLVER, SHORT, WOODEN, AK47, MACHINEGUN}
+    protected static WeaponTypes WeaponType = null;
 
     protected static Image feverFireGif;
 
@@ -234,6 +236,10 @@ public abstract class Game {
         feverCnt = 0;
         health = 100;
     };
+
+    protected void ChangeWeapon(WeaponType weaponType) {
+        w
+    }
     
     
     /**

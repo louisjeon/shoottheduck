@@ -91,6 +91,7 @@ public class Stage1 extends Game {
             if(System.nanoTime() - lastTimeShoot >= timeBetweenShots)
             {
                 shoots++;
+                i
                 PlaySound("pistol", -30.0f);
                 CheckShot(mousePosition);
                 if (!hit) {
