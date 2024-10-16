@@ -90,34 +90,30 @@ public class Stage1 extends Game {
         if(Canvas.mouseButtonState(MouseEvent.BUTTON1))
         {
             if (new Rectangle(0, 20, weaponsImg.getWidth(), weaponsImg.getHeight()).contains(mousePosition)) {
+                PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
                 if (new Rectangle(0, 20, (int) (weaponsImg.getWidth() * 0.1), weaponsImg.getHeight()).contains(mousePosition)) {
-                    PlaySound("reload1", -30.0f);
                     gunType = GunTypes.REVOLVER;
                     timeBetweenShots = Framework.secInNanosec / 3;
                     timeBetweenReload = (long) (Framework.secInNanosec / 1.5);
                 } else if (new Rectangle((int) (weaponsImg.getWidth() * 0.1), 20, (int) (weaponsImg.getWidth() * 0.2), weaponsImg.getHeight()).contains(mousePosition)) {
-                    PlaySound("reload2", -10.0f);
                     gunType = GunTypes.SHORT;
                     timeBetweenShots = Framework.secInNanosec / 20;
                     timeBetweenReload = (Framework.secInNanosec) * 2;
                 } else if (new Rectangle((int) (weaponsImg.getWidth() * 0.3), 20, (int) (weaponsImg.getWidth() * 0.2), weaponsImg.getHeight()).contains(mousePosition)) {
-                    PlaySound("reload3", -30.0f);
                     gunType = GunTypes.WOODEN;
                     timeBetweenShots = Framework.secInNanosec;
                     timeBetweenReload = (Framework.secInNanosec) / 3;
                 } else if (new Rectangle((int) (weaponsImg.getWidth() * 0.5), 20, (int) (weaponsImg.getWidth() * 0.2), weaponsImg.getHeight()).contains(mousePosition)) {
-                    PlaySound("reload4", -30.0f);
                     gunType = GunTypes.AK47;
-                    timeBetweenShots = Framework.secInNanosec / 10;
+                    timeBetweenShots = Framework.secInNanosec / 20;
                     timeBetweenReload = (Framework.secInNanosec) * 2;
                 } else {
-                    PlaySound("reload5", -30.0f);
                     gunType = GunTypes.MACHINEGUN;
                     timeBetweenShots = Framework.secInNanosec / 20;
                     timeBetweenReload = (Framework.secInNanosec) * 3;
                 };
             } else if (bullets.get(gunType) == 0) {
-                PlaySound("reload" + gunIdx.get(gunType), gunDecibel.get(gunType));
+                PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
                 bullets.replace(gunType, defaultBullets.get(gunType));
                 lastTimeReload = System.nanoTime();
             } else if(System.nanoTime() - lastTimeShoot >= timeBetweenShots && System.nanoTime() - lastTimeReload >= timeBetweenReload)
