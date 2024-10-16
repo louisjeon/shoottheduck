@@ -6,9 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -61,12 +59,6 @@ public abstract class Game {
 
    protected static int health;
 
-   protected static int revolverCnt;
-   protected static int woodenCnt;
-   protected static int shortCnt;
-   protected static int ak47Cnt;
-   protected static int machinegunCnt;
-
    protected static boolean hit = false;
     
     /**
@@ -101,8 +93,9 @@ public abstract class Game {
     protected static BufferedImage frogImg;
     protected static BufferedImage gunEffectImg;
     protected static BufferedImage weaponsImg;
-    protected enum WeaponTypes{REVOLVER, SHORT, WOODEN, AK47, MACHINEGUN}
-    protected static WeaponTypes WeaponType = null;
+    protected enum GunTypes{REVOLVER, SHORT, WOODEN, AK47, MACHINEGUN}
+    protected static GunTypes gunType = null;
+    protected static Map<GunTypes, Integer> bullets = new HashMap<GunTypes, Integer>(){{put(GunTypes.REVOLVER, 6);put(GunTypes.SHORT, 30);put(GunTypes.WOODEN, 1);put(GunTypes.AK47, 30);put(GunTypes.MACHINEGUN, 200);}};
 
     protected static Image feverFireGif;
 
@@ -161,11 +154,7 @@ public abstract class Game {
         feverCnt = 0;
         health = 100;
 
-        revolverCnt = 6;
-        woodenCnt = 1;
-        shortCnt = 30;
-        ak47Cnt = 30;
-        machinegunCnt = 200;
+        gunType = GunTypes.REVOLVER;
 
         lastTimeShoot = 0;
         timeBetweenShots = Framework.secInNanosec / 3;
@@ -236,11 +225,6 @@ public abstract class Game {
         feverCnt = 0;
         health = 100;
     };
-
-    protected void ChangeWeapon(WeaponTypes weaponType) {
-
-    }
-    
     
     /**
      * Update game logic.

@@ -50,7 +50,7 @@ public class Stage1 extends Game {
         Duck.lastObjectTime = 0;
     }
 
-     protected void CheckShot(Point mousePosition) {
+    protected void CheckShot(Point mousePosition) {
         for(int i = 0; i < movingDucks.size(); i++)
         {
             if(new Rectangle(movingDucks.get(i).x + 18, movingDucks.get(i).y     , 27, 30).contains(mousePosition) ||
