@@ -65,10 +65,12 @@ public abstract class Game {
      * Last time of the shoot.
      */
     protected static long lastTimeShoot;
+    protected static long lastTimeReload;
     /**
      * The time which must elapse between shots.
      */
     protected static long timeBetweenShots;
+    protected static long timeBetweenReload;
     /**
      * kr.jbnu.se.std.Game background image.
      */
@@ -95,7 +97,11 @@ public abstract class Game {
     protected static BufferedImage weaponsImg;
     protected enum GunTypes{REVOLVER, SHORT, WOODEN, AK47, MACHINEGUN}
     protected static GunTypes gunType = null;
-    protected static Map<GunTypes, Integer> bullets = new HashMap<GunTypes, Integer>(){{put(GunTypes.REVOLVER, 6);put(GunTypes.SHORT, 30);put(GunTypes.WOODEN, 1);put(GunTypes.AK47, 30);put(GunTypes.MACHINEGUN, 200);}};
+    protected static Map<GunTypes, Integer> defaultBullets = new HashMap<GunTypes, Integer>();
+    protected static Map<GunTypes, Integer> bullets = new HashMap<GunTypes, Integer>();
+    protected static Map<GunTypes, Integer> gunIdx = new HashMap<GunTypes, Integer>();
+    protected static Map<GunTypes, String> gunName = new HashMap<GunTypes, String>();
+    protected static Map<GunTypes, Float> gunDecibel = new HashMap<GunTypes, Float>();
 
     protected static Image feverFireGif;
 
@@ -155,9 +161,36 @@ public abstract class Game {
         health = 100;
 
         gunType = GunTypes.REVOLVER;
+        defaultBullets.put(GunTypes.REVOLVER, 6);
+        defaultBullets.put(GunTypes.SHORT, 30);
+        defaultBullets.put(GunTypes.WOODEN, 1);
+        defaultBullets.put(GunTypes.AK47, 30);
+        defaultBullets.put(GunTypes.MACHINEGUN, 200);
+        bullets.put(GunTypes.REVOLVER, 6);
+        bullets.put(GunTypes.SHORT, 30);
+        bullets.put(GunTypes.WOODEN, 1);
+        bullets.put(GunTypes.AK47, 30);
+        bullets.put(GunTypes.MACHINEGUN, 200);
+        gunIdx.put(GunTypes.REVOLVER, 1);
+        gunIdx.put(GunTypes.SHORT, 2);
+        gunIdx.put(GunTypes.WOODEN, 3);
+        gunIdx.put(GunTypes.AK47, 4);
+        gunIdx.put(GunTypes.MACHINEGUN, 5);
+        gunName.put(GunTypes.REVOLVER, "revolver");
+        gunName.put(GunTypes.SHORT, "short");
+        gunName.put(GunTypes.WOODEN, "wooden");
+        gunName.put(GunTypes.AK47, "ak47");
+        gunName.put(GunTypes.MACHINEGUN, "machinegun");
+        gunDecibel.put(GunTypes.REVOLVER, -20.0f);
+        gunDecibel.put(GunTypes.SHORT, -10.0f);
+        gunDecibel.put(GunTypes.WOODEN,  -15.0f);
+        gunDecibel.put(GunTypes.AK47,  -10.0f);
+        gunDecibel.put(GunTypes.MACHINEGUN,  -5.0f);
 
         lastTimeShoot = 0;
+        lastTimeReload = 0;
         timeBetweenShots = Framework.secInNanosec / 3;
+        timeBetweenReload = (long) (Framework.secInNanosec / 1.5);
 
         showShotEffect = false;
     };
@@ -180,7 +213,7 @@ public abstract class Game {
             URL feverBarImgUrl = this.getClass().getResource("/images/fever0.png");
             feverBarImg = ImageIO.read(Objects.requireNonNull(feverBarImgUrl));
             feverFireGif = null;
-            URL frogImgUrl = this.getClass().getResource("/images/frog_revolver.png");
+            URL frogImgUrl = this.getClass().getResource("/images/frog_" + gunName.get(gunType) + ".png");
             frogImg = ImageIO.read(Objects.requireNonNull(frogImgUrl));
             URL gunEffectImgUrl = this.getClass().getResource("/images/gun_effect.png");
             gunEffectImg = ImageIO.read(Objects.requireNonNull(gunEffectImgUrl));
@@ -232,7 +265,7 @@ public abstract class Game {
      * @param gameTime gameTime of the game.
      * @param mousePosition current mouse position.
      */
-    public abstract void UpdateGame(long gameTime, Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException ;
+    public abstract void UpdateGame(long gameTime, Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException;
     
     /**
      * Draw the game to the screen.
@@ -268,7 +301,7 @@ public abstract class Game {
         }
     }
 
-    protected void DrawFront(Graphics2D g2d, Point mousePosition) {
+    protected void DrawFront(Graphics2D g2d, Point mousePosition) throws IOException {
         g2d.setColor(Color.white);
         g2d.drawString("RUNAWAY: " + runawayObjects, 10, 21);
         g2d.drawString("KILLS: " + killedObjects, 160, 21);
@@ -294,6 +327,8 @@ public abstract class Game {
         g2d.setColor(Color.RED);
         g2d.fillRect(Framework.frameWidth - healthBarImg.getWidth() + 58, 5, (healthBarImg.getWidth() - 63) * (health /100), healthBarImg.getHeight() - 10);
 
+        URL frogImgUrl = this.getClass().getResource("/images/frog_" + gunName.get(gunType) + ".png");
+        frogImg = ImageIO.read(Objects.requireNonNull(frogImgUrl));
         rotationCenterX = Framework.frameWidth;
         rotationCenterY = Framework.frameHeight;
         xDiff = rotationCenterX - mousePosition.x;
@@ -368,7 +403,7 @@ public abstract class Game {
             }, 500, TimeUnit.MILLISECONDS);
     }
 
-    public void Draw(Graphics2D g2d, Point mousePosition) {
+    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         DrawBack(g2d);
         DrawFront(g2d, mousePosition);
     }
@@ -380,8 +415,7 @@ public abstract class Game {
      * @param g2d Graphics2D
      * @param mousePosition Current mouse position.
      */
-    public void DrawGameOver(Graphics2D g2d, Point mousePosition)
-    {
+    public void DrawGameOver(Graphics2D g2d, Point mousePosition) throws IOException {
         Draw(g2d, mousePosition);
         
         // The first text is used for shade.

@@ -100,6 +100,7 @@ public class Stage4 extends Stage3 {
             {
                 movingWitches.remove(i);
                 runawayObjects++;
+                feverCnt = 0;
             }
         }
         if(System.nanoTime() - Bat.lastObjectTime >= Bat.timeBetweenObjects)
@@ -121,14 +122,14 @@ public class Stage4 extends Stage3 {
             {
                 movingBats.remove(i);
                 runawayObjects++;
+                feverCnt = 0;
             }
         }
 
         super.UpdateGame(gameTime, mousePosition);
     }
 
-    public void Draw(Graphics2D g2d, Point mousePosition)
-    {
+    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         super.DrawBack(g2d);
         for (Duck duck : this.movingDucks) {
             duck.Draw(g2d);
