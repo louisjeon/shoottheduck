@@ -99,9 +99,7 @@ public class Stage4 extends Stage3 {
             if(movingWitches.get(i).x < -witchImg.getWidth())
             {
                 movingWitches.remove(i);
-                runawayObjects++;
-                feverCnt = 0;
-                DrawFever();
+                RanAway();
             }
         }
         if(System.nanoTime() - Bat.lastObjectTime >= Bat.timeBetweenObjects)
@@ -122,9 +120,7 @@ public class Stage4 extends Stage3 {
             if(movingBats.get(i).x < -batImg.getWidth())
             {
                 movingBats.remove(i);
-                runawayObjects++;
-                feverCnt = 0;
-                DrawFever();
+                RanAway();
             }
         }
 

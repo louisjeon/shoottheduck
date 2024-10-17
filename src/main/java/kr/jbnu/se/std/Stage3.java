@@ -83,9 +83,7 @@ public class Stage3 extends Stage2 {
             if(movingCrows.get(i).x < -crowImg.getWidth())
             {
                 movingCrows.remove(i);
-                runawayObjects++;
-                feverCnt = 0;
-                DrawFever();
+                RanAway();
             }
         }
 

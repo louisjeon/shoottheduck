@@ -272,7 +272,13 @@ public abstract class Game {
      * @param mousePosition current mouse position.
      */
     public abstract void UpdateGame(long gameTime, Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException;
-    
+
+    protected void RanAway() throws IOException {
+        runawayObjects++;
+        health -= 1;
+        feverCnt = 0;
+        DrawFever();
+    }
     /**
      * Draw the game to the screen.
      * 
@@ -309,7 +315,7 @@ public abstract class Game {
 
     protected void DrawFront(Graphics2D g2d, Point mousePosition) throws IOException {
         g2d.setColor(Color.white);
-        g2d.drawString("RUNAWAY: " + runawayObjects, 10, 21);
+        g2d.drawString("HP: " + health, 10, 21);
         g2d.drawString("KILLS: " + killedObjects, 160, 21);
         g2d.drawString("SHOOTS: " + shoots, 299, 21);
         g2d.drawString("SCORE: " + score, 440, 21);
@@ -331,7 +337,7 @@ public abstract class Game {
         g2d.drawImage(feverBarImg, Framework.frameWidth - feverBarImg.getWidth(), healthBarImg.getHeight() - 5, null);
         g2d.drawImage(weaponsImg, 0, 20, null);
         g2d.setColor(Color.RED);
-        g2d.fillRect(Framework.frameWidth - healthBarImg.getWidth() + 58, 5, (healthBarImg.getWidth() - 63) * (health /100), healthBarImg.getHeight() - 10);
+        g2d.fillRect(Framework.frameWidth - healthBarImg.getWidth() + 58, 5, (healthBarImg.getWidth() - 63) * (health / 100), healthBarImg.getHeight() - 10);
 
         URL frogImgUrl = this.getClass().getResource("/images/frog_" + gunName.get(gunType) + ".png");
         frogImg = ImageIO.read(Objects.requireNonNull(frogImgUrl));

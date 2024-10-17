@@ -82,9 +82,7 @@ public class Stage1 extends Game {
             if(movingDucks.get(i).x < -duckImg.getWidth())
             {
                 movingDucks.remove(i);
-                runawayObjects++;
-                feverCnt = 0;
-                DrawFever();
+                RanAway();
             }
         }
 
@@ -133,7 +131,7 @@ public class Stage1 extends Game {
                 lastTimeShoot = System.nanoTime();
             }
         }
-        if(runawayObjects >= 200)
+        if(health == 0)
             Framework.gameState = Framework.GameState.GAMEOVER;
     }
 

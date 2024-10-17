@@ -83,9 +83,7 @@ public class Stage5 extends Stage1 {
             if(movingUFOs.get(i).x < -UFOImg.getWidth())
             {
                 movingUFOs.remove(i);
-                runawayObjects++;
-                feverCnt = 0;
-                DrawFever();
+                RanAway();
             }
         }
         super.UpdateGame(gameTime, mousePosition);

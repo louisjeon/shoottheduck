@@ -101,9 +101,7 @@ public class Stage2 extends Stage1 {
             if(movingHawks.get(i).x < -hawkImg.getWidth())
             {
                 movingHawks.remove(i);
-                runawayObjects++;
-                feverCnt = 0;
-                DrawFever();
+                RanAway();
             }
         }
 
@@ -125,9 +123,7 @@ public class Stage2 extends Stage1 {
             if(movingEagles.get(i).x < -eagleImg.getWidth())
             {
                 movingEagles.remove(i);
-                runawayObjects++;
-                feverCnt = 0;
-                DrawFever();
+                RanAway();
             }
         }
 
