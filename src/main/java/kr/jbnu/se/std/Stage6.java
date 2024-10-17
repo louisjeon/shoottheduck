@@ -16,7 +16,8 @@ public class Stage6 extends Stage1 {
     private BufferedImage pumpkinImg;
     protected ArrayList<Pumpkin> movingPumpkin;
 
-    public Stage6(){}
+    public Stage6(){
+    }
 
     protected void Initialize() {
         super.Initialize();
@@ -48,11 +49,21 @@ public class Stage6 extends Stage1 {
         Pumpkin.pumpkinLastObjectTime = 0;
     }
 
+    boolean checkPumpkinDied(int index) {
+        Pumpkin pumpkin = movingPumpkin.get(index);
+
+        if(pumpkin.getPumpkinHealth() <= 0 ){
+
+            return true;
+        }
+        return false;
+    }
+
     protected void CheckShot(Point mousePosition) {
         super.CheckShot(mousePosition);
         for(int i = 0; i < movingPumpkin.size(); i++)
         {
-            if(new Rectangle(movingPumpkin.get(i).x, movingPumpkin.get(i).y, 600, 600).contains(mousePosition))
+            if(new Rectangle(movingPumpkin.get(i).x, movingPumpkin.get(i).y, 600, 600).contains(mousePosition) && checkPumpkinDied(i))
             {
                 Shot(movingPumpkin, i);
                 return;
@@ -62,6 +73,7 @@ public class Stage6 extends Stage1 {
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         // Creates a new duck, if it's the time, and add it to the array list.
+        Pumpkin pumpkin = new Pumpkin(pumpkinImg); //pumpkin 생성
         if(System.nanoTime() - Pumpkin.pumpkinLastObjectTime >= Pumpkin.pumpkinTimeBetweenObjects)
         {
             movingPumpkin.add(new Pumpkin(pumpkinImg));
@@ -87,12 +99,4 @@ public class Stage6 extends Stage1 {
         super.UpdateGame(gameTime, mousePosition);
     }
 
-    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
-        super.DrawBack(g2d);
-        for (Duck duck : this.movingDucks) {
-            duck.Draw(g2d);
-        }
-
-        super.DrawFront(g2d, mousePosition);
-    }
 }
