@@ -84,6 +84,7 @@ public class Stage1 extends Game {
                 movingDucks.remove(i);
                 runawayObjects++;
                 feverCnt = 0;
+                DrawFever();
             }
         }
 
@@ -118,6 +119,7 @@ public class Stage1 extends Game {
                 lastTimeReload = System.nanoTime();
             } else if(System.nanoTime() - lastTimeShoot >= timeBetweenShots && System.nanoTime() - lastTimeReload >= timeBetweenReload)
             {
+                DrawShot();
                 shoots++;
                 bullets.replace(gunType, bullets.get(gunType) - 1);
                 PlaySound(gunName.get(gunType), gunDecibel.get(gunType));
@@ -126,8 +128,8 @@ public class Stage1 extends Game {
                     killedObjects++;
                     feverCnt++;
                     hit = false;
+                    DrawFever();
                 }
-                DrawFever();
                 lastTimeShoot = System.nanoTime();
             }
         }

@@ -85,6 +85,7 @@ public class Stage5 extends Stage1 {
                 movingUFOs.remove(i);
                 runawayObjects++;
                 feverCnt = 0;
+                DrawFever();
             }
         }
         super.UpdateGame(gameTime, mousePosition);

@@ -103,6 +103,7 @@ public class Stage2 extends Stage1 {
                 movingHawks.remove(i);
                 runawayObjects++;
                 feverCnt = 0;
+                DrawFever();
             }
         }
 
@@ -126,6 +127,7 @@ public class Stage2 extends Stage1 {
                 movingEagles.remove(i);
                 runawayObjects++;
                 feverCnt = 0;
+                DrawFever();
             }
         }
 

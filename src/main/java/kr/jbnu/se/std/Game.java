@@ -345,10 +345,38 @@ public abstract class Game {
         g2d.setTransform(old);
 
         if (feverFireGif != null) {
-            g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
+            switch (gunType) {
+                case REVOLVER:
+                    g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
+                    break;
+                case SHORT:
+                    g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
+                    break;
+                case WOODEN:
+                    g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
+                    break;
+                case AK47:
+                    g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
+                    break;
+                case MACHINEGUN:
+                    g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
+                    break;
+
+            }
         }
 
         DrawCombo(g2d, mousePosition);
+    }
+
+    protected void DrawShot() {
+        showShotEffect = true;
+
+        exec = new ScheduledThreadPoolExecutor(1);
+        exec.schedule(new Runnable() {
+            public void run() {
+                showShotEffect = false;
+            }
+        }, 100, TimeUnit.MILLISECONDS);
     }
 
     protected void DrawFever() throws IOException {
@@ -389,15 +417,6 @@ public abstract class Game {
                 combo3rdDigitImg = null;
             }
         }
-
-        showShotEffect = true;
-
-        exec = new ScheduledThreadPoolExecutor(1);
-        exec.schedule(new Runnable() {
-            public void run() {
-                showShotEffect = false;
-            }
-        }, 100, TimeUnit.MILLISECONDS);
 
         exec2 = new ScheduledThreadPoolExecutor(1);
         exec2.schedule(new Runnable() {

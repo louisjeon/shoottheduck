@@ -101,6 +101,7 @@ public class Stage4 extends Stage3 {
                 movingWitches.remove(i);
                 runawayObjects++;
                 feverCnt = 0;
+                DrawFever();
             }
         }
         if(System.nanoTime() - Bat.lastObjectTime >= Bat.timeBetweenObjects)
@@ -123,6 +124,7 @@ public class Stage4 extends Stage3 {
                 movingBats.remove(i);
                 runawayObjects++;
                 feverCnt = 0;
+                DrawFever();
             }
         }
 

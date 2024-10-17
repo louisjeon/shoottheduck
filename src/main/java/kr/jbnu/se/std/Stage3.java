@@ -85,6 +85,7 @@ public class Stage3 extends Stage2 {
                 movingCrows.remove(i);
                 runawayObjects++;
                 feverCnt = 0;
+                DrawFever();
             }
         }
 
