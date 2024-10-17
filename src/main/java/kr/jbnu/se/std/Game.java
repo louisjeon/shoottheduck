@@ -290,7 +290,7 @@ public abstract class Game {
         g2d.drawImage(backgroundImg, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
     };
 
-    protected void DrawCombo(Graphics2D g2d, Point mousePosition) {
+    protected void DrawCombo(Graphics2D g2d, Point mousePosition) throws IOException {
         if (showShotEffect) {
             rotationCenterX = Framework.frameWidth;
             rotationCenterY = Framework.frameHeight;
@@ -298,7 +298,23 @@ public abstract class Game {
             yDiff = rotationCenterY - mousePosition.y;
             AffineTransform old = g2d.getTransform();
             g2d.rotate(Math.atan2(yDiff, xDiff) - 0.53,rotationCenterX, rotationCenterY );
-            g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 25, Framework.frameHeight - frogImg.getHeight() - 10, null);
+            switch (gunType) {
+                case REVOLVER:
+                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 25, Framework.frameHeight - frogImg.getHeight() - 10, null);
+                    break;
+                case SHORT:
+                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 80, Framework.frameHeight - frogImg.getHeight() - 27, null);
+                    break;
+                case WOODEN:
+                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 100, Framework.frameHeight - frogImg.getHeight() - 36, null);
+                    break;
+                case AK47:
+                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 100, Framework.frameHeight - frogImg.getHeight() - 39, null);
+                    break;
+                case MACHINEGUN:
+                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 116, Framework.frameHeight - frogImg.getHeight() - 60, null);
+                    break;
+            }
             g2d.setTransform(old);
         }
         if (combo1stDigitImg != null) {
@@ -348,24 +364,7 @@ public abstract class Game {
         g2d.setTransform(old);
 
         if (feverFireGif != null) {
-            switch (gunType) {
-                case REVOLVER:
-                    g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
-                    break;
-                case SHORT:
-                    g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
-                    break;
-                case WOODEN:
-                    g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
-                    break;
-                case AK47:
-                    g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
-                    break;
-                case MACHINEGUN:
-                    g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
-                    break;
-
-            }
+            g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
         }
 
         DrawCombo(g2d, mousePosition);
