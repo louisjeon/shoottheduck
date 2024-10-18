@@ -63,28 +63,23 @@ public class Stage5 extends Stage1 {
         }
     }
 
+    int ufo=0;//ufo가 한 번 나올 수 있도록 도와주는 변수
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        // Creates a new duck, if it's the time, and add it to the array list.
-        if(System.nanoTime() - UFO.lastObjectTime >= UFO.timeBetweenObjects)
-        {
+        if (ufo == 0) {
             movingUFOs.add(new UFO(UFOImg));
-
-            UFO.nextObjectLines++;
-            if(UFO.nextObjectLines >= UFO.objectLines.length)
-                UFO.nextObjectLines = 0;
-
-            UFO.lastObjectTime = System.nanoTime();
+            ufo++;
         }
 
-        for(int i = 0; i < movingUFOs.size(); i++)
-        {
+        for (int i = 0; i < movingUFOs.size(); i++) {
             movingUFOs.get(i).Update();
 
-            if(movingUFOs.get(i).x < -UFOImg.getWidth())
-            {
-                movingUFOs.remove(i);
-                runawayObjects++;
-            }
+            // UFO가 화면을 벗어나는 조건을 제거합니다.
+            // 대신 UFO가 멈춘 상태에서 일정 시간이 지나면 제거할 수 있습니다.
+            // 예를 들어:
+            // if (movingUFOs.get(i).stopped && gameTime - movingUFOs.get(i).stoppedTime > 10000) {
+            //     movingUFOs.remove(i);
+            //     i--;
+            // }
         }
         super.UpdateGame(gameTime, mousePosition);
     }
