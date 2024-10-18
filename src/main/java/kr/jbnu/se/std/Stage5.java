@@ -57,10 +57,19 @@ public class Stage5 extends Stage1 {
         {
             if(new Rectangle(movingUFOs.get(i).x, movingUFOs.get(i).y, 260, 200).contains(mousePosition))
             {
-                Shot(movingUFOs, i);
+                if(movingUFOs.get(i).hit()) {
+                    Shot(movingUFOs, i);
+                }
                 return;
             }
         }
+    }
+
+    @Override
+    protected void Shot(ArrayList<? extends MovingObject> arrayList, int i) {
+        score += (int) Math.floor(arrayList.get(i).score * scoreMultiplier);
+        arrayList.remove(i);
+        hit = true;
     }
 
     int ufo=0;//ufo가 한 번 나올 수 있도록 도와주는 변수
@@ -72,14 +81,6 @@ public class Stage5 extends Stage1 {
 
         for (int i = 0; i < movingUFOs.size(); i++) {
             movingUFOs.get(i).Update();
-
-            // UFO가 화면을 벗어나는 조건을 제거합니다.
-            // 대신 UFO가 멈춘 상태에서 일정 시간이 지나면 제거할 수 있습니다.
-            // 예를 들어:
-            // if (movingUFOs.get(i).stopped && gameTime - movingUFOs.get(i).stoppedTime > 10000) {
-            //     movingUFOs.remove(i);
-            //     i--;
-            // }
         }
         super.UpdateGame(gameTime, mousePosition);
     }
