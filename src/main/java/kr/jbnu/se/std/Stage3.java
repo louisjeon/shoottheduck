@@ -83,15 +83,14 @@ public class Stage3 extends Stage2 {
             if(movingCrows.get(i).x < -crowImg.getWidth())
             {
                 movingCrows.remove(i);
-                runawayObjects++;
+                RanAway();
             }
         }
 
         super.UpdateGame(gameTime, mousePosition);
     }
 
-    public void Draw(Graphics2D g2d, Point mousePosition)
-    {
+    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         super.DrawBack(g2d);
         for (Duck duck : this.movingDucks) {
             duck.Draw(g2d);

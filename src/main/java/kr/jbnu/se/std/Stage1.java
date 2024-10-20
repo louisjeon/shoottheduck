@@ -50,7 +50,7 @@ public class Stage1 extends Game {
         Duck.lastObjectTime = 0;
     }
 
-     protected void CheckShot(Point mousePosition) {
+    protected void CheckShot(Point mousePosition) {
         for(int i = 0; i < movingDucks.size(); i++)
         {
             if(new Rectangle(movingDucks.get(i).x + 18, movingDucks.get(i).y     , 27, 30).contains(mousePosition) ||
@@ -82,35 +82,60 @@ public class Stage1 extends Game {
             if(movingDucks.get(i).x < -duckImg.getWidth())
             {
                 movingDucks.remove(i);
-                runawayObjects++;
+                RanAway();
             }
         }
 
         if(Canvas.mouseButtonState(MouseEvent.BUTTON1))
         {
-            if(System.nanoTime() - lastTimeShoot >= timeBetweenShots)
-            {
-                shoots++;
-
-                PlaySound("pistol", -30.0f);
-                CheckShot(mousePosition);
-                if (!hit) {
-                    feverCnt = 0;
+            if (new Rectangle(0, 20, weaponsImg.getWidth(), weaponsImg.getHeight()).contains(mousePosition)) {
+                PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
+                if (new Rectangle(0, 20, (int) (weaponsImg.getWidth() * 0.1), weaponsImg.getHeight()).contains(mousePosition)) {
+                    gunType = GunTypes.REVOLVER;
+                    timeBetweenShots = Framework.secInNanosec / 3;
+                    timeBetweenReload = (long) (Framework.secInNanosec / 1.5);
+                } else if (new Rectangle((int) (weaponsImg.getWidth() * 0.1), 20, (int) (weaponsImg.getWidth() * 0.2), weaponsImg.getHeight()).contains(mousePosition)) {
+                    gunType = GunTypes.SHORT;
+                    timeBetweenShots = Framework.secInNanosec / 20;
+                    timeBetweenReload = (Framework.secInNanosec) * 2;
+                } else if (new Rectangle((int) (weaponsImg.getWidth() * 0.3), 20, (int) (weaponsImg.getWidth() * 0.2), weaponsImg.getHeight()).contains(mousePosition)) {
+                    gunType = GunTypes.WOODEN;
+                    timeBetweenShots = Framework.secInNanosec;
+                    timeBetweenReload = (Framework.secInNanosec) / 3;
+                } else if (new Rectangle((int) (weaponsImg.getWidth() * 0.5), 20, (int) (weaponsImg.getWidth() * 0.2), weaponsImg.getHeight()).contains(mousePosition)) {
+                    gunType = GunTypes.AK47;
+                    timeBetweenShots = Framework.secInNanosec / 20;
+                    timeBetweenReload = (Framework.secInNanosec) * 2;
                 } else {
+                    gunType = GunTypes.MACHINEGUN;
+                    timeBetweenShots = Framework.secInNanosec / 20;
+                    timeBetweenReload = (Framework.secInNanosec) * 3;
+                };
+            } else if (bullets.get(gunType) == 0) {
+                PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
+                bullets.replace(gunType, defaultBullets.get(gunType));
+                lastTimeReload = System.nanoTime();
+            } else if(System.nanoTime() - lastTimeShoot >= timeBetweenShots && System.nanoTime() - lastTimeReload >= timeBetweenReload)
+            {
+                DrawShot();
+                shoots++;
+                bullets.replace(gunType, bullets.get(gunType) - 1);
+                PlaySound(gunName.get(gunType), gunDecibel.get(gunType));
+                CheckShot(mousePosition);
+                if (hit) {
                     killedObjects++;
                     feverCnt++;
                     hit = false;
+                    DrawFever();
                 }
-                DrawFever();
                 lastTimeShoot = System.nanoTime();
             }
         }
-        if(runawayObjects >= 200)
+        if(health == 0)
             Framework.gameState = Framework.GameState.GAMEOVER;
     }
 
-    public void Draw(Graphics2D g2d, Point mousePosition)
-    {
+    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         super.DrawBack(g2d);
         for (Duck duck : movingDucks) {
             duck.Draw(g2d);

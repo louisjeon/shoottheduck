@@ -101,7 +101,7 @@ public class Stage2 extends Stage1 {
             if(movingHawks.get(i).x < -hawkImg.getWidth())
             {
                 movingHawks.remove(i);
-                runawayObjects++;
+                RanAway();
             }
         }
 
@@ -123,15 +123,14 @@ public class Stage2 extends Stage1 {
             if(movingEagles.get(i).x < -eagleImg.getWidth())
             {
                 movingEagles.remove(i);
-                runawayObjects++;
+                RanAway();
             }
         }
 
         super.UpdateGame(gameTime, mousePosition);
     }
 
-    public void Draw(Graphics2D g2d, Point mousePosition)
-    {
+    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         super.DrawBack(g2d);
         for (Duck duck : this.movingDucks) {
             duck.Draw(g2d);

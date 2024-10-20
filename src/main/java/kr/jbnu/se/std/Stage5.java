@@ -79,14 +79,20 @@ public class Stage5 extends Stage1 {
             ufo++;
         }
 
-        for (int i = 0; i < movingUFOs.size(); i++) {
+        for(int i = 0; i < movingUFOs.size(); i++)
+        {
             movingUFOs.get(i).Update();
+
+            if(movingUFOs.get(i).x < -UFOImg.getWidth())
+            {
+                movingUFOs.remove(i);
+                RanAway();
+            }
         }
         super.UpdateGame(gameTime, mousePosition);
     }
 
-    public void Draw(Graphics2D g2d, Point mousePosition)
-    {
+    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         super.DrawBack(g2d);
         for (Duck duck : this.movingDucks) {
             duck.Draw(g2d);

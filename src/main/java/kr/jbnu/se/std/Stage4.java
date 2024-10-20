@@ -99,7 +99,7 @@ public class Stage4 extends Stage3 {
             if(movingWitches.get(i).x < -witchImg.getWidth())
             {
                 movingWitches.remove(i);
-                runawayObjects++;
+                RanAway();
             }
         }
         if(System.nanoTime() - Bat.lastObjectTime >= Bat.timeBetweenObjects)
@@ -120,15 +120,14 @@ public class Stage4 extends Stage3 {
             if(movingBats.get(i).x < -batImg.getWidth())
             {
                 movingBats.remove(i);
-                runawayObjects++;
+                RanAway();
             }
         }
 
         super.UpdateGame(gameTime, mousePosition);
     }
 
-    public void Draw(Graphics2D g2d, Point mousePosition)
-    {
+    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         super.DrawBack(g2d);
         for (Duck duck : this.movingDucks) {
             duck.Draw(g2d);
