@@ -103,6 +103,7 @@ public abstract class Game {
     protected static Map<GunTypes, String> gunName = new HashMap<GunTypes, String>();
     protected static Map<GunTypes, Float> gunDecibel = new HashMap<GunTypes, Float>();
     protected static Map<GunTypes, Float> reloadDecibel = new HashMap<GunTypes, Float>();
+    public static Map<GunTypes, Integer> gunDamage = new HashMap<GunTypes, Integer>();
 
     protected static Image feverFireGif;
 
@@ -192,6 +193,11 @@ public abstract class Game {
         reloadDecibel.put(GunTypes.WOODEN,  -15.0f);
         reloadDecibel.put(GunTypes.AK47,  -15.0f);
         reloadDecibel.put(GunTypes.MACHINEGUN,  -15.0f);
+        gunDamage.put(GunTypes.REVOLVER, 10);
+        gunDamage.put(GunTypes.SHORT, 1);
+        gunDamage.put(GunTypes.WOODEN,  20);
+        gunDamage.put(GunTypes.AK47,  2);
+        gunDamage.put(GunTypes.MACHINEGUN, 3);
 
         lastTimeShoot = 0;
         lastTimeReload = 0;

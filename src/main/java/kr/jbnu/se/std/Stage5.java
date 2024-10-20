@@ -14,13 +14,12 @@ import java.util.logging.Logger;
 
 public class Stage5 extends Stage1 {
     private BufferedImage UFOImg;
-    private ArrayList<UFO> movingUFOs;
+    private UFO movingUFO;
 
     public Stage5(){}
 
     protected void Initialize() {
         super.Initialize();
-        movingUFOs = new ArrayList<UFO>();
     }
 
     protected void LoadContent()
@@ -29,13 +28,13 @@ public class Stage5 extends Stage1 {
         try
         {
             URL backgroundImgUrl = this.getClass().getResource("/images/background5.jpg");
-            this.backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
+            backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
 
             URL grassImgUrl = this.getClass().getResource("/images/grass5.png");
-            this.grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
+            grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
 
             URL duckImgUrl = this.getClass().getResource("/images/duck5.png");
-            this.duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
+            duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
 
             URL UFOImgUrl = this.getClass().getResource("/images/UFO.png");
             UFOImg = ImageIO.read(Objects.requireNonNull(UFOImgUrl));
@@ -47,47 +46,26 @@ public class Stage5 extends Stage1 {
 
     public void RestartGame() {
         super.RestartGame();
-        movingUFOs.clear();
-        UFO.lastObjectTime = 0;
+        movingUFO = new UFO(UFOImg);
     }
 
     protected void CheckShot(Point mousePosition) {
         super.CheckShot(mousePosition);
-        for(int i = 0; i < movingUFOs.size(); i++)
+        if(new Rectangle(movingUFO.x, movingUFO.y, 260, 200).contains(mousePosition))
         {
-            if(new Rectangle(movingUFOs.get(i).x, movingUFOs.get(i).y, 260, 200).contains(mousePosition))
-            {
-                if(movingUFOs.get(i).hit()) {
-                    Shot(movingUFOs, i);
-                }
-                return;
+            PlaySound("alien_scream", -10.0f);
+            if(movingUFO.hit(gunType)) {
+                score += (int) Math.floor(movingUFO.score * scoreMultiplier);
+                movingUFO = null;
             }
         }
     }
 
-    @Override
-    protected void Shot(ArrayList<? extends MovingObject> arrayList, int i) {
-        score += (int) Math.floor(arrayList.get(i).score * scoreMultiplier);
-        arrayList.remove(i);
-        hit = true;
-    }
-
-    int ufo=0;//ufo가 한 번 나올 수 있도록 도와주는 변수
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        if (ufo == 0) {
-            movingUFOs.add(new UFO(UFOImg));
-            ufo++;
-        }
-
-        for(int i = 0; i < movingUFOs.size(); i++)
-        {
-            movingUFOs.get(i).Update();
-
-            if(movingUFOs.get(i).x < -UFOImg.getWidth())
-            {
-                movingUFOs.remove(i);
-                RanAway();
-            }
+        if (movingUFO == null) {
+            movingUFO = new UFO(UFOImg);
+        } else {
+            movingUFO.Update();
         }
         super.UpdateGame(gameTime, mousePosition);
     }
@@ -97,9 +75,9 @@ public class Stage5 extends Stage1 {
         for (Duck duck : this.movingDucks) {
             duck.Draw(g2d);
         }
-        for (UFO ufo : this.movingUFOs) {
-            ufo.Draw(g2d);
-        }
+        if (movingUFO != null) {
+            movingUFO.Draw(g2d);
+        };
         super.DrawFront(g2d, mousePosition);
     }
 }
