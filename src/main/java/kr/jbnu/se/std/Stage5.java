@@ -57,23 +57,26 @@ public class Stage5 extends Stage1 {
         {
             if(new Rectangle(movingUFOs.get(i).x, movingUFOs.get(i).y, 260, 200).contains(mousePosition))
             {
-                Shot(movingUFOs, i);
+                if(movingUFOs.get(i).hit()) {
+                    Shot(movingUFOs, i);
+                }
                 return;
             }
         }
     }
 
+    @Override
+    protected void Shot(ArrayList<? extends MovingObject> arrayList, int i) {
+        score += (int) Math.floor(arrayList.get(i).score * scoreMultiplier);
+        arrayList.remove(i);
+        hit = true;
+    }
+
+    int ufo=0;//ufo가 한 번 나올 수 있도록 도와주는 변수
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        // Creates a new duck, if it's the time, and add it to the array list.
-        if(System.nanoTime() - UFO.lastObjectTime >= UFO.timeBetweenObjects)
-        {
+        if (ufo == 0) {
             movingUFOs.add(new UFO(UFOImg));
-
-            UFO.nextObjectLines++;
-            if(UFO.nextObjectLines >= UFO.objectLines.length)
-                UFO.nextObjectLines = 0;
-
-            UFO.lastObjectTime = System.nanoTime();
+            ufo++;
         }
 
         for(int i = 0; i < movingUFOs.size(); i++)
