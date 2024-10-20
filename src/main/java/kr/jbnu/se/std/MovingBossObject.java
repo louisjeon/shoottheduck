@@ -16,8 +16,8 @@ public class MovingBossObject {
     public static Random random;
     protected BufferedImage objectImg;
     protected int speed;
-    private static final int HEALTH_BAR_WIDTH = 50;
-    private static final int HEALTH_BAR_HEIGHT = 5;
+    private static final int HEALTH_BAR_WIDTH = 100;
+    private static final int HEALTH_BAR_HEIGHT = 10;
 
     public MovingBossObject(int[][] objectLines,int nextObjectLines,BufferedImage objectImg)
     {
@@ -50,7 +50,7 @@ public class MovingBossObject {
         int healthBarY = y - 15;
 
         g2d.setColor(Color.GRAY);
-        g2d.fillRect(x, healthBarY, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
+        g2d.fillRect(x + objectImg.getWidth() / 2 - HEALTH_BAR_WIDTH / 2, healthBarY, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
 
         if (health > 0.7 * INITIAL_HEALTH) {
             g2d.setColor(Color.GREEN);
@@ -60,10 +60,10 @@ public class MovingBossObject {
             g2d.setColor(Color.RED);
         }
 
-        g2d.fillRect(x, healthBarY, (int) (HEALTH_BAR_WIDTH * (double)health/(double)INITIAL_HEALTH), HEALTH_BAR_HEIGHT);
+        g2d.fillRect(x + objectImg.getWidth() / 2 - HEALTH_BAR_WIDTH / 2, healthBarY, (int) (HEALTH_BAR_WIDTH * (double)health/(double)INITIAL_HEALTH), HEALTH_BAR_HEIGHT);
 
         g2d.setColor(Color.BLACK);
-        g2d.drawRect(x, healthBarY, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
+        g2d.drawRect(x + objectImg.getWidth() / 2 - HEALTH_BAR_WIDTH / 2, healthBarY, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
     }
 
     public void Draw(Graphics2D g2d) {
