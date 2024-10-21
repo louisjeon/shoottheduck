@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Stage5 extends Stage1 {
+public class Stage5 extends Game {
 
     public Stage5(){}
 
@@ -50,18 +50,13 @@ public class Stage5 extends Stage1 {
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         if (boss == null) {
             boss = new UFO(bossImg);
+        } else {
+            boss.Update();
         }
         super.UpdateGame(gameTime, mousePosition);
     }
 
     public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
-        super.DrawBack(g2d);
-        for (Duck duck : this.movingDucks) {
-            duck.Draw(g2d);
-        }
-        if (boss != null) {
-            boss.Draw(g2d);
-        };
-        super.DrawFront(g2d, mousePosition);
+        super.Draw(g2d, mousePosition);
     }
 }

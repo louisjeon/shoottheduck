@@ -13,14 +13,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Stage3 extends Stage2 {
-    private BufferedImage crowImg;
-    protected ArrayList<Crow> movingCrows;
+    private BufferedImage batImg;
+    protected ArrayList<Bat> movingBats;
 
     public Stage3(){}
 
     protected void Initialize() {
         super.Initialize();
-        this.movingCrows = new ArrayList<Crow>();
+        this.movingBats = new ArrayList<Bat>();
     }
 
     protected void LoadContent()
@@ -38,7 +38,10 @@ public class Stage3 extends Stage2 {
             duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
 
             URL crowImgUrl = this.getClass().getResource("/images/crow.png");
-            crowImg = ImageIO.read(Objects.requireNonNull(crowImgUrl));
+            bossImg = ImageIO.read(Objects.requireNonNull(crowImgUrl));
+
+            URL batImgUrl = this.getClass().getResource("/images/bat.png");
+            batImg = ImageIO.read(Objects.requireNonNull(batImgUrl));
         }
         catch (IOException ex) {
             Logger.getLogger(Stage3.class.getName()).log(Level.SEVERE, null, ex);
@@ -47,62 +50,60 @@ public class Stage3 extends Stage2 {
 
     public void RestartGame() {
         super.RestartGame();
-        movingCrows.clear();
-        Crow.lastObjectTime = 0;
+        boss = new Crow(bossImg);
+        movingBats.clear();
+        Bat.lastObjectTime = 0;
     }
 
-     protected void CheckShot(Point mousePosition) {
+    protected void CheckShot(Point mousePosition) {
         super.CheckShot(mousePosition);
-         for(int i = 0; i < movingCrows.size(); i++)
-         {
-             if(new Rectangle(movingCrows.get(i).x, movingCrows.get(i).y, 100, 100).contains(mousePosition))
-             {
-                 Shot(movingCrows, i);
-                 return;
-             }
-         }
+        for(int i = 0; i < movingBats.size(); i++)
+        {
+            if(new Rectangle(movingBats.get(i).x, movingBats.get(i).y, 40, 30).contains(mousePosition))
+            {
+                Shot(movingBats, i);
+                return;
+            }
+        }
     }
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        // Creates a new duck, if it's the time, and add it to the array list.
-        if(System.nanoTime() - Crow.lastObjectTime >= Crow.timeBetweenObjects)
+        if (boss == null) {
+            boss = new Crow(bossImg);
+        } else {
+            boss.Update();
+        }
+        if(System.nanoTime() - Bat.lastObjectTime >= Bat.timeBetweenObjects)
         {
-            movingCrows.add(new Crow(crowImg));
+            movingBats.add(new Bat(batImg));
 
-            Crow.nextObjectLines++;
-            if(Crow.nextObjectLines >= Crow.objectLines.length)
-                Crow.nextObjectLines = 0;
+            Bat.nextObjectLines++;
+            if(Bat.nextObjectLines >= Bat.objectLines.length)
+                Bat.nextObjectLines = 0;
 
-            Crow.lastObjectTime = System.nanoTime();
+            Bat.lastObjectTime = System.nanoTime();
         }
 
-        for(int i = 0; i < movingCrows.size(); i++)
+        for(int i = 0; i < movingBats.size(); i++)
         {
-            movingCrows.get(i).Update();
+            movingBats.get(i).Update();
 
-            if(movingCrows.get(i).x < -crowImg.getWidth())
+            if(movingBats.get(i).x < -batImg.getWidth())
             {
-                movingCrows.remove(i);
+                movingBats.remove(i);
                 RanAway();
             }
         }
-
         super.UpdateGame(gameTime, mousePosition);
     }
 
     public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         super.DrawBack(g2d);
-        for (Duck duck : this.movingDucks) {
-            duck.Draw(g2d);
-        }
         for (Hawk hawk : this.movingHawks) {
             hawk.Draw(g2d);
         }
-        for (Eagle eagle : this.movingEagles) {
-            eagle.Draw(g2d);
-        }
-        for (Crow crow : movingCrows) {
-            crow.Draw(g2d);
+        for (Bat bat : movingBats) {
+            bat.Draw(g2d);
         }
         super.DrawFront(g2d, mousePosition);
     }

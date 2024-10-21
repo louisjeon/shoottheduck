@@ -15,15 +15,12 @@ import java.util.logging.Logger;
 public class Stage4 extends Stage3 {
     private BufferedImage witchImg;
     protected ArrayList<Witch> movingWitches;
-    private BufferedImage batImg;
-    protected ArrayList<Bat> movingBats;
 
     public Stage4(){}
 
     protected void Initialize() {
         super.Initialize();
         this.movingWitches = new ArrayList<Witch>();
-        this.movingBats = new ArrayList<Bat>();
     }
 
     protected void LoadContent()
@@ -40,11 +37,11 @@ public class Stage4 extends Stage3 {
             URL duckImgUrl = this.getClass().getResource("/images/duck4.png");
             duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
 
-            URL witchImgUrl = this.getClass().getResource("/images/pumpkin.png");
+            URL witchImgUrl = this.getClass().getResource("/images/witch.png");
             witchImg = ImageIO.read(Objects.requireNonNull(witchImgUrl));
 
-            URL batImgUrl = this.getClass().getResource("/images/bat.png");
-            batImg = ImageIO.read(Objects.requireNonNull(batImgUrl));
+            URL bossImgUrl = this.getClass().getResource("/images/pumpkin.png");
+            bossImg = ImageIO.read(Objects.requireNonNull(bossImgUrl));
         }
         catch (IOException ex) {
             Logger.getLogger(Stage4.class.getName()).log(Level.SEVERE, null, ex);
@@ -53,10 +50,9 @@ public class Stage4 extends Stage3 {
 
     public void RestartGame() {
         super.RestartGame();
+        boss = new Pumpkin(bossImg);
         movingWitches.clear();
-        movingBats.clear();
         Witch.lastObjectTime = 0;
-        Bat.lastObjectTime = 0;
     }
 
      protected void CheckShot(Point mousePosition) {
@@ -69,18 +65,14 @@ public class Stage4 extends Stage3 {
                  return;
              }
          }
-         for(int i = 0; i < movingBats.size(); i++)
-         {
-             if(new Rectangle(movingBats.get(i).x, movingBats.get(i).y, 40, 30).contains(mousePosition))
-             {
-                 Shot(movingBats, i);
-                 return;
-             }
-         }
     }
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        // Creates a new duck, if it's the time, and add it to the array list.
+        if (boss == null) {
+            boss = new Pumpkin(bossImg);
+        } else {
+            boss.Update();
+        }
         if(System.nanoTime() - Witch.lastObjectTime >= Witch.timeBetweenObjects)
         {
             movingWitches.add(new Witch(witchImg));
@@ -102,50 +94,20 @@ public class Stage4 extends Stage3 {
                 RanAway();
             }
         }
-        if(System.nanoTime() - Bat.lastObjectTime >= Bat.timeBetweenObjects)
-        {
-            movingBats.add(new Bat(batImg));
-
-            Bat.nextObjectLines++;
-            if(Bat.nextObjectLines >= Bat.objectLines.length)
-                Bat.nextObjectLines = 0;
-
-            Bat.lastObjectTime = System.nanoTime();
-        }
-
-        for(int i = 0; i < movingBats.size(); i++)
-        {
-            movingBats.get(i).Update();
-
-            if(movingBats.get(i).x < -batImg.getWidth())
-            {
-                movingBats.remove(i);
-                RanAway();
-            }
-        }
 
         super.UpdateGame(gameTime, mousePosition);
     }
 
     public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         super.DrawBack(g2d);
-        for (Duck duck : this.movingDucks) {
-            duck.Draw(g2d);
-        }
         for (Hawk hawk : this.movingHawks) {
             hawk.Draw(g2d);
         }
-        for (Eagle eagle : this.movingEagles) {
-            eagle.Draw(g2d);
-        }
-        for (Crow crow : this.movingCrows) {
-            crow.Draw(g2d);
+        for (Bat bat : movingBats) {
+            bat.Draw(g2d);
         }
         for (Witch witch : movingWitches) {
             witch.Draw(g2d);
-        }
-        for (Bat bat : movingBats) {
-            bat.Draw(g2d);
         }
         super.DrawFront(g2d, mousePosition);
     }

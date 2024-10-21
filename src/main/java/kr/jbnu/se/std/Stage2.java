@@ -13,18 +13,15 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Stage2 extends Stage1 {
+public class Stage2 extends Game {
     private BufferedImage hawkImg;
-    private BufferedImage eagleImg;
     protected ArrayList<Hawk> movingHawks;
-    protected ArrayList<Eagle> movingEagles;
 
     public Stage2(){}
 
     protected void Initialize() {
         super.Initialize();
         this.movingHawks = new ArrayList<Hawk>();
-        this.movingEagles = new ArrayList<Eagle>();
     }
 
     protected void LoadContent()
@@ -39,13 +36,13 @@ public class Stage2 extends Stage1 {
             grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
 
             URL duckImgUrl = this.getClass().getResource("/images/duck2.png");
-            this.duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
+            duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
 
             URL hawkImgUrl = this.getClass().getResource("/images/hawk.png");
             hawkImg = ImageIO.read(Objects.requireNonNull(hawkImgUrl));
 
             URL eagleImgUrl = this.getClass().getResource("/images/eagle.png");
-            eagleImg = ImageIO.read(Objects.requireNonNull(eagleImgUrl));
+            bossImg = ImageIO.read(Objects.requireNonNull(eagleImgUrl));
         }
         catch (IOException ex) {
             Logger.getLogger(Stage2.class.getName()).log(Level.SEVERE, null, ex);
@@ -55,9 +52,8 @@ public class Stage2 extends Stage1 {
     public void RestartGame() {
         super.RestartGame();
         movingHawks.clear();
-        movingEagles.clear();
         Hawk.lastObjectTime = 0;
-        Eagle.lastObjectTime = 0;
+        boss = new Eagle(bossImg);
     }
 
      protected void CheckShot(Point mousePosition) {
@@ -67,15 +63,6 @@ public class Stage2 extends Stage1 {
              if(new Rectangle(movingHawks.get(i).x, movingHawks.get(i).y, 200, 100).contains(mousePosition))
              {
                  Shot(movingHawks, i);
-                 return;
-             }
-         }
-         for(int i = 0; i < movingEagles.size(); i++)
-         {
-             if(new Rectangle(movingEagles.get(i).x + 30, movingEagles.get(i).y + 120 , 270, 40).contains(mousePosition) ||
-                     new Rectangle(movingEagles.get(i).x, movingEagles.get(i).y, 300, 200).contains(mousePosition))
-             {
-                 Shot(movingEagles, i);
                  return;
              }
          }
@@ -105,26 +92,10 @@ public class Stage2 extends Stage1 {
             }
         }
 
-        if(System.nanoTime() - Eagle.lastObjectTime >= Eagle.timeBetweenObjects)
-        {
-            movingEagles.add(new Eagle(eagleImg));
-
-            Eagle.nextObjectLines++;
-            if(Eagle.nextObjectLines >= Eagle.objectLines.length)
-                Eagle.nextObjectLines = 0;
-
-            Eagle.lastObjectTime = System.nanoTime();
-        }
-
-        for(int i = 0; i < movingEagles.size(); i++)
-        {
-            movingEagles.get(i).Update();
-
-            if(movingEagles.get(i).x < -eagleImg.getWidth())
-            {
-                movingEagles.remove(i);
-                RanAway();
-            }
+        if (boss == null) {
+            boss = new Eagle(bossImg);
+        } else {
+            boss.Update();
         }
 
         super.UpdateGame(gameTime, mousePosition);
@@ -132,14 +103,8 @@ public class Stage2 extends Stage1 {
 
     public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         super.DrawBack(g2d);
-        for (Duck duck : this.movingDucks) {
-            duck.Draw(g2d);
-        }
         for (Hawk hawk : movingHawks) {
             hawk.Draw(g2d);
-        }
-        for (Eagle eagle : movingEagles) {
-            eagle.Draw(g2d);
         }
         super.DrawFront(g2d, mousePosition);
     }

@@ -325,6 +325,12 @@ public abstract class Game {
         g2d.setFont(font);
         g2d.setColor(Color.darkGray);
         g2d.drawImage(backgroundImg, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
+        if (boss != null) {
+            boss.Draw(g2d);
+        };
+        for (Duck duck : movingDucks) {
+            duck.Draw(g2d);
+        }
     };
 
     protected void DrawCombo(Graphics2D g2d, Point mousePosition) throws IOException {
@@ -488,9 +494,6 @@ public abstract class Game {
 
     public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         DrawBack(g2d);
-        for (Duck duck : movingDucks) {
-            duck.Draw(g2d);
-        }
         DrawFront(g2d, mousePosition);
     }
 
