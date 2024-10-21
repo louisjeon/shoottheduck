@@ -2,7 +2,7 @@ package kr.jbnu.se.std;
 
 import java.awt.image.BufferedImage;
 
-public class UFO extends MovingBossObject {
+public class BossDuck extends MovingBossObject {
     public static final int INITIAL_HEALTH = 100;
     public static int nextObjectLines = 0;
     public static int[][] objectLines = {
@@ -12,7 +12,7 @@ public class UFO extends MovingBossObject {
             {Framework.frameWidth, (int)(Framework.frameHeight * 0.45), -14, 500}
     }; // 초기 체력 설정
 
-    public UFO(BufferedImage objectImg) {
+    public BossDuck(BufferedImage objectImg) {
         super(objectLines,nextObjectLines,objectImg);
         this.health = INITIAL_HEALTH;
     }

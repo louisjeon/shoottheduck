@@ -4,48 +4,16 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-/**
- * The duck class.
- *
- * @author www.gametutorial.net
- */
-
 public abstract class MovingObject {
-    /**
-     * Indicate which is next duck line.
-     */
     public static Random random;
     public static long timeBetweenObjects;
-
-    /**
-     * X coordinate of the duck.
-     */
     public int x;
-    /**
-     * Y coordinate of the duck.
-     */
     public int y;
     public static long lastObjectTime;
-
-    /**
-     * How fast the duck should move? And to which direction?
-     */
-    int speed;
-
-    /**
-     * How many points this duck is worth?
-     */
+    protected int speed;
     public int score;
+    protected BufferedImage objectImg;
 
-    /**
-     * kr.jbnu.se.std.Duck image.
-     */
-    BufferedImage objectImg;
-
-    /**
-     * Creates new duck.
-     * @param objectImg Image of the duck.
-     */
     public MovingObject(int[][] objectLines,int nextObjectLines, BufferedImage objectImg)
     {
         random = new Random();
@@ -59,19 +27,11 @@ public abstract class MovingObject {
         this.objectImg = objectImg;
     }
 
-
-    /**
-     * Move the duck.
-     */
     public void Update()
     {
         x += speed;
     }
 
-    /**
-     * Draw the duck to the screen.
-     * @param g2d Graphics2D
-     */
     public void Draw(Graphics2D g2d)
     {
         g2d.drawImage(objectImg, x, y, null);

@@ -84,6 +84,8 @@ public class Framework extends Canvas {
     private  BufferedImage stage3BtnImg;
     private  BufferedImage stage4BtnImg;
     private  BufferedImage stage5BtnImg;
+
+    private Frog frog;
     
     
     public Framework ()
@@ -119,7 +121,7 @@ public class Framework extends Canvas {
      */
     private void Initialize()
     {
-
+        frog = Frog.getInstance();
     }
     
     /**
@@ -362,6 +364,17 @@ public class Framework extends Canvas {
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
                     System.exit(0);
                 break;
+        }
+    }
+
+    @Override
+    public void keyPressedFramework(KeyEvent e) {
+        if (Objects.requireNonNull(gameState) == GameState.PLAYING) {
+            if (e.getKeyCode() == KeyEvent.VK_A) {
+                frog.setXChange(frog.getXChange() - 50);
+            } else if (e.getKeyCode() == KeyEvent.VK_D) {
+                frog.setXChange(frog.getXChange() + 50);
+            }
         }
     }
     
