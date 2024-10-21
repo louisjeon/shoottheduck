@@ -73,6 +73,7 @@ public abstract class Game {
     protected static boolean showShotEffect;
 
     protected static Frog frog;
+    protected static int maxFever;
 
     public Game()
     {
@@ -92,10 +93,7 @@ public abstract class Game {
         threadForInitGame.start();
     }
 
-    protected void Initialize() {
-        random = new Random();
-        font = new Font("monospaced", Font.BOLD, 18);
-
+    protected void SetInitialValues() {
         runawayObjects = 0;
         killedObjects = 0;
         score = 0;
@@ -105,16 +103,29 @@ public abstract class Game {
         health = 100;
 
         gunType = GunTypes.REVOLVER;
+        bullets.put(GunTypes.REVOLVER, 6);
+        bullets.put(GunTypes.SHORT, 100);
+        bullets.put(GunTypes.WOODEN, 1);
+        bullets.put(GunTypes.AK47, 100);
+        bullets.put(GunTypes.MACHINEGUN, 200);
+
+        lastTimeShoot = 0;
+        lastTimeReload = 0;
+        timeBetweenShots = Framework.secInNanosec / 3;
+        timeBetweenReload = (long) (Framework.secInNanosec / 1.5);
+
+        showShotEffect = false;
+        frog = Frog.getInstance();
+    }
+
+    protected void Initialize() {
+        random = new Random();
+        font = new Font("monospaced", Font.BOLD, 18);
         defaultBullets.put(GunTypes.REVOLVER, 6);
-        defaultBullets.put(GunTypes.SHORT, 30);
+        defaultBullets.put(GunTypes.SHORT, 100);
         defaultBullets.put(GunTypes.WOODEN, 1);
         defaultBullets.put(GunTypes.AK47, 100);
         defaultBullets.put(GunTypes.MACHINEGUN, 200);
-        bullets.put(GunTypes.REVOLVER, 6);
-        bullets.put(GunTypes.SHORT, 30);
-        bullets.put(GunTypes.WOODEN, 1);
-        bullets.put(GunTypes.AK47, 30);
-        bullets.put(GunTypes.MACHINEGUN, 200);
         gunIdx.put(GunTypes.REVOLVER, 1);
         gunIdx.put(GunTypes.SHORT, 2);
         gunIdx.put(GunTypes.WOODEN, 3);
@@ -140,14 +151,7 @@ public abstract class Game {
         gunDamage.put(GunTypes.WOODEN,  20);
         gunDamage.put(GunTypes.AK47,  2);
         gunDamage.put(GunTypes.MACHINEGUN, 3);
-
-        lastTimeShoot = 0;
-        lastTimeReload = 0;
-        timeBetweenShots = Framework.secInNanosec / 3;
-        timeBetweenReload = (long) (Framework.secInNanosec / 1.5);
-
-        showShotEffect = false;
-        frog = Frog.getInstance();
+        SetInitialValues();
     };
 
     protected void LoadContent()
@@ -169,7 +173,7 @@ public abstract class Game {
             frogImg = ImageIO.read(Objects.requireNonNull(frogImgUrl));
             URL gunEffectImgUrl = this.getClass().getResource("/images/gun_effect.png");
             gunEffectImg = ImageIO.read(Objects.requireNonNull(gunEffectImgUrl));
-            URL weaponsImgUrl = this.getClass().getResource("/images/weapons.png");
+            URL weaponsImgUrl = this.getClass().getResource("/images/weapons1.png");
             weaponsImg = ImageIO.read(Objects.requireNonNull(weaponsImgUrl));
 
             frog.setXChange(0);
@@ -202,13 +206,7 @@ public abstract class Game {
     }
 
     public void RestartGame() {
-        runawayObjects = 0;
-        killedObjects = 0;
-        score = 0;
-        shoots = 0;
-        lastTimeShoot = 0;
-        feverCnt = 0;
-        health = 100;
+        SetInitialValues();
     };
 
     public abstract void UpdateGame(long gameTime, Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException;
@@ -291,6 +289,12 @@ public abstract class Game {
         g2d.drawImage(sightImg, mousePosition.x - sightImgMiddleWidth, mousePosition.y - sightImgMiddleHeight, null);
         g2d.drawImage(healthBarImg, Framework.frameWidth - healthBarImg.getWidth(), 0, null);
         g2d.drawImage(feverBarImg, Framework.frameWidth - feverBarImg.getWidth(), healthBarImg.getHeight() - 5, null);
+
+        if (feverCnt % 10 == 0 && Math.min(50, feverCnt) > maxFever) {
+            maxFever = Math.min(50, feverCnt);
+        }
+        URL weaponsImgUrl = this.getClass().getResource("/images/weapons" + Math.min(5, maxFever / 10 + 1) + ".png");
+        weaponsImg = ImageIO.read(Objects.requireNonNull(weaponsImgUrl));
         g2d.drawImage(weaponsImg, 0, 20, null);
         g2d.setColor(Color.RED);
         g2d.fillRect(Framework.frameWidth - healthBarImg.getWidth() + 58, 5, (healthBarImg.getWidth() - 63) * health / 100, healthBarImg.getHeight() - 10);

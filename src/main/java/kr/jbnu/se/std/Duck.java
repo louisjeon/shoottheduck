@@ -16,6 +16,7 @@ public class Duck extends MovingObject {
     public static long timeBetweenObjects = Framework.secInNanosec / 2;
 
     public static int nextObjectLines = 0;
+    public boolean hasPortion = false;
     /**
      * kr.jbnu.se.std.Duck lines.
      * Where is starting location for the duck?
