@@ -304,11 +304,12 @@ public abstract class Game {
         old = g2d.getTransform();
         if (Math.atan2(yDiff, xDiff) - 0.53 > Math.PI / 2 - 0.4) {
             frogImg = Flip(frogImg);
-            g2d.rotate(Math.atan2(yDiff, xDiff),rotationCenterX , rotationCenterY);
+            g2d.rotate(Math.atan2(yDiff, xDiff) + 0.53,rotationCenterX , rotationCenterY);
+            g2d.drawImage(frogImg, Framework.frameWidth - frogImg.getWidth() - 30 +  frog.getXChange(), Framework.frameHeight + frog.getYChange(), null);
         } else {
             g2d.rotate(Math.atan2(yDiff, xDiff) - 0.53,rotationCenterX , rotationCenterY);
+            g2d.drawImage(frogImg, Framework.frameWidth - frogImg.getWidth() - 30 +  frog.getXChange(), Framework.frameHeight - frogImg.getHeight() + frog.getYChange(), null);
         }
-        g2d.drawImage(frogImg, Framework.frameWidth - frogImg.getWidth() - 30 +  frog.getXChange(), Framework.frameHeight - frogImg.getHeight() + frog.getYChange(), null);
         g2d.setTransform(old);
 
         if (feverFireGif != null) {
