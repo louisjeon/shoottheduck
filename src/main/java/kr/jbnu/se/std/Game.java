@@ -15,105 +15,49 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
 
-/**
- * Actual game.
- * 
- * @author www.gametutorial.net
- */
-
 public abstract class Game {
-    
-    /**
-     * We use this to generate a random number.
-     */
     protected static Random random;
-    
-    /**
-     * Font that we will use to write statistic to the screen.
-     */
     private static Font font;
-    
-    /**
-     * How many ducks leave the screen alive?
-     */
-    protected static int runawayObjects;
-    
-   /**
-     * How many ducks the player killed?
-     */
-   protected static int killedObjects;
-    
-    /**
-     * For each killed duck, the player gets points.
-     */
-    protected static int score;
-    protected static double scoreMultiplier;
-    
-   /**
-     * How many times a player is shot?
-     */
-   protected static int shoots;
 
+    protected static int runawayObjects;
+   protected static int killedObjects;
+    protected static int score;
+   protected static int shoots;
    protected static int feverCnt;
    protected static int feverImgNum;
-
    protected static int health;
+    protected static double scoreMultiplier;
 
    protected static boolean hit = false;
-    
-    /**
-     * Last time of the shoot.
-     */
+
     protected static long lastTimeShoot;
     protected static long lastTimeReload;
-    /**
-     * The time which must elapse between shots.
-     */
     protected static long timeBetweenShots;
     protected static long timeBetweenReload;
-    /**
-     * kr.jbnu.se.std.Game background image.
-     */
-    protected static BufferedImage backgroundImg;
-    
-    /**
-     * Bottom grass.
-     */
-    protected static BufferedImage grassImg;
 
-    /**
-     * Shotgun sight image.
-     */
+    protected static BufferedImage backgroundImg;
+    protected static BufferedImage grassImg;
     protected static BufferedImage sightImg;
     protected static BufferedImage healthBarImg;
     protected static BufferedImage feverBarImg;
-
     protected static BufferedImage combo1stDigitImg;
     protected static BufferedImage combo2ndDigitImg;
     protected static BufferedImage combo3rdDigitImg;
-
     protected static BufferedImage frogImg;
     protected static BufferedImage gunEffectImg;
     protected static BufferedImage weaponsImg;
     protected enum GunTypes{REVOLVER, SHORT, WOODEN, AK47, MACHINEGUN}
     protected static GunTypes gunType = null;
-    protected static Map<GunTypes, Integer> defaultBullets = new HashMap<GunTypes, Integer>();
-    protected static Map<GunTypes, Integer> bullets = new HashMap<GunTypes, Integer>();
-    protected static Map<GunTypes, Integer> gunIdx = new HashMap<GunTypes, Integer>();
-    protected static Map<GunTypes, String> gunName = new HashMap<GunTypes, String>();
-    protected static Map<GunTypes, Float> gunDecibel = new HashMap<GunTypes, Float>();
-    protected static Map<GunTypes, Float> reloadDecibel = new HashMap<GunTypes, Float>();
-    public static Map<GunTypes, Integer> gunDamage = new HashMap<GunTypes, Integer>();
+    protected static Map<GunTypes, Integer> defaultBullets = new HashMap<>();
+    protected static Map<GunTypes, Integer> bullets = new HashMap<>();
+    protected static Map<GunTypes, Integer> gunIdx = new HashMap<>();
+    protected static Map<GunTypes, String> gunName = new HashMap<>();
+    protected static Map<GunTypes, Float> gunDecibel = new HashMap<>();
+    protected static Map<GunTypes, Float> reloadDecibel = new HashMap<>();
+    public static Map<GunTypes, Integer> gunDamage = new HashMap<>();
 
     protected static Image feverFireGif;
-
-    /**
-     * Middle width of the sight image.
-     */
     protected static int sightImgMiddleWidth;
-    /**
-     * Middle height of the sight image.
-     */
     protected static int sightImgMiddleHeight;
 
     protected static ScheduledThreadPoolExecutor exec;
@@ -126,7 +70,8 @@ public abstract class Game {
 
     protected static AffineTransform old;
     protected static boolean showShotEffect;
-    
+
+    protected static Frog frog;
 
     public Game()
     {
@@ -145,11 +90,7 @@ public abstract class Game {
         };
         threadForInitGame.start();
     }
-    
-    
-   /**
-     * Set variables and objects for the game.
-     */
+
     protected void Initialize() {
         random = new Random();
         font = new Font("monospaced", Font.BOLD, 18);
@@ -205,11 +146,9 @@ public abstract class Game {
         timeBetweenReload = (long) (Framework.secInNanosec / 1.5);
 
         showShotEffect = false;
+        frog = Frog.getInstance();
     };
-    
-    /**
-     * Load game files - images, sounds, ...
-     */
+
     protected void LoadContent()
     {
         try
@@ -231,6 +170,9 @@ public abstract class Game {
             gunEffectImg = ImageIO.read(Objects.requireNonNull(gunEffectImgUrl));
             URL weaponsImgUrl = this.getClass().getResource("/images/weapons.png");
             weaponsImg = ImageIO.read(Objects.requireNonNull(weaponsImgUrl));
+
+            frog.setXChange(0);
+            frog.setYChange(0);
         }
         catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
@@ -258,9 +200,6 @@ public abstract class Game {
         hit = true;
     }
 
-    /**
-     * Restart game - reset some variables.
-     */
     public void RestartGame() {
         runawayObjects = 0;
         killedObjects = 0;
@@ -270,13 +209,7 @@ public abstract class Game {
         feverCnt = 0;
         health = 100;
     };
-    
-    /**
-     * Update game logic.
-     * 
-     * @param gameTime gameTime of the game.
-     * @param mousePosition current mouse position.
-     */
+
     public abstract void UpdateGame(long gameTime, Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException;
 
     protected void RanAway() throws IOException {
@@ -285,11 +218,7 @@ public abstract class Game {
         feverCnt = 0;
         DrawFever();
     }
-    /**
-     * Draw the game to the screen.
-     * 
-     * @param g2d Graphics2D
-     */
+
     protected void DrawBack(Graphics2D g2d) {
         g2d.setFont(font);
         g2d.setColor(Color.darkGray);
@@ -298,27 +227,27 @@ public abstract class Game {
 
     protected void DrawCombo(Graphics2D g2d, Point mousePosition) throws IOException {
         if (showShotEffect) {
-            rotationCenterX = Framework.frameWidth;
-            rotationCenterY = Framework.frameHeight;
+            rotationCenterX = Framework.frameWidth + frog.getXChange();
+            rotationCenterY = Framework.frameHeight + frog.getYChange();
             xDiff = rotationCenterX - mousePosition.x;
             yDiff = rotationCenterY - mousePosition.y;
             AffineTransform old = g2d.getTransform();
             g2d.rotate(Math.atan2(yDiff, xDiff) - 0.53,rotationCenterX, rotationCenterY );
             switch (gunType) {
                 case REVOLVER:
-                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 25, Framework.frameHeight - frogImg.getHeight() - 10, null);
+                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 25 + frog.getXChange(), Framework.frameHeight - frogImg.getHeight() - 10 + frog.getYChange(), null);
                     break;
                 case SHORT:
-                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 80, Framework.frameHeight - frogImg.getHeight() - 27, null);
+                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 80 + frog.getXChange(), Framework.frameHeight - frogImg.getHeight() - 27 + frog.getYChange(), null);
                     break;
                 case WOODEN:
-                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 100, Framework.frameHeight - frogImg.getHeight() - 36, null);
+                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 100 + frog.getXChange(), Framework.frameHeight - frogImg.getHeight() - 36 + frog.getYChange(), null);
                     break;
                 case AK47:
-                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 100, Framework.frameHeight - frogImg.getHeight() - 39, null);
+                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 100 + frog.getXChange(), Framework.frameHeight - frogImg.getHeight() - 39 + frog.getYChange(), null);
                     break;
                 case MACHINEGUN:
-                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 116, Framework.frameHeight - frogImg.getHeight() - 60, null);
+                    g2d.drawImage(gunEffectImg, Framework.frameWidth - frogImg.getWidth() - 116 + frog.getXChange(), Framework.frameHeight - frogImg.getHeight() - 60 + frog.getYChange(), null);
                     break;
             }
             g2d.setTransform(old);
@@ -360,13 +289,13 @@ public abstract class Game {
 
         URL frogImgUrl = this.getClass().getResource("/images/frog_" + gunName.get(gunType) + ".png");
         frogImg = ImageIO.read(Objects.requireNonNull(frogImgUrl));
-        rotationCenterX = Framework.frameWidth;
-        rotationCenterY = Framework.frameHeight;
-        xDiff = rotationCenterX - mousePosition.x;
-        yDiff = rotationCenterY - mousePosition.y;
+        rotationCenterX = Framework.frameWidth+ frog.getXChange();
+        rotationCenterY = Framework.frameHeight+ frog.getYChange();
+        xDiff = rotationCenterX  - mousePosition.x;
+        yDiff = rotationCenterY  - mousePosition.y;
         old = g2d.getTransform();
-        g2d.rotate(Math.atan2(yDiff, xDiff) - 0.53,rotationCenterX, rotationCenterY );
-        g2d.drawImage(frogImg, Framework.frameWidth - frogImg.getWidth() - 30, Framework.frameHeight - frogImg.getHeight(), null);
+        g2d.rotate(Math.atan2(yDiff, xDiff) - 0.53,rotationCenterX , rotationCenterY);
+        g2d.drawImage(frogImg, Framework.frameWidth - frogImg.getWidth() - 30 +  frog.getXChange(), Framework.frameHeight - frogImg.getHeight() + frog.getYChange(), null);
         g2d.setTransform(old);
 
         if (feverFireGif != null) {
@@ -440,14 +369,7 @@ public abstract class Game {
         DrawBack(g2d);
         DrawFront(g2d, mousePosition);
     }
-    
-    
-    /**
-     * Draw the game over screen.
-     * 
-     * @param g2d Graphics2D
-     * @param mousePosition Current mouse position.
-     */
+
     public void DrawGameOver(Graphics2D g2d, Point mousePosition) throws IOException {
         Draw(g2d, mousePosition);
         

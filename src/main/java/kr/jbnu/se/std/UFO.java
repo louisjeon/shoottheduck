@@ -1,15 +1,6 @@
 package kr.jbnu.se.std;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
-
-import static kr.jbnu.se.std.Game.gunDamage;
-
-/**
- * The duck class.
- *
- * @author www.gametutorial.net
- */
 
 public class UFO extends MovingBossObject {
     public static final int INITIAL_HEALTH = 100;
