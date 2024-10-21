@@ -18,7 +18,9 @@ public class Frog {
         return xChange;
     }
     public void setXChange(int x) {
-        this.xChange = x;
+        if (x > - 1400 && x <= 0) {
+            this.xChange = x;
+        }
     }
 
     public int getYChange() {

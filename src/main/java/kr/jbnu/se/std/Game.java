@@ -2,6 +2,7 @@ package kr.jbnu.se.std;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -264,6 +265,13 @@ public abstract class Game {
         }
     }
 
+    protected BufferedImage Flip(BufferedImage img) {
+        AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
+        tx.translate(0, -img.getHeight(null));
+        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        return op.filter(img, null);
+    }
+
     protected void DrawFront(Graphics2D g2d, Point mousePosition) throws IOException {
         g2d.setColor(Color.white);
         g2d.drawString("HP: " + health + " | " + "KILLS: " + killedObjects + " | " + "SHOOTS: " + shoots + " | " + "SCORE: " + score + " | " + "BULLETS: " + bullets.get(gunType) + "/" + defaultBullets.get(gunType), 10, 21);
@@ -294,7 +302,12 @@ public abstract class Game {
         xDiff = rotationCenterX  - mousePosition.x;
         yDiff = rotationCenterY  - mousePosition.y;
         old = g2d.getTransform();
-        g2d.rotate(Math.atan2(yDiff, xDiff) - 0.53,rotationCenterX , rotationCenterY);
+        if (Math.atan2(yDiff, xDiff) - 0.53 > Math.PI / 2 - 0.4) {
+            frogImg = Flip(frogImg);
+            g2d.rotate(Math.atan2(yDiff, xDiff),rotationCenterX , rotationCenterY);
+        } else {
+            g2d.rotate(Math.atan2(yDiff, xDiff) - 0.53,rotationCenterX , rotationCenterY);
+        }
         g2d.drawImage(frogImg, Framework.frameWidth - frogImg.getWidth() - 30 +  frog.getXChange(), Framework.frameHeight - frogImg.getHeight() + frog.getYChange(), null);
         g2d.setTransform(old);
 
