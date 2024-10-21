@@ -15,5 +15,6 @@ public class BossDuck extends MovingBossObject {
     public BossDuck(BufferedImage objectImg) {
         super(objectLines,nextObjectLines,objectImg);
         this.health = INITIAL_HEALTH;
+        this.soundName = "quack";
     }
 }

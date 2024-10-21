@@ -18,6 +18,9 @@ public class MovingBossObject {
     protected int speed;
     private static final int HEALTH_BAR_WIDTH = 100;
     private static final int HEALTH_BAR_HEIGHT = 10;
+    public int width;
+    public int height;
+    public String soundName;
 
     public MovingBossObject(int[][] objectLines,int nextObjectLines,BufferedImage objectImg)
     {
@@ -30,6 +33,8 @@ public class MovingBossObject {
         this.score = objectLines[nextObjectLines][3];
         STOP_POSITION = Framework.frameWidth / 2 - objectImg.getWidth() / 2;
         INITIAL_HEALTH = 100;
+        width = objectImg.getWidth();
+        height = objectImg.getHeight();
     }
 
     public void Update() {

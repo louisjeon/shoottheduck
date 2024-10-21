@@ -18,6 +18,8 @@ public class Stage1 extends Game {
 
     protected BufferedImage duckImg;
     protected ArrayList<Duck> movingDucks;
+    protected BufferedImage bossImg;
+    protected MovingBossObject boss;
 
     public Stage1() {}
 
@@ -37,6 +39,9 @@ public class Stage1 extends Game {
 
             URL duckImgUrl = this.getClass().getResource("/images/duck.png");
             duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
+
+            URL bossImgUrl = this.getClass().getResource("/images/boss_duck.png");
+            bossImg = ImageIO.read(Objects.requireNonNull(bossImgUrl));
         }
         catch (IOException ex) {
             Logger.getLogger(Stage1.class.getName()).log(Level.SEVERE, null, ex);
@@ -48,6 +53,7 @@ public class Stage1 extends Game {
         super.RestartGame();
         movingDucks.clear();
         Duck.lastObjectTime = 0;
+        boss = new BossDuck(bossImg);
     }
 
     protected void CheckShot(Point mousePosition) {
@@ -61,9 +67,22 @@ public class Stage1 extends Game {
                 return;
             }
         }
+        if (boss != null && new Rectangle(boss.x, boss.y, boss.width, boss.height).contains(mousePosition)) {
+            PlaySound(boss.soundName, -13.0f);
+            if (boss.hit(gunType)) {
+                score += (int) Math.floor(boss.score * scoreMultiplier);
+                boss = null;
+            }
+        }
     }
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+        if (boss == null) {
+            boss = new BossDuck(bossImg);
+        } else {
+            boss.Update();
+        }
+
         if(System.nanoTime() - Duck.lastObjectTime >= Duck.timeBetweenObjects)
         {
             movingDucks.add(new Duck(duckImg));
@@ -93,24 +112,28 @@ public class Stage1 extends Game {
                     gunType = GunTypes.REVOLVER;
                     timeBetweenShots = Framework.secInNanosec / 3;
                     timeBetweenReload = (long) (Framework.secInNanosec / 1.5);
+                    PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
                 } else if (maxFever >=10 && new Rectangle((int) (weaponsImg.getWidth() * 0.1), 20, (int) (weaponsImg.getWidth() * 0.2), weaponsImg.getHeight()).contains(mousePosition)) {
                     gunType = GunTypes.SHORT;
                     timeBetweenShots = Framework.secInNanosec / 20;
                     timeBetweenReload = (Framework.secInNanosec) * 2;
+                    PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
                 } else if (maxFever >=20 && new Rectangle((int) (weaponsImg.getWidth() * 0.3), 20, (int) (weaponsImg.getWidth() * 0.2), weaponsImg.getHeight()).contains(mousePosition)) {
                     gunType = GunTypes.WOODEN;
                     timeBetweenShots = Framework.secInNanosec / 3;
                     timeBetweenReload = (Framework.secInNanosec) / 5;
+                    PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
                 } else if (maxFever >=30 && new Rectangle((int) (weaponsImg.getWidth() * 0.5), 20, (int) (weaponsImg.getWidth() * 0.2), weaponsImg.getHeight()).contains(mousePosition)) {
                     gunType = GunTypes.AK47;
                     timeBetweenShots = Framework.secInNanosec / 20;
                     timeBetweenReload = (Framework.secInNanosec) * 2;
+                    PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
                 } else if (maxFever >=40) {
                     gunType = GunTypes.MACHINEGUN;
                     timeBetweenShots = Framework.secInNanosec / 20;
                     timeBetweenReload = (Framework.secInNanosec) * 3;
+                    PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
                 };
-                PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
             } else if (bullets.get(gunType) == 0) {
                 PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
                 bullets.replace(gunType, defaultBullets.get(gunType));

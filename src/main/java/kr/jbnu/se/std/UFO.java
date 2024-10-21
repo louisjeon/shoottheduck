@@ -10,7 +10,7 @@ public class UFO extends MovingBossObject {
             {Framework.frameWidth, (int)(Framework.frameHeight * 0.35), -16, 500},
             {Framework.frameWidth, (int)(Framework.frameHeight * 0.40), -15, 500},
             {Framework.frameWidth, (int)(Framework.frameHeight * 0.45), -14, 500}
-    }; // 초기 체력 설정
+    };
 
     public UFO(BufferedImage objectImg) {
         super(objectLines,nextObjectLines,objectImg);

@@ -32,13 +32,13 @@ public class Stage4 extends Stage3 {
         try
         {
             URL backgroundImgUrl = this.getClass().getResource("/images/background4.jpg");
-            this.backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
+            backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
 
             URL grassImgUrl = this.getClass().getResource("/images/grass4.png");
-            this.grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
+            grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
 
             URL duckImgUrl = this.getClass().getResource("/images/duck4.png");
-            this.duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
+            duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
 
             URL witchImgUrl = this.getClass().getResource("/images/pumpkin.png");
             witchImg = ImageIO.read(Objects.requireNonNull(witchImgUrl));
