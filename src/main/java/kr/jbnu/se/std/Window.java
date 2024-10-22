@@ -3,6 +3,8 @@ package kr.jbnu.se.std;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import java.awt.*;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Creates frame and set its properties.
@@ -12,8 +14,7 @@ import java.awt.*;
 
 public class Window extends JFrame{
         
-    private Window()
-    {
+    private Window() throws IOException, ExecutionException, InterruptedException {
         // Sets the title for this frame.
         this.setTitle("Shoot the duck");
         
@@ -49,7 +50,11 @@ public class Window extends JFrame{
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new Window();
+                try {
+                    new Window();
+                } catch (IOException | ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }

@@ -1,5 +1,7 @@
 package kr.jbnu.se.std;
 
+import com.google.cloud.firestore.Firestore;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -695,11 +697,51 @@ public abstract class Game {
         g2d.setColor(Color.black);
         g2d.fillRect(0, 0, Framework.frameWidth, Framework.frameHeight);
         g2d.setColor(Color.WHITE);
-        g2d.drawString("Stage " + stage, Framework.frameWidth / 2 - 39, (int)(Framework.frameHeight * 0.65) + 1);
+        int bestScore = 0;
+        switch (stage) {
+            case 1:
+                bestScore = ScoreBoard.stage1;
+                break;
+            case 2:
+                bestScore = ScoreBoard.stage2;
+                break;
+            case 3:
+                bestScore = ScoreBoard.stage3;
+                break;
+            case 4:
+                bestScore = ScoreBoard.stage4;
+                break;
+            case 5:
+                bestScore = ScoreBoard.stage5;
+                break;
+        }
+        g2d.drawString("Stage " + stage + " best result: " + bestScore, Framework.frameWidth / 2 - 39, (int)(Framework.frameHeight * 0.65) + 1);
     }
 
     public void DrawGameOver(Graphics2D g2d, Point mousePosition) throws IOException {
         Draw(g2d, mousePosition);
+        switch (stage) {
+            case 1:
+                if (score > ScoreBoard.stage1) {
+                    ScoreBoard.stage1 = score;
+                }
+            case 2:
+                if (score > ScoreBoard.stage2) {
+                    ScoreBoard.stage2 = score;
+                }
+            case 3:
+                if (score > ScoreBoard.stage3) {
+                    ScoreBoard.stage3 = score;
+                }
+            case 4:
+                if (score > ScoreBoard.stage4) {
+                    ScoreBoard.stage4 = score;
+                }
+            case 5:
+                if (score > ScoreBoard.stage5) {
+                    ScoreBoard.stage5 = score;
+                }
+        }
         
         // The first text is used for shade.
         g2d.setColor(Color.black);

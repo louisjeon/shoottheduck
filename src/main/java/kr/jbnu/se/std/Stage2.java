@@ -20,7 +20,7 @@ public class Stage2 extends Game {
         stage = 2;
     }
 
-    protected void Initialize() {
+    protected void Initialize(){
         super.Initialize();
         this.movingHawks = new ArrayList<>();
     }

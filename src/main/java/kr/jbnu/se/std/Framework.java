@@ -1,12 +1,19 @@
 package kr.jbnu.se.std;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.*;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -85,12 +92,25 @@ public class Framework extends Canvas {
 
     private Frog frog;
 
-    private ScheduledThreadPoolExecutor exec;
-    
-    
-    public Framework ()
-    {
+    public Framework () throws IOException, ExecutionException, InterruptedException {
         super();
+        Firestore db = FirebaseConfig.initialize();
+        ApiFuture<QuerySnapshot> query = db.collection("scores").get();
+        QuerySnapshot querySnapshot = query.get();
+        querySnapshot.getDocuments().forEach(document -> {
+            ScoreBoard.stage1 = Math.toIntExact(document.getLong("1"));
+            ScoreBoard.stage1 = Math.toIntExact(document.getLong("2"));
+            ScoreBoard.stage1 = Math.toIntExact(document.getLong("3"));
+            ScoreBoard.stage1 = Math.toIntExact(document.getLong("4"));
+            ScoreBoard.stage1 = Math.toIntExact(document.getLong("5"));
+        });
+
+
+//        DocumentReference docRef = db.collection("scores").document("stage");
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("1", 999999);
+//        ApiFuture<WriteResult> result = docRef.set(data);
+//        System.out.println("Update time : " + result.get().getUpdateTime());
         
         gameState = GameState.VISUALIZING;
         
