@@ -18,28 +18,7 @@ public class Stage5 extends Game {
 
     protected void Initialize() {
         super.Initialize();
-    }
-
-    protected void LoadContent()
-    {
-        super.LoadContent();
-        try
-        {
-            URL backgroundImgUrl = this.getClass().getResource("/images/background5.jpg");
-            backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
-
-            URL grassImgUrl = this.getClass().getResource("/images/grass5.png");
-            grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
-
-            URL duckImgUrl = this.getClass().getResource("/images/duck5.png");
-            duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
-
-            URL bossImgUrl = this.getClass().getResource("/images/UFO.png");
-            bossImg = ImageIO.read(Objects.requireNonNull(bossImgUrl));
-        }
-        catch (IOException ex) {
-            Logger.getLogger(Stage5.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        stage = 5;
     }
 
     public void RestartGame() {
@@ -54,9 +33,5 @@ public class Stage5 extends Game {
             boss.Update();
         }
         super.UpdateGame(gameTime, mousePosition);
-    }
-
-    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
-        super.Draw(g2d, mousePosition);
     }
 }

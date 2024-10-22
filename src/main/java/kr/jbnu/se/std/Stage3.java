@@ -20,7 +20,8 @@ public class Stage3 extends Stage2 {
 
     protected void Initialize() {
         super.Initialize();
-        this.movingBats = new ArrayList<Bat>();
+        stage = 3;
+        this.movingBats = new ArrayList<>();
     }
 
     protected void LoadContent()
@@ -28,18 +29,6 @@ public class Stage3 extends Stage2 {
         super.LoadContent();
         try
         {
-            URL backgroundImgUrl = this.getClass().getResource("/images/background3.jpg");
-            backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
-
-            URL grassImgUrl = this.getClass().getResource("/images/grass3.png");
-            grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
-
-            URL duckImgUrl = this.getClass().getResource("/images/duck3.png");
-            duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
-
-            URL crowImgUrl = this.getClass().getResource("/images/boss3.png");
-            bossImg = ImageIO.read(Objects.requireNonNull(crowImgUrl));
-
             URL batImgUrl = this.getClass().getResource("/images/bat.png");
             batImg = ImageIO.read(Objects.requireNonNull(batImgUrl));
         }
@@ -99,7 +88,7 @@ public class Stage3 extends Stage2 {
 
     public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         super.DrawBack(g2d);
-        for (Hawk hawk : this.movingHawks) {
+        for (Hawk hawk : movingHawks) {
             hawk.Draw(g2d);
         }
         for (Bat bat : movingBats) {

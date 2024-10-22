@@ -168,7 +168,7 @@ public abstract class Game {
     {
         try
         {
-            URL grassImgUrl = this.getClass().getResource("/images/ground.png");
+            URL grassImgUrl = this.getClass().getResource("/images/grass" + stage + ".png");
             grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
             URL sightImgUrl = this.getClass().getResource("/images/sight.png");
             sightImg = ImageIO.read(Objects.requireNonNull(sightImgUrl));

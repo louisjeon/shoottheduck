@@ -20,6 +20,7 @@ public class Stage2 extends Game {
 
     protected void Initialize() {
         super.Initialize();
+        stage = 2;
         this.movingHawks = new ArrayList<Hawk>();
     }
 
@@ -28,20 +29,8 @@ public class Stage2 extends Game {
         super.LoadContent();
         try
         {
-            URL backgroundImgUrl = this.getClass().getResource("/images/background2.jpg");
-            backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
-
-            URL grassImgUrl = this.getClass().getResource("/images/grass2.png");
-            grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
-
-            URL duckImgUrl = this.getClass().getResource("/images/duck2.png");
-            duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
-
             URL hawkImgUrl = this.getClass().getResource("/images/hawk.png");
             hawkImg = ImageIO.read(Objects.requireNonNull(hawkImgUrl));
-
-            URL eagleImgUrl = this.getClass().getResource("/images/boss2.png");
-            bossImg = ImageIO.read(Objects.requireNonNull(eagleImgUrl));
         }
         catch (IOException ex) {
             Logger.getLogger(Stage2.class.getName()).log(Level.SEVERE, null, ex);
@@ -50,9 +39,9 @@ public class Stage2 extends Game {
 
     public void RestartGame() {
         super.RestartGame();
+        boss = new Eagle(bossImg);
         movingHawks.clear();
         Hawk.lastObjectTime = 0;
-        boss = new Eagle(bossImg);
     }
 
      protected void CheckShot(Point mousePosition) {
