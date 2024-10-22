@@ -39,7 +39,6 @@ public class Stage4 extends Stage3 {
 
     public void RestartGame() {
         super.RestartGame();
-        boss = new Pumpkin(bossImg);
         movingWitches.clear();
         Witch.lastObjectTime = 0;
     }
@@ -57,9 +56,10 @@ public class Stage4 extends Stage3 {
     }
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        if (boss == null) {
+        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.secInNanosec * 20) {
             boss = new Pumpkin(bossImg);
-        } else {
+            lastBossAttackTime = System.nanoTime();
+        } else if (boss != null) {
             boss.Update();
         }
         if(System.nanoTime() - Witch.lastObjectTime >= Witch.timeBetweenObjects)

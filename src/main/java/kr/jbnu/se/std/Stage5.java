@@ -19,36 +19,12 @@ public class Stage5 extends Game {
     public Stage5(){
         stage = 5;}
 
-    protected void Initialize() {
-        super.Initialize();
-    }
-
-    public void RestartGame() {
-        super.RestartGame();
-        boss = new UFO(bossImg);
-    }
-
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        if (boss == null) {
+        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.secInNanosec * 20) {
             boss = new UFO(bossImg);
-        } else {
+            lastBossAttackTime = System.nanoTime();
+        } else if (boss != null) {
             boss.Update();
-        }
-        if (System.nanoTime() - lastBossAttackTime >= 500000000) {
-            bossAttacking = true;
-            exec3 = new ScheduledThreadPoolExecutor(1);
-            exec3.schedule(new Runnable() {
-                public void run() {
-                    bossAttacking = false;
-                    lastBossAttackTime = System.nanoTime();
-                }
-            }, 500, TimeUnit.MILLISECONDS);
-        }
-        if (bossAttacking) {
-            if(new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
-                health -= 0.5f;
-            }
-
         }
         super.UpdateGame(gameTime, mousePosition);
     }

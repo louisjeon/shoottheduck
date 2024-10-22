@@ -86,8 +86,10 @@ public abstract class Game {
     protected static MovingBossObject boss;
     protected static BufferedImage bossAttackImg;
     protected static long lastBossAttackTime;
+    protected static long lastBossDeathTime;
     protected static boolean bossAttacking;
     protected Thread threadForInitGame;
+    protected static boolean canShoot;
 
     public Game()
     {
@@ -138,6 +140,8 @@ public abstract class Game {
         movingDucks = new ArrayList<>();
         movingPotionDucks = new ArrayList<>();
         boss = null;
+        canShoot = true;
+        lastBossDeathTime= System.nanoTime();
     }
 
     protected void Initialize() {
@@ -250,9 +254,90 @@ public abstract class Game {
         PotionDuck.lastObjectTime = 0;
         lastBossAttackTime = 0;
         bossAttacking = false;
+        boss = null;
     };
 
     public void UpdateGame(long gameTime, Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+        if (boss != null) {
+            switch (stage) {
+                case 1:
+                    if (System.nanoTime() - lastBossAttackTime >= 1000000000) {
+                        bossAttacking = true;
+                        canShoot = false;
+                        exec3 = new ScheduledThreadPoolExecutor(1);
+                        exec3.schedule(new Runnable() {
+                            public void run() {
+                                bossAttacking = false;
+                                lastBossAttackTime = System.nanoTime();
+                                canShoot = true;
+                            }
+                        }, 1, TimeUnit.SECONDS);
+                    }
+                    break;
+                case 2:
+                    if (System.nanoTime() - lastBossAttackTime >= 500000000) {
+                        bossAttacking = true;
+                        exec3 = new ScheduledThreadPoolExecutor(1);
+                        exec3.schedule(new Runnable() {
+                            public void run() {
+                                bossAttacking = false;
+                                lastBossAttackTime = System.nanoTime();
+                            }
+                        }, 500, TimeUnit.MILLISECONDS);
+                    }
+                    if (bossAttacking && new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY+200)) {
+                        health -= 2f;
+                    }
+                    break;
+                case 3:
+                    if (System.nanoTime() - lastBossAttackTime >= 500000000) {
+                        bossAttacking = true;
+                        exec3 = new ScheduledThreadPoolExecutor(1);
+                        exec3.schedule(new Runnable() {
+                            public void run() {
+                                bossAttacking = false;
+                                lastBossAttackTime = System.nanoTime();
+                            }
+                        }, 500, TimeUnit.MILLISECONDS);
+                    }
+                    if (bossAttacking && new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
+                        health -= 0.5f;
+                    }
+                    break;
+                case 4:
+                    if (System.nanoTime() - lastBossAttackTime >= 500000000) {
+                        bossAttacking = true;
+                        exec3 = new ScheduledThreadPoolExecutor(1);
+                        exec3.schedule(new Runnable() {
+                            public void run() {
+                                bossAttacking = false;
+                                lastBossAttackTime = System.nanoTime();
+                            }
+                        }, 500, TimeUnit.MILLISECONDS);
+                    }
+                    if (bossAttacking && new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
+                        health -= 0.5f;
+                    }
+                    break;
+                case 5:
+                    if (System.nanoTime() - lastBossAttackTime >= 500000000) {
+                        bossAttacking = true;
+                        exec3 = new ScheduledThreadPoolExecutor(1);
+                        exec3.schedule(new Runnable() {
+                            public void run() {
+                                bossAttacking = false;
+                                lastBossAttackTime = System.nanoTime();
+                            }
+                        }, 500, TimeUnit.MILLISECONDS);
+                    }
+                    if (bossAttacking && new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
+                        health -= 0.5f;
+                    }
+                    break;
+            }
+
+        }
+
         if(System.nanoTime() - Duck.lastObjectTime >= Duck.timeBetweenObjects)
         {
             movingDucks.add(new Duck(duckImg));
@@ -326,24 +411,26 @@ public abstract class Game {
                     timeBetweenReload = (Framework.secInNanosec) * 3;
                     PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
                 };
-            } else if (bullets.get(gunType) == 0) {
-                PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
-                bullets.replace(gunType, defaultBullets.get(gunType));
-                lastTimeReload = System.nanoTime();
-            } else if(System.nanoTime() - lastTimeShoot >= timeBetweenShots && System.nanoTime() - lastTimeReload >= timeBetweenReload)
-            {
-                DrawShot();
-                shoots++;
-                bullets.replace(gunType, bullets.get(gunType) - 1);
-                PlaySound(gunName.get(gunType), gunDecibel.get(gunType));
-                CheckShot(mousePosition);
-                if (hit) {
-                    killedObjects++;
-                    feverCnt++;
-                    hit = false;
-                    DrawFever();
+            } else if (canShoot) {
+                if (bullets.get(gunType) == 0) {
+                    PlaySound("reload" + gunIdx.get(gunType), reloadDecibel.get(gunType));
+                    bullets.replace(gunType, defaultBullets.get(gunType));
+                    lastTimeReload = System.nanoTime();
+                } else if(System.nanoTime() - lastTimeShoot >= timeBetweenShots && System.nanoTime() - lastTimeReload >= timeBetweenReload)
+                {
+                    DrawShot();
+                    shoots++;
+                    bullets.replace(gunType, bullets.get(gunType) - 1);
+                    PlaySound(gunName.get(gunType), gunDecibel.get(gunType));
+                    CheckShot(mousePosition);
+                    if (hit) {
+                        killedObjects++;
+                        feverCnt++;
+                        hit = false;
+                        DrawFever();
+                    }
+                    lastTimeShoot = System.nanoTime();
                 }
-                lastTimeShoot = System.nanoTime();
             }
         }
         if(health <= 0f)
@@ -378,6 +465,7 @@ public abstract class Game {
             if (boss.hit(gunType)) {
                 score += (int) Math.floor(boss.score * scoreMultiplier);
                 boss = null;
+                lastBossDeathTime = System.nanoTime();
             }
         }
     }
@@ -451,22 +539,6 @@ public abstract class Game {
     }
 
     protected void DrawFront(Graphics2D g2d, Point mousePosition) throws IOException {
-        if (bossAttacking) {
-            switch (stage) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, null);
-                    break;
-            }
-        }
-
         g2d.setColor(Color.white);
         g2d.drawString("HP: " + health + " | " + "KILLS: " + killedObjects + " | " + "SHOOTS: " + shoots + " | " + "SCORE: " + score + " | " + "BULLETS: " + bullets.get(gunType) + "/" + defaultBullets.get(gunType), 10, 21);
         g2d.drawString("FEVERx" + scoreMultiplier, Framework.frameWidth - feverBarImg.getWidth(), 80 + feverBarImg.getHeight());
@@ -516,6 +588,46 @@ public abstract class Game {
         }
         g2d.setTransform(old);
 
+        if (bossAttacking) {
+            switch (stage) {
+                case 1:
+                    old = g2d.getTransform();
+                    if (Math.atan2(yDiff, xDiff) - 0.53 > Math.PI / 2 - 0.4) {
+                        g2d.rotate(Math.atan2(yDiff, xDiff) + 1.03,rotationCenterX , rotationCenterY);
+                        g2d.drawImage(bossAttackImg, frog.x, frog.y, null);
+                    } else {
+                        g2d.rotate(Math.atan2(yDiff, xDiff) + 0.2,rotationCenterX , rotationCenterY);
+                        g2d.drawImage(bossAttackImg, frog.x, frog.y, null);
+                    }
+                    g2d.setTransform(old);
+                    break;
+                case 2:
+                    g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, null);
+                    if (new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
+                        health -= 0.5f;
+                    }
+                    break;
+                case 3:
+                    g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, null);
+                    if (new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
+                        health -= 0.5f;
+                    }
+                    break;
+                case 4:
+                    g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, null);
+                    if (new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
+                        health -= 0.5f;
+                    }
+                    break;
+                case 5:
+                    g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, null);
+                    if (new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
+                        health -= 0.5f;
+                    }
+                    break;
+            }
+        }
+
         if (feverFireGif != null) {
             g2d.drawImage(feverFireGif, Framework.frameWidth - feverFireGif.getWidth(null) - 430 + Math.min(feverCnt, 10) * 44, -10 + feverBarImg.getHeight(), null);
         }
@@ -547,7 +659,6 @@ public abstract class Game {
             combo1stDigitImg = null;
         }
         if (feverCnt >= 10) {
-            scoreMultiplier = 3;
             URL combo2ndDigitUrl = this.getClass().getResource("/images/number" + (int) (double) ((feverCnt % 100) / 10) + ".png");
             combo2ndDigitImg = ImageIO.read(Objects.requireNonNull(combo2ndDigitUrl));
         } else {

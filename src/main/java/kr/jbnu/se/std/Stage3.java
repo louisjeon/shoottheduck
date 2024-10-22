@@ -39,7 +39,6 @@ public class Stage3 extends Stage2 {
 
     public void RestartGame() {
         super.RestartGame();
-        boss = new Crow(bossImg);
         movingBats.clear();
         Bat.lastObjectTime = 0;
     }
@@ -57,9 +56,10 @@ public class Stage3 extends Stage2 {
     }
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        if (boss == null) {
+        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.secInNanosec * 20) {
             boss = new Crow(bossImg);
-        } else {
+            lastBossAttackTime = System.nanoTime();
+        } else if (boss != null) {
             boss.Update();
         }
         if(System.nanoTime() - Bat.lastObjectTime >= Bat.timeBetweenObjects)

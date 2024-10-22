@@ -10,21 +10,11 @@ public class Stage1 extends Game {
         stage = 1;
     }
 
-    protected void Initialize()
-    {
-        super.Initialize();
-    }
-
-    public void RestartGame()
-    {
-        super.RestartGame();
-        boss = new BossDuck(bossImg);
-    }
-
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        if (boss == null) {
+        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.secInNanosec * 20) {
             boss = new BossDuck(bossImg);
-        } else {
+            lastBossAttackTime = System.nanoTime();
+        } else if (boss != null) {
             boss.Update();
         }
         super.UpdateGame(gameTime, mousePosition);

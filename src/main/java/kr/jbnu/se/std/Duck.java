@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class Duck extends MovingObject {
     public static long lastObjectTime;
-    public static long timeBetweenObjects = Framework.secInNanosec / 2;
+    public static long timeBetweenObjects = Framework.secInNanosec;
 
     public static int nextObjectLines = 0;
 

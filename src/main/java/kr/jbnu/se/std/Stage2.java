@@ -40,7 +40,6 @@ public class Stage2 extends Game {
 
     public void RestartGame() {
         super.RestartGame();
-        boss = new Eagle(bossImg);
         movingHawks.clear();
         Hawk.lastObjectTime = 0;
     }
@@ -81,9 +80,10 @@ public class Stage2 extends Game {
             }
         }
 
-        if (boss == null) {
+        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.secInNanosec * 20) {
             boss = new Eagle(bossImg);
-        } else {
+            lastBossAttackTime = System.nanoTime();
+        } else if (boss != null) {
             boss.Update();
         }
 
