@@ -28,7 +28,7 @@ public abstract class Game {
    protected static int shoots;
    protected static int feverCnt;
    protected static int feverImgNum;
-   protected static int health;
+   protected static float health;
     protected static double scoreMultiplier;
 
    protected static boolean hit = false;
@@ -66,6 +66,7 @@ public abstract class Game {
     protected static ScheduledThreadPoolExecutor exec0;
     protected static ScheduledThreadPoolExecutor exec;
     protected static ScheduledThreadPoolExecutor exec2;
+    protected static ScheduledThreadPoolExecutor exec3;
 
     protected static double rotationCenterX;
     protected static double rotationCenterY;
@@ -83,6 +84,9 @@ public abstract class Game {
     protected static ArrayList<PotionDuck> movingPotionDucks;
     protected static BufferedImage bossImg;
     protected static MovingBossObject boss;
+    protected static BufferedImage bossAttackImg;
+    protected static long lastBossAttackTime;
+    protected static boolean bossAttacking;
     protected Thread threadForInitGame;
 
     public Game()
@@ -93,7 +97,7 @@ public abstract class Game {
             public void run() {
                 threadForInitGame.start();
             }
-        }, 3, TimeUnit.SECONDS);
+        }, 2, TimeUnit.SECONDS);
 
         threadForInitGame = new Thread() {
             @Override
@@ -114,7 +118,7 @@ public abstract class Game {
         scoreMultiplier = 1;
         shoots = 0;
         feverCnt = 0;
-        health = 100;
+        health = 100f;
 
         gunType = GunTypes.REVOLVER;
         bullets.put(GunTypes.REVOLVER, 6);
@@ -208,6 +212,9 @@ public abstract class Game {
 
             URL bossImgUrl = this.getClass().getResource("/images/boss" + stage + ".png");
             bossImg = ImageIO.read(Objects.requireNonNull(bossImgUrl));
+
+            URL bossAttackImgUrl = this.getClass().getResource("/images/boss_attack" + stage + ".png");
+            bossAttackImg = ImageIO.read(Objects.requireNonNull(bossAttackImgUrl));
         }
         catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
@@ -241,6 +248,8 @@ public abstract class Game {
         movingPotionDucks.clear();
         Duck.lastObjectTime = 0;
         PotionDuck.lastObjectTime = 0;
+        lastBossAttackTime = 0;
+        bossAttacking = false;
     };
 
     public void UpdateGame(long gameTime, Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
@@ -337,7 +346,7 @@ public abstract class Game {
                 lastTimeShoot = System.nanoTime();
             }
         }
-        if(health == 0)
+        if(health <= 0f)
             Framework.gameState = Framework.GameState.GAMEOVER;
     };
 
@@ -360,7 +369,7 @@ public abstract class Game {
             {
                 Shot(movingPotionDucks, i);
                 PlaySound("quack", -18.0f);
-                health = Math.min(100, health + 30);
+                health = Math.min(100f, health + 30f);
                 return;
             }
         }
@@ -375,7 +384,7 @@ public abstract class Game {
 
     protected void RanAway() throws IOException {
         runawayObjects++;
-        health -= 1;
+        health -= 1f;
         feverCnt = 0;
         DrawFever();
     }
@@ -442,6 +451,22 @@ public abstract class Game {
     }
 
     protected void DrawFront(Graphics2D g2d, Point mousePosition) throws IOException {
+        if (bossAttacking) {
+            switch (stage) {
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, null);
+                    break;
+            }
+        }
+
         g2d.setColor(Color.white);
         g2d.drawString("HP: " + health + " | " + "KILLS: " + killedObjects + " | " + "SHOOTS: " + shoots + " | " + "SCORE: " + score + " | " + "BULLETS: " + bullets.get(gunType) + "/" + defaultBullets.get(gunType), 10, 21);
         g2d.drawString("FEVERx" + scoreMultiplier, Framework.frameWidth - feverBarImg.getWidth(), 80 + feverBarImg.getHeight());
@@ -468,7 +493,7 @@ public abstract class Game {
         weaponsImg = ImageIO.read(Objects.requireNonNull(weaponsImgUrl));
         g2d.drawImage(weaponsImg, 0, 20, null);
         g2d.setColor(Color.RED);
-        g2d.fillRect(Framework.frameWidth - healthBarImg.getWidth() + 58, 5, (healthBarImg.getWidth() - 63) * health / 100, healthBarImg.getHeight() - 10);
+        g2d.fillRect(Framework.frameWidth - healthBarImg.getWidth() + 58, 5, (healthBarImg.getWidth() - 63) * (int) health / 100, healthBarImg.getHeight() - 10);
 
         URL frogImgUrl = this.getClass().getResource("/images/frog_" + gunName.get(gunType) + ".png");
         frogImg = ImageIO.read(Objects.requireNonNull(frogImgUrl));
@@ -480,10 +505,14 @@ public abstract class Game {
         if (Math.atan2(yDiff, xDiff) - 0.53 > Math.PI / 2 - 0.4) {
             frogImg = Flip(frogImg);
             g2d.rotate(Math.atan2(yDiff, xDiff) + 0.53,rotationCenterX , rotationCenterY);
-            g2d.drawImage(frogImg, Framework.frameWidth - frogImg.getWidth() - 30 +  frog.getXChange(), Framework.frameHeight + frog.getYChange(), null);
+            frog.x = Framework.frameWidth - frogImg.getWidth() - 30 + frog.getXChange();
+            frog.y = Framework.frameHeight + frog.getYChange();
+            g2d.drawImage(frogImg, frog.x, frog.y, null);
         } else {
             g2d.rotate(Math.atan2(yDiff, xDiff) - 0.53,rotationCenterX , rotationCenterY);
-            g2d.drawImage(frogImg, Framework.frameWidth - frogImg.getWidth() - 30 +  frog.getXChange(), Framework.frameHeight - frogImg.getHeight() + frog.getYChange(), null);
+            frog.x = Framework.frameWidth - frogImg.getWidth() - 30 +  frog.getXChange();
+            frog.y = Framework.frameHeight - frogImg.getHeight() + frog.getYChange();
+            g2d.drawImage(frogImg, frog.x, frog.y, null);
         }
         g2d.setTransform(old);
 

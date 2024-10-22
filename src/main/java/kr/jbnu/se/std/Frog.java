@@ -4,6 +4,8 @@ public class Frog {
     private static Frog frog;
     private int xChange;
     private int yChange;
+    public int x;
+    public int y;
 
     private Frog() {};
 
@@ -18,7 +20,7 @@ public class Frog {
         return xChange;
     }
     public void setXChange(int x) {
-        if (x > - 1400 && x <= 0) {
+        if (x > - 1250 && x <= 0) {
             this.xChange = x;
         }
     }

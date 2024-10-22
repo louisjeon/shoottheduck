@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +33,22 @@ public class Stage5 extends Game {
             boss = new UFO(bossImg);
         } else {
             boss.Update();
+        }
+        if (System.nanoTime() - lastBossAttackTime >= 500000000) {
+            bossAttacking = true;
+            exec3 = new ScheduledThreadPoolExecutor(1);
+            exec3.schedule(new Runnable() {
+                public void run() {
+                    bossAttacking = false;
+                    lastBossAttackTime = System.nanoTime();
+                }
+            }, 500, TimeUnit.MILLISECONDS);
+        }
+        if (bossAttacking) {
+            if(new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
+                health -= 0.5f;
+            }
+
         }
         super.UpdateGame(gameTime, mousePosition);
     }
