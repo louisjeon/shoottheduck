@@ -285,8 +285,16 @@ public abstract class Game {
                             }
                         }, 500, TimeUnit.MILLISECONDS);
                     }
-                    if (bossAttacking && new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY+200)) {
-                        health -= 2f;
+                    if (bossAttacking) {
+                        System.out.println(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2);
+                        System.out.println(boss.y + bossImg.getHeight() - 10);
+                        System.out.println(bossAttackImg.getWidth());
+                        System.out.println(bossAttackImg.getHeight());
+                        System.out.println(rotationCenterX);
+                        System.out.println(rotationCenterY + 200);
+                    }
+                    if (bossAttacking && new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY-200)) {
+                        health -= 1f;
                     }
                     break;
                 case 3:
