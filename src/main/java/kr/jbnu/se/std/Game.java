@@ -285,14 +285,6 @@ public abstract class Game {
                             }
                         }, 500, TimeUnit.MILLISECONDS);
                     }
-                    if (bossAttacking) {
-                        System.out.println(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2);
-                        System.out.println(boss.y + bossImg.getHeight() - 10);
-                        System.out.println(bossAttackImg.getWidth());
-                        System.out.println(bossAttackImg.getHeight());
-                        System.out.println(rotationCenterX);
-                        System.out.println(rotationCenterY + 200);
-                    }
                     if (bossAttacking && new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY-200)) {
                         health -= 1f;
                     }
@@ -308,8 +300,8 @@ public abstract class Game {
                             }
                         }, 500, TimeUnit.MILLISECONDS);
                     }
-                    if (bossAttacking && new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
-                        health -= 0.5f;
+                    if (bossAttacking && new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY - 200)) {
+                        health -= 2f;
                     }
                     break;
                 case 4:
@@ -348,8 +340,11 @@ public abstract class Game {
 
         if(System.nanoTime() - Duck.lastObjectTime >= Duck.timeBetweenObjects)
         {
-            movingDucks.add(new Duck(duckImg));
-
+            if (stage != 5) {
+                movingDucks.add(new Duck(duckImg));
+            } else {
+                movingDucks.add(new FastDuck(duckImg));
+            }
             Duck.nextObjectLines++;
             if(Duck.nextObjectLines >= Duck.objectLines.length)
                 Duck.nextObjectLines = 0;
@@ -611,27 +606,16 @@ public abstract class Game {
                     break;
                 case 2:
                     g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, null);
-                    if (new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
-                        health -= 0.5f;
-                    }
                     break;
                 case 3:
-                    g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, null);
-                    if (new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
-                        health -= 0.5f;
-                    }
+                    g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() +100, null);
                     break;
                 case 4:
-                    g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, null);
-                    if (new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
-                        health -= 0.5f;
-                    }
+                    g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, 0, null);
                     break;
                 case 5:
                     g2d.drawImage(bossAttackImg, boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, null);
-                    if (new Rectangle(boss.x + bossImg.getWidth() / 2 - bossAttackImg.getWidth() / 2, boss.y + bossImg.getHeight() - 10, bossAttackImg.getWidth(), bossAttackImg.getHeight()).contains(rotationCenterX, rotationCenterY)) {
-                        health -= 0.5f;
-                    }
+
                     break;
             }
         }

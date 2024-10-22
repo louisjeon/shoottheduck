@@ -13,7 +13,7 @@ public class Bat extends MovingObject {
     /**
      * How much time must pass in order to create a new eagle?
      */
-    public static long timeBetweenObjects = Framework.secInNanosec;
+    public static long timeBetweenObjects = Framework.secInNanosec * 5;
 
     public static int nextObjectLines = 0;
     /**
@@ -23,10 +23,10 @@ public class Bat extends MovingObject {
      * How many points is a duck worth?
      */
     public static int[][] objectLines = {
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.13), -13, 50},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.18), -15, 50},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.25), -20, 50},
-                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.32), -12, 50}
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.20), -3, 50},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.25), -3, 50},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.30), -3, 50},
+                                       {Framework.frameWidth, (int)(Framework.frameHeight * 0.35), -3, 50}
                                       };
     /**
      * Creates new duck.

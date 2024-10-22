@@ -12,7 +12,7 @@ public class Pumpkin extends MovingBossObject {
 
     public Pumpkin(BufferedImage objectImg) {
         super(objectLines,nextObjectLines,objectImg);
-        INITIAL_HEALTH = 500;
+        INITIAL_HEALTH = 300;
         this.health = INITIAL_HEALTH;
     }
 }

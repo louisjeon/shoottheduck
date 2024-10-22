@@ -20,7 +20,7 @@ public class Stage5 extends Game {
         stage = 5;}
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.secInNanosec * 20) {
+        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.secInNanosec * 5) {
             boss = new UFO(bossImg);
             lastBossAttackTime = System.nanoTime();
         } else if (boss != null) {
