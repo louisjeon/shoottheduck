@@ -4,7 +4,6 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -41,7 +40,7 @@ public class Stage2 extends Game {
             URL hawkImgUrl = this.getClass().getResource("/images/hawk.png");
             hawkImg = ImageIO.read(Objects.requireNonNull(hawkImgUrl));
 
-            URL eagleImgUrl = this.getClass().getResource("/images/eagle.png");
+            URL eagleImgUrl = this.getClass().getResource("/images/boss2.png");
             bossImg = ImageIO.read(Objects.requireNonNull(eagleImgUrl));
         }
         catch (IOException ex) {

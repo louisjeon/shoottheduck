@@ -40,7 +40,7 @@ public class Stage4 extends Stage3 {
             URL witchImgUrl = this.getClass().getResource("/images/witch.png");
             witchImg = ImageIO.read(Objects.requireNonNull(witchImgUrl));
 
-            URL bossImgUrl = this.getClass().getResource("/images/pumpkin.png");
+            URL bossImgUrl = this.getClass().getResource("/images/boss4.png");
             bossImg = ImageIO.read(Objects.requireNonNull(bossImgUrl));
         }
         catch (IOException ex) {

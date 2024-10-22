@@ -18,12 +18,13 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 
 public abstract class Game {
+    protected static int stage;
     protected static Random random;
     private static Font font;
 
     protected static int runawayObjects;
    protected static int killedObjects;
-    protected static int score;
+   protected static int score;
    protected static int shoots;
    protected static int feverCnt;
    protected static int feverImgNum;
@@ -76,7 +77,9 @@ public abstract class Game {
     protected static Frog frog;
     protected static int maxFever;
     protected static BufferedImage duckImg;
+    protected static BufferedImage potionDuckImg;
     protected static ArrayList<Duck> movingDucks;
+    protected static ArrayList<PotionDuck> movingPotionDucks;
     protected static BufferedImage bossImg;
     protected static MovingBossObject boss;
 
@@ -87,9 +90,9 @@ public abstract class Game {
         Thread threadForInitGame = new Thread() {
             @Override
             public void run(){
-                // Sets variables and objects for the game.
+
                 Initialize();
-                // Load game files (images, sounds, ...)
+
                 LoadContent();
 
                 Framework.gameState = Framework.GameState.PLAYING;
@@ -156,7 +159,8 @@ public abstract class Game {
         gunDamage.put(GunTypes.WOODEN,  20);
         gunDamage.put(GunTypes.AK47,  2);
         gunDamage.put(GunTypes.MACHINEGUN, 3);
-        movingDucks = new ArrayList<Duck>();
+        movingDucks = new ArrayList<>();
+        movingPotionDucks = new ArrayList<>();
         SetInitialValues();
     };
 
@@ -184,6 +188,18 @@ public abstract class Game {
 
             frog.setXChange(0);
             frog.setYChange(0);
+
+            URL backgroundImgUrl = this.getClass().getResource("/images/background" + stage + ".jpg");
+            backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
+
+            URL duckImgUrl = this.getClass().getResource("/images/duck" + stage + ".png");
+            duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
+
+            URL potionDuckImgUrl = this.getClass().getResource("/images/duck" + stage +"_potion.png");
+            potionDuckImg = ImageIO.read(Objects.requireNonNull(potionDuckImgUrl));
+
+            URL bossImgUrl = this.getClass().getResource("/images/boss" + stage + ".png");
+            bossImg = ImageIO.read(Objects.requireNonNull(bossImgUrl));
         }
         catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
@@ -214,7 +230,9 @@ public abstract class Game {
     public void RestartGame() {
         SetInitialValues();
         movingDucks.clear();
+        movingPotionDucks.clear();
         Duck.lastObjectTime = 0;
+        PotionDuck.lastObjectTime = 0;
     };
 
     public void UpdateGame(long gameTime, Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
@@ -236,6 +254,28 @@ public abstract class Game {
             if(movingDucks.get(i).x < -duckImg.getWidth())
             {
                 movingDucks.remove(i);
+                RanAway();
+            }
+        }
+
+        if(System.nanoTime() - PotionDuck.lastObjectTime >= PotionDuck.timeBetweenObjects)
+        {
+            movingPotionDucks.add(new PotionDuck(potionDuckImg));
+
+            PotionDuck.nextObjectLines++;
+            if(PotionDuck.nextObjectLines >= PotionDuck.objectLines.length)
+                PotionDuck.nextObjectLines = 0;
+
+            PotionDuck.lastObjectTime = System.nanoTime();
+        }
+
+        for(int i = 0; i < movingPotionDucks.size(); i++)
+        {
+            movingPotionDucks.get(i).Update();
+
+            if(movingPotionDucks.get(i).x < -potionDuckImg.getWidth())
+            {
+                movingPotionDucks.remove(i);
                 RanAway();
             }
         }
@@ -305,6 +345,17 @@ public abstract class Game {
                 return;
             }
         }
+        for(int i = 0; i < movingPotionDucks.size(); i++)
+        {
+            if(new Rectangle(movingPotionDucks.get(i).x + 18, movingPotionDucks.get(i).y     , 27, 30).contains(mousePosition) ||
+                    new Rectangle(movingPotionDucks.get(i).x + 30, movingPotionDucks.get(i).y + 30, 100, 35).contains(mousePosition))
+            {
+                Shot(movingPotionDucks, i);
+                PlaySound("quack", -18.0f);
+                health = Math.min(100, health + 30);
+                return;
+            }
+        }
         if (boss != null && new Rectangle(boss.x, boss.y, boss.width, boss.height).contains(mousePosition)) {
             PlaySound(boss.soundName, -13.0f);
             if (boss.hit(gunType)) {
@@ -330,6 +381,9 @@ public abstract class Game {
         };
         for (Duck duck : movingDucks) {
             duck.Draw(g2d);
+        }
+        for (PotionDuck potionDuck: movingPotionDucks) {
+            potionDuck.Draw(g2d);
         }
     };
 
