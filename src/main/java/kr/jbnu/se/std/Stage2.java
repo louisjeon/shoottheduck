@@ -16,12 +16,13 @@ public class Stage2 extends Game {
     private BufferedImage hawkImg;
     protected ArrayList<Hawk> movingHawks;
 
-    public Stage2(){}
+    public Stage2(){
+        stage = 2;
+    }
 
     protected void Initialize() {
         super.Initialize();
-        stage = 2;
-        this.movingHawks = new ArrayList<Hawk>();
+        this.movingHawks = new ArrayList<>();
     }
 
     protected void LoadContent()

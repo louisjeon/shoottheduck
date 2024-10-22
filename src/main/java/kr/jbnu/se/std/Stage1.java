@@ -6,12 +6,13 @@ import javax.sound.sampled.*;
 
 public class Stage1 extends Game {
 
-    public Stage1() {}
+    public Stage1() {
+        stage = 1;
+    }
 
     protected void Initialize()
     {
         super.Initialize();
-        stage = 1;
     }
 
     public void RestartGame()

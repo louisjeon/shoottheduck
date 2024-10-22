@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -47,11 +49,7 @@ public class Framework extends Canvas {
      * How many times per second the game should update?
      */
     private final int GAME_FPS = 60;
-    /**
-     * Pause between updates. It is in nanoseconds.
-     */
-    private final long GAME_UPDATE_PERIOD = secInNanosec / GAME_FPS;
-    
+
     /**
      * Possible states of the game
      */
@@ -86,6 +84,8 @@ public class Framework extends Canvas {
     private  BufferedImage stage5BtnImg;
 
     private Frog frog;
+
+    private ScheduledThreadPoolExecutor exec;
     
     
     public Framework ()
@@ -188,7 +188,6 @@ public class Framework extends Canvas {
                     //...
                 break;
                 case STARTING:
-                    // Sets variables and objects.
                     Initialize();
                     // Load files - images, sounds, ...
                     LoadContent();
@@ -222,6 +221,10 @@ public class Framework extends Canvas {
             
             // Here we calculate the time that defines for how long we should put threat to sleep to meet the GAME_FPS.
             timeTaken = System.nanoTime() - beginTime;
+            /**
+             * Pause between updates. It is in nanoseconds.
+             */
+            long GAME_UPDATE_PERIOD = secInNanosec / GAME_FPS;
             timeLeft = (GAME_UPDATE_PERIOD - timeTaken) / milisecInNanosec; // In milliseconds
             // If the time is less than 10 milliseconds, then we will put thread to sleep for 10 millisecond so that some other thread can do some work.
             if (timeLeft < 10) 
@@ -264,8 +267,7 @@ public class Framework extends Canvas {
                 //...
             break;
             case GAME_CONTENT_LOADING:
-                g2d.setColor(Color.white);
-                g2d.drawString("GAME is LOADING", frameWidth / 2 - 50, frameHeight / 2);
+                game.DrawScoreWindow(g2d);
             break;
         }
     }
@@ -388,9 +390,6 @@ public class Framework extends Canvas {
     {
         if (Objects.requireNonNull(gameState) == GameState.MAIN_MENU) {
             if (e.getButton() == MouseEvent.BUTTON1) {
-                int x = mousePosition().x;
-                int y = mousePosition().y;
-
                 if (new Rectangle(frameWidth / 2 - stage1BtnImg.getWidth() / 2, frameHeight / 2 - 160, stage1BtnImg.getWidth(), stage1BtnImg.getHeight()).contains(e.getPoint())) {
                     newGame(1);
                 } else if (new Rectangle(frameWidth / 2 - stage2BtnImg.getWidth() / 2, frameHeight / 2 - 60, stage2BtnImg.getWidth(), stage2BtnImg.getHeight()).contains(e.getPoint())) {

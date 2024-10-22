@@ -63,6 +63,7 @@ public abstract class Game {
     protected static int sightImgMiddleWidth;
     protected static int sightImgMiddleHeight;
 
+    protected static ScheduledThreadPoolExecutor exec0;
     protected static ScheduledThreadPoolExecutor exec;
     protected static ScheduledThreadPoolExecutor exec2;
 
@@ -82,15 +83,21 @@ public abstract class Game {
     protected static ArrayList<PotionDuck> movingPotionDucks;
     protected static BufferedImage bossImg;
     protected static MovingBossObject boss;
+    protected Thread threadForInitGame;
 
     public Game()
     {
         Framework.gameState = Framework.GameState.GAME_CONTENT_LOADING;
+        exec0 = new ScheduledThreadPoolExecutor(1);
+        exec0.schedule(new Runnable() {
+            public void run() {
+                threadForInitGame.start();
+            }
+        }, 3, TimeUnit.SECONDS);
 
-        Thread threadForInitGame = new Thread() {
+        threadForInitGame = new Thread() {
             @Override
             public void run(){
-
                 Initialize();
 
                 LoadContent();
@@ -98,7 +105,6 @@ public abstract class Game {
                 Framework.gameState = Framework.GameState.PLAYING;
             }
         };
-        threadForInitGame.start();
     }
 
     protected void SetInitialValues() {
@@ -124,6 +130,10 @@ public abstract class Game {
 
         showShotEffect = false;
         frog = Frog.getInstance();
+
+        movingDucks = new ArrayList<>();
+        movingPotionDucks = new ArrayList<>();
+        boss = null;
     }
 
     protected void Initialize() {
@@ -159,8 +169,6 @@ public abstract class Game {
         gunDamage.put(GunTypes.WOODEN,  20);
         gunDamage.put(GunTypes.AK47,  2);
         gunDamage.put(GunTypes.MACHINEGUN, 3);
-        movingDucks = new ArrayList<>();
-        movingPotionDucks = new ArrayList<>();
         SetInitialValues();
     };
 
@@ -549,6 +557,13 @@ public abstract class Game {
     public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         DrawBack(g2d);
         DrawFront(g2d, mousePosition);
+    }
+
+    public void DrawScoreWindow(Graphics2D g2d) {
+        g2d.setColor(Color.black);
+        g2d.fillRect(0, 0, Framework.frameWidth, Framework.frameHeight);
+        g2d.setColor(Color.WHITE);
+        g2d.drawString("Stage " + stage, Framework.frameWidth / 2 - 39, (int)(Framework.frameHeight * 0.65) + 1);
     }
 
     public void DrawGameOver(Graphics2D g2d, Point mousePosition) throws IOException {

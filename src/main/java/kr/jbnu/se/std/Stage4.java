@@ -16,11 +16,11 @@ public class Stage4 extends Stage3 {
     private BufferedImage witchImg;
     protected ArrayList<Witch> movingWitches;
 
-    public Stage4(){}
+    public Stage4(){
+        stage = 4;}
 
     protected void Initialize() {
         super.Initialize();
-        stage = 4;
         this.movingWitches = new ArrayList<>();
     }
 

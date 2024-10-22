@@ -16,11 +16,11 @@ public class Stage3 extends Stage2 {
     private BufferedImage batImg;
     protected ArrayList<Bat> movingBats;
 
-    public Stage3(){}
+    public Stage3(){
+        stage = 3;}
 
     protected void Initialize() {
         super.Initialize();
-        stage = 3;
         this.movingBats = new ArrayList<>();
     }
 

@@ -14,11 +14,11 @@ import java.util.logging.Logger;
 
 public class Stage5 extends Game {
 
-    public Stage5(){}
+    public Stage5(){
+        stage = 5;}
 
     protected void Initialize() {
         super.Initialize();
-        stage = 5;
     }
 
     public void RestartGame() {
