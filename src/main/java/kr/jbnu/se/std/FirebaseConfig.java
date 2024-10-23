@@ -20,8 +20,6 @@ public class FirebaseConfig {
 
         FirebaseApp.initializeApp(options);
 
-        Firestore db = FirestoreClient.getFirestore();
-        System.out.println("AAA");
-        return db;
+        return FirestoreClient.getFirestore();
     }
 }

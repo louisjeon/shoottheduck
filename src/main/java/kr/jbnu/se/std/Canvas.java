@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JPanel;
 
 /**
@@ -54,7 +55,7 @@ Canvas extends JPanel implements KeyListener, MouseListener {
     
     
     // This method is overridden in kr.jbnu.se.std.Framework.java and is used for drawing to the screen.
-    public abstract void Draw(Graphics2D g2d) throws IOException;
+    public abstract void Draw(Graphics2D g2d) throws IOException, ExecutionException, InterruptedException;
     
     @Override
     public void paintComponent(Graphics g)
@@ -63,7 +64,7 @@ Canvas extends JPanel implements KeyListener, MouseListener {
         super.paintComponent(g2d);
         try {
             Draw(g2d);
-        } catch (IOException e) {
+        } catch (IOException | ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -95,13 +96,17 @@ Canvas extends JPanel implements KeyListener, MouseListener {
     public void keyReleased(KeyEvent e)
     {
         keyboardState[e.getKeyCode()] = false;
-        keyReleasedFramework(e);
+        try {
+            keyReleasedFramework(e);
+        } catch (ExecutionException | InterruptedException ex) {
+            throw new RuntimeException(ex);
+        }
     }
     
     @Override
     public void keyTyped(KeyEvent e) { }
     
-    public abstract void keyReleasedFramework(KeyEvent e);
+    public abstract void keyReleasedFramework(KeyEvent e) throws ExecutionException, InterruptedException;
     
     
     // Mouse

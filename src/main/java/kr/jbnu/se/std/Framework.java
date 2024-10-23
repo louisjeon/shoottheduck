@@ -9,53 +9,20 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-/**
- * kr.jbnu.se.std.Framework that controls the game (kr.jbnu.se.std.Game.java) that created it, update it and draw it on the screen.
- * 
- * @author www.gametutorial.net
- */
-
 public class Framework extends Canvas {
-    
-    /**
-     * Width of the frame.
-     */
     public static int frameWidth;
-    /**
-     * Height of the frame.
-     */
     public static int frameHeight;
-
-    /**
-     * Time of one second in nanoseconds.
-     * 1 second = 1 000 000 000 nanoseconds
-     */
     public static final long secInNanosec = 1000000000L;
-    
-    /**
-     * Time of one millisecond in nanoseconds.
-     * 1 millisecond = 1 000 000 nanoseconds
-     */
     public static final long milisecInNanosec = 1000000L;
-    
-    /**
-     * FPS - Frames per second
-     * How many times per second the game should update?
-     */
-    private final int GAME_FPS = 60;
 
     /**
      * Possible states of the game
@@ -94,23 +61,6 @@ public class Framework extends Canvas {
 
     public Framework () throws IOException, ExecutionException, InterruptedException {
         super();
-        Firestore db = FirebaseConfig.initialize();
-        ApiFuture<QuerySnapshot> query = db.collection("scores").get();
-        QuerySnapshot querySnapshot = query.get();
-        querySnapshot.getDocuments().forEach(document -> {
-            ScoreBoard.stage1 = Math.toIntExact(document.getLong("1"));
-            ScoreBoard.stage1 = Math.toIntExact(document.getLong("2"));
-            ScoreBoard.stage1 = Math.toIntExact(document.getLong("3"));
-            ScoreBoard.stage1 = Math.toIntExact(document.getLong("4"));
-            ScoreBoard.stage1 = Math.toIntExact(document.getLong("5"));
-        });
-
-
-//        DocumentReference docRef = db.collection("scores").document("stage");
-//        Map<String, Object> data = new HashMap<>();
-//        data.put("1", 999999);
-//        ApiFuture<WriteResult> result = docRef.set(data);
-//        System.out.println("Update time : " + result.get().getUpdateTime());
         
         gameState = GameState.VISUALIZING;
         
@@ -244,6 +194,7 @@ public class Framework extends Canvas {
             /**
              * Pause between updates. It is in nanoseconds.
              */
+            int GAME_FPS = 60;
             long GAME_UPDATE_PERIOD = secInNanosec / GAME_FPS;
             timeLeft = (GAME_UPDATE_PERIOD - timeTaken) / milisecInNanosec; // In milliseconds
             // If the time is less than 10 milliseconds, then we will put thread to sleep for 10 millisecond so that some other thread can do some work.
@@ -260,7 +211,7 @@ public class Framework extends Canvas {
      * Draw the game to the screen. It is called through repaint() method in GameLoop() method.
      */
     @Override
-    public void Draw(Graphics2D g2d) throws IOException {
+    public void Draw(Graphics2D g2d) throws IOException, ExecutionException, InterruptedException {
         switch (gameState)
         {
             case PLAYING:
@@ -287,16 +238,14 @@ public class Framework extends Canvas {
                 //...
             break;
             case GAME_CONTENT_LOADING:
-                game.DrawScoreWindow(g2d);
+                if (game != null) {
+                    game.DrawScoreWindow(g2d);
+                }
             break;
         }
     }
-    
-    /**
-     * Starts new game.
-     */
-    private void newGame(int stage)
-    {
+
+    private void newGame(int stage) throws IOException, ExecutionException, InterruptedException {
         // We set gameTime to zero and lastTime to current time for later calculations.
         gameTime = 0;
         lastTime = System.nanoTime();
@@ -323,8 +272,7 @@ public class Framework extends Canvas {
     /**
      *  Restart game - reset game time and call RestartGame() method of game object so that reset some variables.
      */
-    private void restartGame()
-    {
+    private void restartGame() throws ExecutionException, InterruptedException {
         // We set gameTime to zero and lastTime to current time for later calculations.
         gameTime = 0;
         lastTime = System.nanoTime();
@@ -364,12 +312,12 @@ public class Framework extends Canvas {
      * @param e KeyEvent
      */
     @Override
-    public void keyReleasedFramework(KeyEvent e)
-    {
+    public void keyReleasedFramework(KeyEvent e) throws ExecutionException, InterruptedException {
         switch (gameState)
         {
             case GAMEOVER:
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    game.SaveScore();
                     game = null;
                     gameState = GameState.MAIN_MENU;
                 }
@@ -378,6 +326,7 @@ public class Framework extends Canvas {
                 break;
             case PLAYING:
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    game.SaveScore();
                     game = null;
                     gameState = GameState.MAIN_MENU;
                 }
@@ -411,15 +360,35 @@ public class Framework extends Canvas {
         if (Objects.requireNonNull(gameState) == GameState.MAIN_MENU) {
             if (e.getButton() == MouseEvent.BUTTON1) {
                 if (new Rectangle(frameWidth / 2 - stage1BtnImg.getWidth() / 2, frameHeight / 2 - 160, stage1BtnImg.getWidth(), stage1BtnImg.getHeight()).contains(e.getPoint())) {
-                    newGame(1);
+                    try {
+                        newGame(1);
+                    } catch (IOException | ExecutionException | InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } else if (new Rectangle(frameWidth / 2 - stage2BtnImg.getWidth() / 2, frameHeight / 2 - 60, stage2BtnImg.getWidth(), stage2BtnImg.getHeight()).contains(e.getPoint())) {
-                    newGame(2);
+                    try {
+                        newGame(2);
+                    } catch (IOException | ExecutionException | InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } else if (new Rectangle(frameWidth / 2 - stage3BtnImg.getWidth() / 2, frameHeight / 2 + 40, stage3BtnImg.getWidth(), stage3BtnImg.getHeight()).contains(e.getPoint())) {
-                    newGame(3);
+                    try {
+                        newGame(3);
+                    } catch (IOException | ExecutionException | InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } else if (new Rectangle(frameWidth / 2 - stage4BtnImg.getWidth() / 2, frameHeight / 2 + 140, stage4BtnImg.getWidth(), stage4BtnImg.getHeight()).contains(e.getPoint())) {
-                    newGame(4);
+                    try {
+                        newGame(4);
+                    } catch (IOException | ExecutionException | InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 } else if (new Rectangle(frameWidth / 2 - stage5BtnImg.getWidth() / 2, frameHeight / 2 + 240, stage5BtnImg.getWidth(), stage5BtnImg.getHeight()).contains(e.getPoint())) {
-                    newGame(5);
+                    try {
+                        newGame(5);
+                    } catch (IOException | ExecutionException | InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
         }

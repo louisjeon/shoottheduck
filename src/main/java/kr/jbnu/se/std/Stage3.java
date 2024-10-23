@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +17,8 @@ public class Stage3 extends Stage2 {
     private BufferedImage batImg;
     protected ArrayList<Bat> movingBats;
 
-    public Stage3(){
+    public Stage3() throws IOException, ExecutionException, InterruptedException {
+        super();
         stage = 3;}
 
     protected void Initialize() {
@@ -37,7 +39,7 @@ public class Stage3 extends Stage2 {
         }
     }
 
-    public void RestartGame() {
+    public void RestartGame() throws ExecutionException, InterruptedException {
         super.RestartGame();
         movingBats.clear();
         Bat.lastObjectTime = 0;

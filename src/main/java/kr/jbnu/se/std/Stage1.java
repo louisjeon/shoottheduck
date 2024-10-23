@@ -2,11 +2,13 @@ package kr.jbnu.se.std;
 
 import java.awt.Point;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import javax.sound.sampled.*;
 
 public class Stage1 extends Game {
 
-    public Stage1() {
+    public Stage1() throws IOException, ExecutionException, InterruptedException {
+        super();
         stage = 1;
     }
 

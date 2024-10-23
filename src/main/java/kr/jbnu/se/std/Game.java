@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -93,15 +94,16 @@ public abstract class Game {
     protected Thread threadForInitGame;
     protected static boolean canShoot;
 
-    public Game()
-    {
+    private static ScoreBoard scoreBoard;
+
+    public Game() throws IOException, ExecutionException, InterruptedException {
         Framework.gameState = Framework.GameState.GAME_CONTENT_LOADING;
         exec0 = new ScheduledThreadPoolExecutor(1);
         exec0.schedule(new Runnable() {
             public void run() {
                 threadForInitGame.start();
             }
-        }, 2, TimeUnit.SECONDS);
+        }, 3, TimeUnit.SECONDS);
 
         threadForInitGame = new Thread() {
             @Override
@@ -113,6 +115,8 @@ public abstract class Game {
                 Framework.gameState = Framework.GameState.PLAYING;
             }
         };
+
+        scoreBoard = ScoreBoard.getInstance();
     }
 
     protected void SetInitialValues() {
@@ -248,7 +252,7 @@ public abstract class Game {
         hit = true;
     }
 
-    public void RestartGame() {
+    public void RestartGame() throws ExecutionException, InterruptedException {
         SetInitialValues();
         movingDucks.clear();
         movingPotionDucks.clear();
@@ -257,6 +261,9 @@ public abstract class Game {
         lastBossAttackTime = 0;
         bossAttacking = false;
         boss = null;
+        if (score > scoreBoard.getScore(stage)) {
+            scoreBoard.setScore(stage, score);
+        }
     };
 
     public void UpdateGame(long gameTime, Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
@@ -688,6 +695,12 @@ public abstract class Game {
             }, 500, TimeUnit.MILLISECONDS);
     }
 
+    public void SaveScore() throws ExecutionException, InterruptedException {
+        if (score > scoreBoard.getScore(stage)) {
+            scoreBoard.setScore(stage, score);
+        }
+    }
+
     public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
         DrawBack(g2d);
         DrawFront(g2d, mousePosition);
@@ -697,53 +710,15 @@ public abstract class Game {
         g2d.setColor(Color.black);
         g2d.fillRect(0, 0, Framework.frameWidth, Framework.frameHeight);
         g2d.setColor(Color.WHITE);
-        int bestScore = 0;
-        switch (stage) {
-            case 1:
-                bestScore = ScoreBoard.stage1;
-                break;
-            case 2:
-                bestScore = ScoreBoard.stage2;
-                break;
-            case 3:
-                bestScore = ScoreBoard.stage3;
-                break;
-            case 4:
-                bestScore = ScoreBoard.stage4;
-                break;
-            case 5:
-                bestScore = ScoreBoard.stage5;
-                break;
-        }
-        g2d.drawString("Stage " + stage + " best result: " + bestScore, Framework.frameWidth / 2 - 39, (int)(Framework.frameHeight * 0.65) + 1);
+        g2d.drawString("Stage " + stage + " best result: " + scoreBoard.getScore(stage), Framework.frameWidth / 2 - 39, (int)(Framework.frameHeight * 0.65) + 1);
     }
 
-    public void DrawGameOver(Graphics2D g2d, Point mousePosition) throws IOException {
+    public void DrawGameOver(Graphics2D g2d, Point mousePosition) throws IOException, ExecutionException, InterruptedException {
         Draw(g2d, mousePosition);
-        switch (stage) {
-            case 1:
-                if (score > ScoreBoard.stage1) {
-                    ScoreBoard.stage1 = score;
-                }
-            case 2:
-                if (score > ScoreBoard.stage2) {
-                    ScoreBoard.stage2 = score;
-                }
-            case 3:
-                if (score > ScoreBoard.stage3) {
-                    ScoreBoard.stage3 = score;
-                }
-            case 4:
-                if (score > ScoreBoard.stage4) {
-                    ScoreBoard.stage4 = score;
-                }
-            case 5:
-                if (score > ScoreBoard.stage5) {
-                    ScoreBoard.stage5 = score;
-                }
+        if (score > scoreBoard.getScore(stage)) {
+            scoreBoard.setScore(stage, score);
         }
-        
-        // The first text is used for shade.
+
         g2d.setColor(Color.black);
         g2d.drawString("kr.jbnu.se.std.Game Over", Framework.frameWidth / 2 - 39, (int)(Framework.frameHeight * 0.65) + 1);
         g2d.drawString("Press space or enter to restart.", Framework.frameWidth / 2 - 149, (int)(Framework.frameHeight * 0.70) + 1);

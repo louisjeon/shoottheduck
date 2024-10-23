@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +17,8 @@ public class Stage2 extends Game {
     private BufferedImage hawkImg;
     protected ArrayList<Hawk> movingHawks;
 
-    public Stage2(){
+    public Stage2() throws IOException, ExecutionException, InterruptedException {
+        super();
         stage = 2;
     }
 
@@ -38,7 +40,7 @@ public class Stage2 extends Game {
         }
     }
 
-    public void RestartGame() {
+    public void RestartGame() throws ExecutionException, InterruptedException {
         super.RestartGame();
         movingHawks.clear();
         Hawk.lastObjectTime = 0;

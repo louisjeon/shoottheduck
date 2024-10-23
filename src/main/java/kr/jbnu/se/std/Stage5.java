@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -16,7 +17,8 @@ import java.util.logging.Logger;
 
 public class Stage5 extends Game {
 
-    public Stage5(){
+    public Stage5() throws IOException, ExecutionException, InterruptedException {
+        super();
         stage = 5;}
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
