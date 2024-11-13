@@ -1,7 +1,5 @@
 package kr.jbnu.se.std;
 
-import com.google.cloud.firestore.Firestore;
-
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;

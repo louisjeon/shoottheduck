@@ -13,7 +13,7 @@ public class Bat extends MovingObject {
     /**
      * How much time must pass in order to create a new eagle?
      */
-    public static long timeBetweenObjects = Framework.secInNanosec * 5;
+    public static final long timeBetweenObjects = Framework.secInNanosec * 5;
 
     public static int nextObjectLines = 0;
     /**
@@ -22,7 +22,7 @@ public class Bat extends MovingObject {
      * Speed of the duck?
      * How many points is a duck worth?
      */
-    public static int[][] objectLines = {
+    protected static final int[][] objectLines = {
                                        {Framework.frameWidth, (int)(Framework.frameHeight * 0.20), -3, 50},
                                        {Framework.frameWidth, (int)(Framework.frameHeight * 0.25), -3, 50},
                                        {Framework.frameWidth, (int)(Framework.frameHeight * 0.30), -3, 50},
