@@ -68,7 +68,7 @@ public class Stage4 extends Stage3 {
         {
             movingWitches.add(new Witch(witchImg));
 
-            Witch.setNextObjectLines(Bat.getNextObjectLines()+1);
+            Witch.setNextObjectLines(Witch.getNextObjectLines()+1);
             if(Witch.getNextObjectLines() >= Witch.getObjectLines().length)
                 Witch.setNextObjectLines(0);
 

@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class PotionDuck extends MovingObject {
     public static long lastObjectTime;
+
     public static long timeBetweenObjects = Framework.secInNanosec * 10;
 
     public static int nextObjectLines = 0;

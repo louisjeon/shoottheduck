@@ -43,7 +43,7 @@ public class Stage2 extends Game {
     public void RestartGame() throws ExecutionException, InterruptedException {
         super.RestartGame();
         movingHawks.clear();
-        Hawk.lastObjectTime = 0;
+        Hawk.setLastObjectTime(0);
     }
 
      protected void CheckShot(Point mousePosition) {
@@ -60,15 +60,15 @@ public class Stage2 extends Game {
 
     public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         // Creates a new duck, if it's the time, and add it to the array list.
-        if(System.nanoTime() - Hawk.lastObjectTime >= Hawk.timeBetweenObjects)
+        if(System.nanoTime() - Hawk.getLastObjectTime() >= Hawk.TIME_BETWEEN_OBJECTS)
         {
             movingHawks.add(new Hawk(hawkImg));
 
-            Hawk.nextObjectLines++;
-            if(Hawk.nextObjectLines >= Hawk.objectLines.length)
-                Hawk.nextObjectLines = 0;
+            Hawk.setNextObjectLines(Hawk.getNextObjectLines()+1);
+            if(Hawk.getNextObjectLines() >= Hawk.getObjectLines().length)
+                Hawk.setNextObjectLines(0);
 
-            Hawk.lastObjectTime = System.nanoTime();
+            Hawk.setLastObjectTime(System.nanoTime());
         }
 
         for(int i = 0; i < movingHawks.size(); i++)
