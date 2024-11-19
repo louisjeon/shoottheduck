@@ -42,7 +42,8 @@ public class Stage3 extends Stage2 {
     public void RestartGame() throws ExecutionException, InterruptedException {
         super.RestartGame();
         movingBats.clear();
-        Bat.lastObjectTime = 0;
+        //Bat.lastObjectTime = 0;
+        Bat.setLastObjectTime(0);
     }
 
     protected void CheckShot(Point mousePosition) {
@@ -64,15 +65,35 @@ public class Stage3 extends Stage2 {
         } else if (boss != null) {
             boss.Update();
         }
-        if(System.nanoTime() - Bat.lastObjectTime >= Bat.timeBetweenObjects)
+//        if(System.nanoTime() - Bat.lastObjectTime >= Bat.TIME_BETWEEN_OBJECTS)
+//        {
+//            movingBats.add(new Bat(batImg));
+//
+//            Bat.nextObjectLines++;
+//            if(Bat.nextObjectLines >= Bat.objectLines.length)
+//                Bat.nextObjectLines = 0;
+//
+//            Bat.lastObjectTime = System.nanoTime();
+//        } //기존 코드
+//        if(System.nanoTime() - Bat.getLastObjectTime() >= Bat.TIME_BETWEEN_OBJECTS)
+//        {
+//            movingBats.add(new Bat(batImg));
+//
+//            Bat.nextObjectLines++;
+//            if(Bat.nextObjectLines >= Bat.objectLines.length)
+//                Bat.nextObjectLines = 0;
+//
+//            Bat.setLastObjectTime(System.nanoTime());
+//        }
+        if(System.nanoTime() - Bat.getLastObjectTime() >= Bat.TIME_BETWEEN_OBJECTS)
         {
             movingBats.add(new Bat(batImg));
 
-            Bat.nextObjectLines++;
-            if(Bat.nextObjectLines >= Bat.objectLines.length)
-                Bat.nextObjectLines = 0;
+            Bat.setNextObjectLines(Bat.getNextObjectLines()+1);
+            if(Bat.getNextObjectLines() >= Bat.objectLines.length)
+                Bat.setNextObjectLines(0);
 
-            Bat.lastObjectTime = System.nanoTime();
+            Bat.setLastObjectTime(System.nanoTime());
         }
 
         for(int i = 0; i < movingBats.size(); i++)

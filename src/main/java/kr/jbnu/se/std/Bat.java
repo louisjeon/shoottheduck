@@ -9,13 +9,26 @@ import java.awt.image.BufferedImage;
  */
 
 public class Bat extends MovingObject {
-    public static long lastObjectTime;
+    private static long lastObjectTime; //public->private
+    public static long getLastObjectTime() {
+        return lastObjectTime;
+    }//추가
+    public static void setLastObjectTime(long lastObjectTime) {
+        Bat.lastObjectTime = lastObjectTime;
+    }//추가
+
     /**
      * How much time must pass in order to create a new eagle?
      */
-    public static final long timeBetweenObjects = Framework.secInNanosec * 5;
+    public static final long TIME_BETWEEN_OBJECTS = Framework.secInNanosec * 5;
 
-    public static int nextObjectLines = 0;
+    private static int nextObjectLines = 0;
+    public static int getNextObjectLines(){
+        return nextObjectLines;
+    }
+    public static void setNextObjectLines(int nextObjectLines){
+        Bat.nextObjectLines = nextObjectLines;
+    }
     /**
      * kr.jbnu.se.std.Duck lines.
      * Where is starting location for the duck?
