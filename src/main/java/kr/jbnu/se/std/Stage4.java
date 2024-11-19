@@ -42,7 +42,7 @@ public class Stage4 extends Stage3 {
     public void RestartGame() throws ExecutionException, InterruptedException {
         super.RestartGame();
         movingWitches.clear();
-        Witch.lastObjectTime = 0;
+        Witch.setLastObjectTime(0);
     }
 
      protected void CheckShot(Point mousePosition) {
@@ -64,15 +64,15 @@ public class Stage4 extends Stage3 {
         } else if (boss != null) {
             boss.Update();
         }
-        if(System.nanoTime() - Witch.lastObjectTime >= Witch.timeBetweenObjects)
+        if(System.nanoTime() - Witch.getLastObjectTime() >= Witch.TIME_BETWEEN_OBJECTS)
         {
             movingWitches.add(new Witch(witchImg));
 
-            Witch.nextObjectLines++;
-            if(Witch.nextObjectLines >= Witch.objectLines.length)
-                Witch.nextObjectLines = 0;
+            Witch.setNextObjectLines(Bat.getNextObjectLines()+1);
+            if(Witch.getNextObjectLines() >= Witch.getObjectLines().length)
+                Witch.setNextObjectLines(0);
 
-            Witch.lastObjectTime = System.nanoTime();
+            Witch.setLastObjectTime(System.nanoTime());
         }
 
         for(int i = 0; i < movingWitches.size(); i++)

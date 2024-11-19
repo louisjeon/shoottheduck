@@ -12,10 +12,10 @@ public class Bat extends MovingObject {
     private static long lastObjectTime; //public->private
     public static long getLastObjectTime() {
         return lastObjectTime;
-    }//추가
+    }
     public static void setLastObjectTime(long lastObjectTime) {
         Bat.lastObjectTime = lastObjectTime;
-    }//추가
+    }
 
     /**
      * How much time must pass in order to create a new eagle?
