@@ -15,20 +15,18 @@ import java.util.logging.Logger;
 
 public class Stage4 extends Stage3 {
     private BufferedImage witchImg;
-    protected ArrayList<Witch> movingWitches;
+    protected static ArrayList<Witch> movingWitches;
 
-    public Stage4() throws IOException, ExecutionException, InterruptedException {
+    public Stage4() {
         super();
-        stage = 4;}
-
-    protected void Initialize() {
-        super.Initialize();
-        this.movingWitches = new ArrayList<>();
+        stage = 4;
+        movingWitches = new ArrayList<>();
     }
 
-    protected void LoadContent()
+    @Override
+    protected void loadContent()
     {
-        super.LoadContent();
+        super.loadContent();
         try
         {
             URL witchImgUrl = this.getClass().getResource("/images/witch.png");
@@ -39,67 +37,67 @@ public class Stage4 extends Stage3 {
         }
     }
 
-    public void RestartGame() throws ExecutionException, InterruptedException {
-        super.RestartGame();
+    @Override
+    public void restartGame() {
+        super.restartGame();
         movingWitches.clear();
-        Witch.lastObjectTime = 0;
+        Witch.setLastObjectTime(0);
     }
 
-     protected void CheckShot(Point mousePosition) {
-        super.CheckShot(mousePosition);
-         for(int i = 0; i < movingWitches.size(); i++)
-         {
-             if(new Rectangle(movingWitches.get(i).x, movingWitches.get(i).y, 400, 200).contains(mousePosition))
-             {
-                 Shot(movingWitches, i);
-                 return;
-             }
-         }
+    @Override
+    protected void checkShot(Point mousePosition) {
+        super.checkShot(mousePosition);
+        for(int i = 0; i < movingWitches.size(); i++)
+        {
+            if(new Rectangle(movingWitches.get(i).getX(), movingWitches.get(i).getY(), 400, 200).contains(mousePosition))
+            {
+                shot(movingWitches, i);
+                return;
+            }
+        }
     }
 
-    public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.secInNanosec * 20) {
+    @Override
+    public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
             boss = new Pumpkin(bossImg);
             lastBossAttackTime = System.nanoTime();
         } else if (boss != null) {
-            boss.Update();
+            boss.update();
         }
-        if(System.nanoTime() - Witch.lastObjectTime >= Witch.timeBetweenObjects)
+        if(System.nanoTime() - Witch.getLastObjectTime() >= Witch.getTimeBetweenObjects())
         {
             movingWitches.add(new Witch(witchImg));
 
-            Witch.nextObjectLines++;
-            if(Witch.nextObjectLines >= Witch.objectLines.length)
-                Witch.nextObjectLines = 0;
-
-            Witch.lastObjectTime = System.nanoTime();
+            Witch.setLastObjectTime(System.nanoTime());
         }
 
         for(int i = 0; i < movingWitches.size(); i++)
         {
-            movingWitches.get(i).Update();
+            movingWitches.get(i).update();
 
-            if(movingWitches.get(i).x < -witchImg.getWidth())
+            if(movingWitches.get(i).getX() < -witchImg.getWidth())
             {
                 movingWitches.remove(i);
-                RanAway();
+                ranAway();
             }
         }
 
-        super.UpdateGame(gameTime, mousePosition);
+        super.updateGame(mousePosition);
     }
 
-    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
-        super.DrawBack(g2d);
+    @Override
+    public void draw(Graphics2D g2d, Point mousePosition) throws IOException {
+        super.drawBack(g2d);
         for (Hawk hawk : movingHawks) {
-            hawk.Draw(g2d);
+            hawk.draw(g2d);
         }
         for (Bat bat : movingBats) {
-            bat.Draw(g2d);
+            bat.draw(g2d);
         }
         for (Witch witch : movingWitches) {
-            witch.Draw(g2d);
+            witch.draw(g2d);
         }
-        super.DrawFront(g2d, mousePosition);
+        super.drawFront(g2d, mousePosition);
     }
 }

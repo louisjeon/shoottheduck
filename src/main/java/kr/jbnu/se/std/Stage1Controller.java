@@ -1,21 +1,20 @@
 package kr.jbnu.se.std;
 
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.awt.*;
+import java.awt.Point;
 import java.io.IOException;
+import javax.sound.sampled.*;
 
-public class Stage5 extends Game {
+public class Stage1Controller extends GameController {
+    private static long lastBossDeathTime;
 
-    public Stage5() {
+    public Stage1Controller() {
         super();
-        stage = 5;
+        GameConfig.setStage(1);
     }
 
-    @Override
     public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 5) {
-            boss = new UFO(bossImg);
+        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
+            boss = new BossDuck(GameModel.getBoss);
             lastBossAttackTime = System.nanoTime();
         } else if (boss != null) {
             boss.update();

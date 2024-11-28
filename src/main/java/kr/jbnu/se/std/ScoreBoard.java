@@ -12,28 +12,36 @@ import java.util.concurrent.ExecutionException;
 
 public class ScoreBoard {
     private static ScoreBoard scoreBoard;
-    private final int[] scores;
-    private final CollectionReference scoresCollection;
+    private final static int[] scores = new int[5];
+    private static final Firestore db;
+
+    static {
+        try {
+            db = FirebaseConfig.initialize();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final CollectionReference scoresCollection = db.collection("scores");;
 
 
-    private ScoreBoard() throws IOException, ExecutionException, InterruptedException {
-        Firestore db = FirebaseConfig.initialize();
-        scoresCollection = db.collection("scores");
+    private ScoreBoard() throws ExecutionException, InterruptedException {
+        System.out.println("ScoreBoard Loading...");
         ApiFuture<QuerySnapshot> query = scoresCollection.get();
         QuerySnapshot querySnapshot = query.get();
         List<QueryDocumentSnapshot> documentSnapshotList = querySnapshot.getDocuments();
         QueryDocumentSnapshot documentSnapshot = documentSnapshotList.get(0);
 
-        int[] a = new int[5];
         for (int i = 0; i < 5; i++) {
             Object b = documentSnapshot.get(i + 1 + "");
             if (b != null) {
-                a[i] = Integer.parseInt(Objects.requireNonNull(b).toString());}
+                scores[i] = Integer.parseInt(Objects.requireNonNull(b).toString());}
              else  {
-                a[i] = 0;
+                scores[i] = 0;
              }
         }
-        scores = a;
+        System.out.println("ScoreBoard Loading Done!!!!!");
     }
 
     public static ScoreBoard getInstance() throws IOException, ExecutionException, InterruptedException {
@@ -43,11 +51,11 @@ public class ScoreBoard {
         return scoreBoard;
     }
 
-    public int getScore(int stage) {
+    public static int getScore(int stage) {
         return scores[stage - 1];
     }
 
-    public void setScore(int stage, int score) throws ExecutionException, InterruptedException {
+    public static void setScore(int stage, int score) {
         scores[stage - 1] = score;
         Map<String, Object> data = new HashMap<>();
         data.put(stage + "", score);

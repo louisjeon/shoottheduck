@@ -15,21 +15,18 @@ import java.util.logging.Logger;
 
 public class Stage2 extends Game {
     private BufferedImage hawkImg;
-    protected ArrayList<Hawk> movingHawks;
+    protected static ArrayList<Hawk> movingHawks;
 
-    public Stage2() throws IOException, ExecutionException, InterruptedException {
+    public Stage2() {
         super();
         stage = 2;
+        movingHawks = new ArrayList<>();
     }
 
-    protected void Initialize(){
-        super.Initialize();
-        this.movingHawks = new ArrayList<>();
-    }
-
-    protected void LoadContent()
+    @Override
+    protected void loadContent()
     {
-        super.LoadContent();
+        super.loadContent();
         try
         {
             URL hawkImgUrl = this.getClass().getResource("/images/hawk.png");
@@ -40,63 +37,63 @@ public class Stage2 extends Game {
         }
     }
 
-    public void RestartGame() throws ExecutionException, InterruptedException {
-        super.RestartGame();
+    @Override
+    public void restartGame() {
+        super.restartGame();
         movingHawks.clear();
-        Hawk.lastObjectTime = 0;
+        Hawk.setLastObjectTime(0);
     }
 
-     protected void CheckShot(Point mousePosition) {
-        super.CheckShot(mousePosition);
+    @Override
+     protected void checkShot(Point mousePosition) {
+        super.checkShot(mousePosition);
          for(int i = 0; i < movingHawks.size(); i++)
          {
-             if(new Rectangle(movingHawks.get(i).x, movingHawks.get(i).y, 200, 100).contains(mousePosition))
+             if(new Rectangle(movingHawks.get(i).getX(), movingHawks.get(i).getY(), 200, 100).contains(mousePosition))
              {
-                 Shot(movingHawks, i);
+                 shot(movingHawks, i);
                  return;
              }
          }
     }
 
-    public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+    @Override
+    public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         // Creates a new duck, if it's the time, and add it to the array list.
-        if(System.nanoTime() - Hawk.lastObjectTime >= Hawk.timeBetweenObjects)
+        if(System.nanoTime() - Hawk.getLastObjectTime() >= Hawk.getTimeBetweenObjects())
         {
             movingHawks.add(new Hawk(hawkImg));
 
-            Hawk.nextObjectLines++;
-            if(Hawk.nextObjectLines >= Hawk.objectLines.length)
-                Hawk.nextObjectLines = 0;
-
-            Hawk.lastObjectTime = System.nanoTime();
+            Hawk.setLastObjectTime(System.nanoTime());
         }
 
         for(int i = 0; i < movingHawks.size(); i++)
         {
-            movingHawks.get(i).Update();
+            movingHawks.get(i).update();
 
-            if(movingHawks.get(i).x < -hawkImg.getWidth())
+            if(movingHawks.get(i).getX() < -hawkImg.getWidth())
             {
                 movingHawks.remove(i);
-                RanAway();
+                ranAway();
             }
         }
 
-        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.secInNanosec * 20) {
+        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
             boss = new Eagle(bossImg);
             lastBossAttackTime = System.nanoTime();
         } else if (boss != null) {
-            boss.Update();
+            boss.update();
         }
 
-        super.UpdateGame(gameTime, mousePosition);
+        super.updateGame(mousePosition);
     }
 
-    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
-        super.DrawBack(g2d);
+    @Override
+    public void draw(Graphics2D g2d, Point mousePosition) throws IOException {
+        super.drawBack(g2d);
         for (Hawk hawk : movingHawks) {
-            hawk.Draw(g2d);
+            hawk.draw(g2d);
         }
-        super.DrawFront(g2d, mousePosition);
+        super.drawFront(g2d, mousePosition);
     }
 }

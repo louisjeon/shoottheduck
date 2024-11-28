@@ -15,20 +15,18 @@ import java.util.logging.Logger;
 
 public class Stage3 extends Stage2 {
     private BufferedImage batImg;
-    protected ArrayList<Bat> movingBats;
+    protected static ArrayList<Bat> movingBats;
 
-    public Stage3() throws IOException, ExecutionException, InterruptedException {
+    public Stage3() {
         super();
-        stage = 3;}
-
-    protected void Initialize() {
-        super.Initialize();
-        this.movingBats = new ArrayList<>();
+        stage = 3;
+        movingBats = new ArrayList<>();
     }
 
-    protected void LoadContent()
+    @Override
+    protected void loadContent()
     {
-        super.LoadContent();
+        super.loadContent();
         try
         {
             URL batImgUrl = this.getClass().getResource("/images/bat.png");
@@ -39,63 +37,63 @@ public class Stage3 extends Stage2 {
         }
     }
 
-    public void RestartGame() throws ExecutionException, InterruptedException {
-        super.RestartGame();
+    @Override
+    public void restartGame()  {
+        super.restartGame();
         movingBats.clear();
-        Bat.lastObjectTime = 0;
+        Bat.setLastObjectTime(0);
     }
 
-    protected void CheckShot(Point mousePosition) {
-        super.CheckShot(mousePosition);
+    @Override
+    protected void checkShot(Point mousePosition) {
+        super.checkShot(mousePosition);
         for(int i = 0; i < movingBats.size(); i++)
         {
-            if(new Rectangle(movingBats.get(i).x, movingBats.get(i).y, 40, 30).contains(mousePosition))
+            if(new Rectangle(movingBats.get(i).getX(), movingBats.get(i).getY(), 40, 30).contains(mousePosition))
             {
-                Shot(movingBats, i);
+                shot(movingBats, i);
                 return;
             }
         }
     }
 
-    public void UpdateGame(long gameTime, Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.secInNanosec * 20) {
+    @Override
+    public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+        if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
             boss = new Crow(bossImg);
             lastBossAttackTime = System.nanoTime();
         } else if (boss != null) {
-            boss.Update();
+            boss.update();
         }
-        if(System.nanoTime() - Bat.lastObjectTime >= Bat.timeBetweenObjects)
+        if(System.nanoTime() - Bat.getLastObjectTime() >= Bat.getTimeBetweenObjects())
         {
             movingBats.add(new Bat(batImg));
 
-            Bat.nextObjectLines++;
-            if(Bat.nextObjectLines >= Bat.objectLines.length)
-                Bat.nextObjectLines = 0;
-
-            Bat.lastObjectTime = System.nanoTime();
+            Bat.setLastObjectTime(System.nanoTime());
         }
 
         for(int i = 0; i < movingBats.size(); i++)
         {
-            movingBats.get(i).Update();
+            movingBats.get(i).update();
 
-            if(movingBats.get(i).x < -batImg.getWidth())
+            if(movingBats.get(i).getX() < -batImg.getWidth())
             {
                 movingBats.remove(i);
-                RanAway();
+                ranAway();
             }
         }
-        super.UpdateGame(gameTime, mousePosition);
+        super.updateGame(mousePosition);
     }
 
-    public void Draw(Graphics2D g2d, Point mousePosition) throws IOException {
-        super.DrawBack(g2d);
+    @Override
+    public void draw(Graphics2D g2d, Point mousePosition) throws IOException {
+        super.drawBack(g2d);
         for (Hawk hawk : movingHawks) {
-            hawk.Draw(g2d);
+            hawk.draw(g2d);
         }
         for (Bat bat : movingBats) {
-            bat.Draw(g2d);
+            bat.draw(g2d);
         }
-        super.DrawFront(g2d, mousePosition);
+        super.drawFront(g2d, mousePosition);
     }
 }
