@@ -25,9 +25,8 @@ public class Stage2Controller extends GameController {
         Hawk.setLastObjectTime(0);
     }
 
-    @Override
-     protected void checkShot(Point mousePosition) {
-        super.checkShot(mousePosition);
+     protected static void checkShot(Point mousePosition) {
+        GameController.checkShot(mousePosition);
          for(int i = 0; i < movingHawks.size(); i++)
          {
              if(new Rectangle(movingHawks.get(i).getX(), movingHawks.get(i).getY(), 200, 100).contains(mousePosition))
@@ -38,8 +37,7 @@ public class Stage2Controller extends GameController {
          }
     }
 
-    @Override
-    public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+    public static void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         if(System.nanoTime() - Hawk.getLastObjectTime() >= Hawk.getTimeBetweenObjects())
         {
             movingHawks.add(new Hawk());
@@ -65,7 +63,7 @@ public class Stage2Controller extends GameController {
             boss.update();
         }
 
-        super.updateGame(mousePosition);
+        GameController.updateGame(mousePosition);
     }
 
     public void draw(Graphics2D g2d, Point mousePosition) throws IOException {

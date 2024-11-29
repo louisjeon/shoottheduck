@@ -20,7 +20,7 @@ public class Framework extends Canvas {
     public static final long SEC_IN_NANOSEC = 1000000000L;
     public static final long MILISEC_IN_NANOSEC = 1000000L;
     public enum GameState{STARTING, VISUALIZING, GAME_CONTENT_LOADING, MAIN_MENU, OPTIONS, PLAYING, GAMEOVER, DESTROYED, UPDATE_FEVER}
-    private static GameState gameState;
+    private GameState gameState;
     private Game game;
 
     private BufferedImage shootTheDuckMenuImg;
@@ -180,7 +180,7 @@ public class Framework extends Canvas {
         }
     }
 
-    public static void setGameState(GameState gs) {
+    public void setGameState(GameState gs) {
         gameState = gs;
     }
     
@@ -192,10 +192,10 @@ public class Framework extends Canvas {
         switch (gameState)
         {
             case PLAYING:
-                game.draw(g2d, mousePosition());
+                GameView.instance().draw(g2d, mousePosition());
             break;
             case GAMEOVER:
-                game.drawGameOver(g2d, mousePosition());
+                GameView.instance().drawGameOver(g2d, mousePosition());
             break;
             case MAIN_MENU:
                 g2d.drawImage(shootTheDuckMenuImg, 0, 0, frameWidth, frameHeight, null);
@@ -216,37 +216,21 @@ public class Framework extends Canvas {
             break;
             case GAME_CONTENT_LOADING:
                 if (game != null) {
-                    game.drawScoreWindow(g2d);
+                    GameView.instance().drawScoreWindow(g2d);
                 }
             break;
         }
     }
 
-    private void newGame(int stage) throws IOException, ExecutionException, InterruptedException {
-        switch (stage) {
-            case 1:
-                game = new Stage1();
-                break;
-            case 2:
-                game = new Stage2();
-                break;
-            case 3:
-                game = new Stage3();
-                break;
-            case 4:
-                game = new Stage4Controller();
-                break;
-            case 5:
-                game = new Stage5Controller();
-                break;
-        }
+    private void newGame() throws IOException, ExecutionException, InterruptedException {
+        game = new Game();
     }
     
     /**
      *  Restart game - reset game time and call RestartGame() method of game object so that reset some variables.
      */
     private void restartGame() throws ExecutionException, InterruptedException {
-        game.restartGame();
+        GameController.restartGame();
         
         // We change game status so that the game can start.
         gameState = GameState.PLAYING;
@@ -286,7 +270,7 @@ public class Framework extends Canvas {
         {
             case GAMEOVER:
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    game.saveScore();
+                    GameController.saveScore();
                     game = null;
                     gameState = GameState.MAIN_MENU;
                 }
@@ -295,7 +279,7 @@ public class Framework extends Canvas {
                 break;
             case PLAYING:
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    game.saveScore();
+                    GameController.saveScore();
                     game = null;
                     gameState = GameState.MAIN_MENU;
                 }
@@ -328,33 +312,26 @@ public class Framework extends Canvas {
     {
         if (Objects.requireNonNull(gameState) == GameState.MAIN_MENU) {
             if (e.getButton() == MouseEvent.BUTTON1) {
+                boolean clicked = false;
                 if (new Rectangle(frameWidth / 2 - stage1BtnImg.getWidth() / 2, frameHeight / 2 - 160, stage1BtnImg.getWidth(), stage1BtnImg.getHeight()).contains(e.getPoint())) {
-                    try {
-                        newGame(1);
-                    } catch (IOException | ExecutionException | InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    GameConfig.setStage(1);
+                    clicked = true;
                 } else if (new Rectangle(frameWidth / 2 - stage2BtnImg.getWidth() / 2, frameHeight / 2 - 60, stage2BtnImg.getWidth(), stage2BtnImg.getHeight()).contains(e.getPoint())) {
-                    try {
-                        newGame(2);
-                    } catch (IOException | ExecutionException | InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    GameConfig.setStage(2);
+                    clicked = true;
                 } else if (new Rectangle(frameWidth / 2 - stage3BtnImg.getWidth() / 2, frameHeight / 2 + 40, stage3BtnImg.getWidth(), stage3BtnImg.getHeight()).contains(e.getPoint())) {
-                    try {
-                        newGame(3);
-                    } catch (IOException | ExecutionException | InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    GameConfig.setStage(3);
+                    clicked = true;
                 } else if (new Rectangle(frameWidth / 2 - stage4BtnImg.getWidth() / 2, frameHeight / 2 + 140, stage4BtnImg.getWidth(), stage4BtnImg.getHeight()).contains(e.getPoint())) {
-                    try {
-                        newGame(4);
-                    } catch (IOException | ExecutionException | InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    GameConfig.setStage(4);
+                    clicked = true;
                 } else if (new Rectangle(frameWidth / 2 - stage5BtnImg.getWidth() / 2, frameHeight / 2 + 240, stage5BtnImg.getWidth(), stage5BtnImg.getHeight()).contains(e.getPoint())) {
+                    GameConfig.setStage(5);
+                    clicked = true;
+                }
+                if (clicked) {
                     try {
-                        newGame(5);
+                        newGame();
                     } catch (IOException | ExecutionException | InterruptedException ex) {
                         throw new RuntimeException(ex);
                     }

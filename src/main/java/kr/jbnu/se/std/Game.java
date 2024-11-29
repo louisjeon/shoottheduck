@@ -3,7 +3,7 @@ package kr.jbnu.se.std;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public abstract class Game {
+public class Game {
     protected Thread threadForInitGame;
 
     protected Game() {

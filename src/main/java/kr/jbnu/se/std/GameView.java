@@ -54,7 +54,7 @@ public class GameView {
         return op.filter(img, null);
     }
 
-    public void drawBack(Graphics2D g2d) throws IOException {
+    public static void drawBack(Graphics2D g2d) throws IOException {
         g2d.setFont(font);
         g2d.setColor(Color.darkGray);
         g2d.drawImage(GameModel.stage(0).getBackgroundImg(), 0, 0, Framework.getFrameWidth(), Framework.getFrameHeight(), null);
@@ -278,6 +278,7 @@ public class GameView {
 
     public void draw(Graphics2D g2d, Point mousePosition) throws IOException {
         drawBack(g2d);
+
         drawFront(g2d, mousePosition);
     }
 

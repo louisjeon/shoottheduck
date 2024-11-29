@@ -10,13 +10,13 @@ public class Stage1Controller extends GameController {
         GameConfig.setStage(1);
     }
 
-    public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+    public static void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
             boss = new BossDuck();
             lastBossAttackTime = System.nanoTime();
         } else if (boss != null) {
             boss.update();
         }
-        super.updateGame(mousePosition);
+        GameController.updateGame(mousePosition);
     }
 }

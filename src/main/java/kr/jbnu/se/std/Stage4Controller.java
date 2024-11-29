@@ -26,9 +26,8 @@ public class Stage4Controller extends Stage3Controller {
         Witch.setLastObjectTime(0);
     }
 
-    @Override
-    protected void checkShot(Point mousePosition) {
-        super.checkShot(mousePosition);
+    protected static void checkShot(Point mousePosition) {
+        GameController.checkShot(mousePosition);
         for(int i = 0; i < movingWitches.size(); i++)
         {
             if(new Rectangle(movingWitches.get(i).getX(), movingWitches.get(i).getY(), 400, 200).contains(mousePosition))
@@ -39,8 +38,7 @@ public class Stage4Controller extends Stage3Controller {
         }
     }
 
-    @Override
-    public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+    public static void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
             boss = new Pumpkin();
             lastBossAttackTime = System.nanoTime();
@@ -65,7 +63,7 @@ public class Stage4Controller extends Stage3Controller {
             }
         }
 
-        super.updateGame(mousePosition);
+        GameController.updateGame(mousePosition);
     }
 
     @Override

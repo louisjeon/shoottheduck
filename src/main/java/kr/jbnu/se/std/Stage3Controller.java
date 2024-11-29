@@ -26,9 +26,8 @@ public class Stage3Controller extends Stage2Controller {
         Bat.setLastObjectTime(0);
     }
 
-    @Override
-    protected void checkShot(Point mousePosition) {
-        super.checkShot(mousePosition);
+    protected static void checkShot(Point mousePosition) {
+        GameController.checkShot(mousePosition);
         for(int i = 0; i < movingBats.size(); i++)
         {
             if(new Rectangle(movingBats.get(i).getX(), movingBats.get(i).getY(), 40, 30).contains(mousePosition))
@@ -39,8 +38,7 @@ public class Stage3Controller extends Stage2Controller {
         }
     }
 
-    @Override
-    public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+    public static void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
             boss = new Crow();
             lastBossAttackTime = System.nanoTime();
@@ -64,7 +62,7 @@ public class Stage3Controller extends Stage2Controller {
                 ranAway();
             }
         }
-        super.updateGame(mousePosition);
+        GameController.updateGame(mousePosition);
     }
 
     public void draw(Graphics2D g2d, Point mousePosition) throws IOException {

@@ -293,7 +293,7 @@ public class GameController {
         GameView.instance().drawFever();
     }
 
-    public void saveScore() {
+    public static void saveScore() {
         int stage = GameConfig.getStage();
         if (score > ScoreBoard.getScore(stage)) {
             ScoreBoard.setScore(stage, score);
