@@ -9,37 +9,19 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Stage4 extends Stage3 {
-    private BufferedImage witchImg;
-    protected static ArrayList<Witch> movingWitches;
+public class Stage4Controller extends Stage3Controller {
+    protected static ArrayList<Witch> movingWitches = new ArrayList<>();;
 
-    public Stage4() {
+    public Stage4Controller() {
         super();
-        stage = 4;
-        movingWitches = new ArrayList<>();
+        GameConfig.setStage(4);
     }
 
-    @Override
-    protected void loadContent()
-    {
-        super.loadContent();
-        try
-        {
-            URL witchImgUrl = this.getClass().getResource("/images/witch.png");
-            witchImg = ImageIO.read(Objects.requireNonNull(witchImgUrl));
-        }
-        catch (IOException ex) {
-            Logger.getLogger(Stage4.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void restartGame() {
-        super.restartGame();
+    public static void restartGame() {
+        GameController.restartGame();
         movingWitches.clear();
         Witch.setLastObjectTime(0);
     }
@@ -60,14 +42,14 @@ public class Stage4 extends Stage3 {
     @Override
     public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
-            boss = new Pumpkin(bossImg);
+            boss = new Pumpkin();
             lastBossAttackTime = System.nanoTime();
         } else if (boss != null) {
             boss.update();
         }
         if(System.nanoTime() - Witch.getLastObjectTime() >= Witch.getTimeBetweenObjects())
         {
-            movingWitches.add(new Witch(witchImg));
+            movingWitches.add(new Witch());
 
             Witch.setLastObjectTime(System.nanoTime());
         }
@@ -76,7 +58,7 @@ public class Stage4 extends Stage3 {
         {
             movingWitches.get(i).update();
 
-            if(movingWitches.get(i).getX() < -witchImg.getWidth())
+            if(movingWitches.get(i).getX() < -GameModel.getWitchImg().getWidth())
             {
                 movingWitches.remove(i);
                 ranAway();
@@ -88,16 +70,9 @@ public class Stage4 extends Stage3 {
 
     @Override
     public void draw(Graphics2D g2d, Point mousePosition) throws IOException {
-        super.drawBack(g2d);
-        for (Hawk hawk : movingHawks) {
-            hawk.draw(g2d);
-        }
-        for (Bat bat : movingBats) {
-            bat.draw(g2d);
-        }
+        super.draw(g2d, mousePosition);
         for (Witch witch : movingWitches) {
             witch.draw(g2d);
         }
-        super.drawFront(g2d, mousePosition);
     }
 }

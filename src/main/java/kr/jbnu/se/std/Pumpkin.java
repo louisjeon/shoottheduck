@@ -3,7 +3,7 @@ package kr.jbnu.se.std;
 import java.io.IOException;
 
 public class Pumpkin extends MovingBossObject {
-    public static int[][] objectLines = {
+    private static final int[][] objectLines = {
             {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.10), -2, 2500},
             {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.15), -3, 2500},
             {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.20), -4, 2500},

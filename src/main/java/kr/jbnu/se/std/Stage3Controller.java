@@ -9,37 +9,19 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Stage3 extends Stage2 {
-    private BufferedImage batImg;
-    protected static ArrayList<Bat> movingBats;
+public class Stage3Controller extends Stage2Controller {
+    protected static ArrayList<Bat> movingBats = new ArrayList<>();;
 
-    public Stage3() {
+    public Stage3Controller() {
         super();
-        stage = 3;
-        movingBats = new ArrayList<>();
+        GameConfig.setStage(3);
     }
 
-    @Override
-    protected void loadContent()
-    {
-        super.loadContent();
-        try
-        {
-            URL batImgUrl = this.getClass().getResource("/images/bat.png");
-            batImg = ImageIO.read(Objects.requireNonNull(batImgUrl));
-        }
-        catch (IOException ex) {
-            Logger.getLogger(Stage3.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    @Override
-    public void restartGame()  {
-        super.restartGame();
+    public static void restartGame()  {
+        GameController.restartGame();
         movingBats.clear();
         Bat.setLastObjectTime(0);
     }
@@ -60,14 +42,14 @@ public class Stage3 extends Stage2 {
     @Override
     public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
-            boss = new Crow(bossImg);
+            boss = new Crow();
             lastBossAttackTime = System.nanoTime();
         } else if (boss != null) {
             boss.update();
         }
         if(System.nanoTime() - Bat.getLastObjectTime() >= Bat.getTimeBetweenObjects())
         {
-            movingBats.add(new Bat(batImg));
+            movingBats.add(new Bat());
 
             Bat.setLastObjectTime(System.nanoTime());
         }
@@ -76,7 +58,7 @@ public class Stage3 extends Stage2 {
         {
             movingBats.get(i).update();
 
-            if(movingBats.get(i).getX() < -batImg.getWidth())
+            if(movingBats.get(i).getX() < -GameModel.getBatImg().getWidth())
             {
                 movingBats.remove(i);
                 ranAway();
@@ -85,15 +67,10 @@ public class Stage3 extends Stage2 {
         super.updateGame(mousePosition);
     }
 
-    @Override
     public void draw(Graphics2D g2d, Point mousePosition) throws IOException {
-        super.drawBack(g2d);
-        for (Hawk hawk : movingHawks) {
-            hawk.draw(g2d);
-        }
+        super.draw(g2d, mousePosition);
         for (Bat bat : movingBats) {
             bat.draw(g2d);
         }
-        super.drawFront(g2d, mousePosition);
     }
 }

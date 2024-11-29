@@ -25,7 +25,9 @@ public class GameModel {
     private static BufferedImage frogImg;
     private static BufferedImage sightImg;
     private static BufferedImage weaponsImg;
+    private static BufferedImage hawkImg;
     private static BufferedImage batImg;
+    private static BufferedImage witchImg;
 
     private GameModel(int stage) throws IOException {
         URL duckImgUrl = this.getClass().getResource("/images/duck" + stage + ".png");
@@ -40,7 +42,9 @@ public class GameModel {
         URL sightImgUrl = this.getClass().getResource("/images/sight.png");
         URL frogImgUrl = this.getClass().getResource("/images/frog_revolver.png");
         URL weaponsImgUrl = this.getClass().getResource("/images/weapons1.png");
+        URL hawkImgUrl = this.getClass().getResource("/images/hawk.png");
         URL batImgUrl = this.getClass().getResource("/images/bat.png");
+        URL witchImgUrl = this.getClass().getResource("/images/witch.png");
 
         duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
         grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
@@ -54,7 +58,9 @@ public class GameModel {
         sightImg = ImageIO.read(Objects.requireNonNull(sightImgUrl));
         frogImg = ImageIO.read(Objects.requireNonNull(frogImgUrl));
         weaponsImg = ImageIO.read(Objects.requireNonNull(weaponsImgUrl));
+        hawkImg = ImageIO.read(Objects.requireNonNull(hawkImgUrl));
         batImg = ImageIO.read(Objects.requireNonNull(batImgUrl));
+        witchImg = ImageIO.read(Objects.requireNonNull(witchImgUrl));
     }
 
     public static GameModel stage(int stage) throws IOException {
@@ -154,5 +160,13 @@ public class GameModel {
 
     public static BufferedImage getBatImg() {
         return batImg;
+    }
+
+    public static BufferedImage getHawkImg() {
+        return hawkImg;
+    }
+
+    public static BufferedImage getWitchImg() {
+        return witchImg;
     }
 }

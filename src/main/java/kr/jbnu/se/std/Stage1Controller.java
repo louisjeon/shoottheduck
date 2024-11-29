@@ -5,8 +5,6 @@ import java.io.IOException;
 import javax.sound.sampled.*;
 
 public class Stage1Controller extends GameController {
-    private static long lastBossDeathTime;
-
     public Stage1Controller() {
         super();
         GameConfig.setStage(1);
@@ -14,7 +12,7 @@ public class Stage1Controller extends GameController {
 
     public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
-            boss = new BossDuck(GameModel.getBoss);
+            boss = new BossDuck();
             lastBossAttackTime = System.nanoTime();
         } else if (boss != null) {
             boss.update();

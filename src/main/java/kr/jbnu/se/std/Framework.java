@@ -116,7 +116,7 @@ public class Framework extends Canvas {
             switch (gameState)
             {
                 case PLAYING:
-                    game.updateGame(mousePosition());
+                    GameController.updateGame(mousePosition());
                 break;
                 case GAMEOVER:
                     //...
@@ -234,10 +234,10 @@ public class Framework extends Canvas {
                 game = new Stage3();
                 break;
             case 4:
-                game = new Stage4();
+                game = new Stage4Controller();
                 break;
             case 5:
-                game = new Stage5();
+                game = new Stage5Controller();
                 break;
         }
     }

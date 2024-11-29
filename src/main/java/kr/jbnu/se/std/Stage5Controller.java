@@ -5,17 +5,16 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
 import java.io.IOException;
 
-public class Stage5 extends Game {
+public class Stage5Controller extends GameController {
 
-    public Stage5() {
+    public Stage5Controller() {
         super();
-        stage = 5;
+        GameConfig.setStage(5);
     }
 
-    @Override
     public void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 5) {
-            boss = new UFO(bossImg);
+            boss = new UFO();
             lastBossAttackTime = System.nanoTime();
         } else if (boss != null) {
             boss.update();

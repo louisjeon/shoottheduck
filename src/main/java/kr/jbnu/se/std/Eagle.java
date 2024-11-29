@@ -1,6 +1,5 @@
 package kr.jbnu.se.std;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class Eagle extends MovingBossObject {

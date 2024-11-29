@@ -28,7 +28,8 @@ public class GameController {
     private static long timeBetweenReload;
     private static ArrayList<Duck> movingDucks;
     private static ArrayList<PotionDuck> movingPotionDucks;
-    private static long lastBossAttackTime;
+    protected static long lastBossAttackTime;
+    protected static long lastBossDeathTime;
     private static boolean canShoot;
     private static boolean showShotEffect;
     protected static MovingBossObject boss;
@@ -61,7 +62,7 @@ public class GameController {
         setInitialValues();
     }
 
-    public void playSound(String soundName, Float decibel) {
+    public static void playSound(String soundName, Float decibel) {
         try {
             File soundFile = new File("src/main/resources/audio/" + soundName + ".wav");
             AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
@@ -76,13 +77,13 @@ public class GameController {
         }
     }
 
-    public void shot(ArrayList<? extends MovingObject> arrayList, int i) {
+    public static void shot(ArrayList<? extends MovingObject> arrayList, int i) {
         score += (int) Math.floor(arrayList.get(i).getScore() * scoreMultiplier);
         arrayList.remove(i);
         hit = true;
     }
 
-    public void restartGame() {
+    public static void restartGame() {
         setInitialValues();
         movingDucks.clear();
         movingPotionDucks.clear();
@@ -98,7 +99,7 @@ public class GameController {
 
     };
 
-    public void updateGame(Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+    public static void updateGame(Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
         ScheduledThreadPoolExecutor exec3;
         if (boss != null) {
             boolean case1 = false;
@@ -162,7 +163,7 @@ public class GameController {
             if (stage != 5) {
                 movingDucks.add(new Duck());
             } else {
-                movingDucks.add(new FastDuck(stage));
+                movingDucks.add(new FastDuck());
             }
 
             Duck.setLastObjectTime(System.nanoTime());
@@ -224,7 +225,7 @@ public class GameController {
                     GameConfig.setGunType(GameConfig.GunType.MACHINEGUN);
                     timeBetweenShots = Framework.SEC_IN_NANOSEC / 20;
                     timeBetweenReload = (Framework.SEC_IN_NANOSEC) * 3;
-                };
+                }
                 playSound("reload"+ (gunType.ordinal() + 1), Guns.getReloadDecibel(gunType));
             } else if (canShoot) {
                 if (Guns.getBullets(gunType) == 0) {
@@ -253,7 +254,7 @@ public class GameController {
     }
 
 
-    public void checkShot(Point mousePosition) {
+    protected static void checkShot(Point mousePosition) {
         for(int i = 0; i < movingDucks.size(); i++)
         {
             if(new Rectangle(movingDucks.get(i).getX() + 18, movingDucks.get(i).getY()     , 27, 30).contains(mousePosition) ||
@@ -285,7 +286,7 @@ public class GameController {
         }
     }
 
-    public void ranAway() throws IOException {
+    public static void ranAway() throws IOException {
         runawayObjects++;
         health -= 1f;
         feverCnt = 0;
