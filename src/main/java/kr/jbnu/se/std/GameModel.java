@@ -9,19 +9,25 @@ import java.util.Objects;
 
 public class GameModel {
     private static final GameModel[] gameModels = new GameModel[5];
-    private final BufferedImage duckImg;
-    private final BufferedImage grassImg;
-    private final BufferedImage backgroundImg;
+    static {
+        try {
+            new GameModel();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private BufferedImage duckImg;
+    private BufferedImage grassImg;
+    private BufferedImage backgroundImg;
     private static BufferedImage healthBarImg;
-    private static BufferedImage feverBarImg;
+    private static BufferedImage[] feverBarImgs;
     private static BufferedImage gunEffectImg;
-    private final BufferedImage bossImg;
-    private final BufferedImage bossAttackImg;
-    private final BufferedImage potionDuckImg;
+    private BufferedImage bossImg;
+    private BufferedImage bossAttackImg;
+    private BufferedImage potionDuckImg;
     private static Image feverFireGif;
-    private static BufferedImage combo1stDigitImg;
-    private static BufferedImage combo2ndDigitImg;
-    private static BufferedImage combo3rdDigitImg;
+    private static BufferedImage[] comboDigitImgs;
+    private static BufferedImage[] currentCombiDigitImgs;
     private static BufferedImage frogImg;
     private static BufferedImage sightImg;
     private static BufferedImage weaponsImg;
@@ -29,38 +35,57 @@ public class GameModel {
     private static BufferedImage batImg;
     private static BufferedImage witchImg;
 
+    private GameModel() throws IOException {
+        URL healthBarImgUrl = this.getClass().getResource("/images/health_bar.png");
+        URL gunEffectImgUrl = this.getClass().getResource("/images/gun_effect.png");
+        URL sightImgUrl = this.getClass().getResource("/images/sight.png");
+        URL hawkImgUrl = this.getClass().getResource("/images/hawk.png");
+        URL batImgUrl = this.getClass().getResource("/images/bat.png");
+        URL witchImgUrl = this.getClass().getResource("/images/witch.png");
+        URL frogImgUrl = this.getClass().getResource("/images/frog_revolver.png");
+        URL weaponsImgUrl = this.getClass().getResource("/images/weapons1.png");
+
+        BufferedImage[] tmp = new BufferedImage[11];
+        for (int i = 0; i < 11; i++) {
+            URL feverBarImgUrl = this.getClass().getResource("/images/fever" + i + ".png");
+            tmp[i] = ImageIO.read(Objects.requireNonNull(feverBarImgUrl));
+        }
+        feverBarImgs = tmp;
+
+        BufferedImage[] tmp2 = new BufferedImage[10];
+        for (int i = 0; i < 10; i++) {
+            URL feverBarImgUrl = this.getClass().getResource("/images/number" + i + ".png");
+            tmp2[i] = ImageIO.read(Objects.requireNonNull(feverBarImgUrl));
+        }
+        comboDigitImgs = tmp2;
+
+        BufferedImage[] tmp3 = new BufferedImage[3];
+        currentCombiDigitImgs = tmp3;
+
+        healthBarImg = ImageIO.read(Objects.requireNonNull(healthBarImgUrl));
+        gunEffectImg = ImageIO.read(Objects.requireNonNull(gunEffectImgUrl));
+        sightImg = ImageIO.read(Objects.requireNonNull(sightImgUrl));
+        hawkImg = ImageIO.read(Objects.requireNonNull(hawkImgUrl));
+        batImg = ImageIO.read(Objects.requireNonNull(batImgUrl));
+        witchImg = ImageIO.read(Objects.requireNonNull(witchImgUrl));
+        frogImg = ImageIO.read(Objects.requireNonNull(frogImgUrl));
+        weaponsImg = ImageIO.read(Objects.requireNonNull(weaponsImgUrl));
+    }
+
     private GameModel(int stage) throws IOException {
         URL duckImgUrl = this.getClass().getResource("/images/duck" + stage + ".png");
         URL grassImgUrl = this.getClass().getResource("/images/grass" + stage + ".png");
-        URL healthBarImgUrl = this.getClass().getResource("/images/health_bar.png");
-        URL feverBarImgUrl = this.getClass().getResource("/images/fever0.png");
         URL backgroundImgUrl = this.getClass().getResource("/images/background" + stage + ".jpg");
         URL potionDuckImgUrl = this.getClass().getResource("/images/duck" + stage +"_potion.png");
         URL bossImgUrl = this.getClass().getResource("/images/boss" + stage + ".png");
         URL bossAttackImgUrl = this.getClass().getResource("/images/boss_attack" + stage + ".png");
-        URL gunEffectImgUrl = this.getClass().getResource("/images/gun_effect.png");
-        URL sightImgUrl = this.getClass().getResource("/images/sight.png");
-        URL frogImgUrl = this.getClass().getResource("/images/frog_revolver.png");
-        URL weaponsImgUrl = this.getClass().getResource("/images/weapons1.png");
-        URL hawkImgUrl = this.getClass().getResource("/images/hawk.png");
-        URL batImgUrl = this.getClass().getResource("/images/bat.png");
-        URL witchImgUrl = this.getClass().getResource("/images/witch.png");
 
         duckImg = ImageIO.read(Objects.requireNonNull(duckImgUrl));
         grassImg = ImageIO.read(Objects.requireNonNull(grassImgUrl));
-        healthBarImg = ImageIO.read(Objects.requireNonNull(healthBarImgUrl));
-        feverBarImg = ImageIO.read(Objects.requireNonNull(feverBarImgUrl));
         backgroundImg = ImageIO.read(Objects.requireNonNull(backgroundImgUrl));
         potionDuckImg = ImageIO.read(Objects.requireNonNull(potionDuckImgUrl));
         bossImg = ImageIO.read(Objects.requireNonNull(bossImgUrl));
         bossAttackImg = ImageIO.read(Objects.requireNonNull(bossAttackImgUrl));
-        gunEffectImg = ImageIO.read(Objects.requireNonNull(gunEffectImgUrl));
-        sightImg = ImageIO.read(Objects.requireNonNull(sightImgUrl));
-        frogImg = ImageIO.read(Objects.requireNonNull(frogImgUrl));
-        weaponsImg = ImageIO.read(Objects.requireNonNull(weaponsImgUrl));
-        hawkImg = ImageIO.read(Objects.requireNonNull(hawkImgUrl));
-        batImg = ImageIO.read(Objects.requireNonNull(batImgUrl));
-        witchImg = ImageIO.read(Objects.requireNonNull(witchImgUrl));
     }
 
     public static GameModel stage(int stage) throws IOException {
@@ -86,8 +111,8 @@ public class GameModel {
         return healthBarImg;
     }
 
-    public static BufferedImage getFeverBarImg() {
-        return feverBarImg;
+    public static BufferedImage getFeverBarImg(int n) {
+        return feverBarImgs[n];
     }
 
     public static BufferedImage getGunEffectImg() {
@@ -114,28 +139,22 @@ public class GameModel {
         return feverFireGif;
     }
 
-    public static void setCombo1stDigitImg(BufferedImage img) {
-        combo1stDigitImg = img;
+    public static BufferedImage getComboDigitImg(int n) {
+        return currentCombiDigitImgs[n-1];
     }
 
-    public static BufferedImage getCombo1stDigitImg() {
-        return combo1stDigitImg;
+    public static void setComboDigitImg(int n, int digit) {
+        if (digit >= 0) {
+            currentCombiDigitImgs[n-1] = comboDigitImgs[digit];
+        } else {
+            currentCombiDigitImgs[n-1] = null;
+        }
     }
 
-    public static void setCombo2ndDigitImg(BufferedImage img) {
-        combo2ndDigitImg = img;
-    }
-
-    public static BufferedImage getCombo2ndDigitImg() {
-        return combo2ndDigitImg;
-    }
-
-    public static void setCombo3rdDigitImg(BufferedImage img) {
-        combo3rdDigitImg = img;
-    }
-
-    public static BufferedImage getCombo3rdDigitImg() {
-        return combo3rdDigitImg;
+    public static void resetComboDigitImgs() {
+        for (int i = 0; i < 3; i++) {
+            comboDigitImgs[i] = null;
+        }
     }
 
     public static void setFrogImg(BufferedImage img) {

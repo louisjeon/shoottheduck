@@ -9,7 +9,6 @@ public class Game {
     protected Game() {
         Framework.setGameState(Framework.GameState.GAME_CONTENT_LOADING);
         new ScheduledThreadPoolExecutor(1).schedule(() -> threadForInitGame.start(), 3, TimeUnit.SECONDS);
-
         threadForInitGame = new Thread() {
             @Override
             public void run(){

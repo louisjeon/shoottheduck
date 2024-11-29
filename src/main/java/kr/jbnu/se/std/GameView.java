@@ -1,8 +1,5 @@
 package kr.jbnu.se.std;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -18,8 +15,8 @@ import java.util.concurrent.TimeUnit;
 import static kr.jbnu.se.std.GameConfig.font;
 
 public class GameView {
-    private static final Logger log = LoggerFactory.getLogger(GameView.class);
-    BufferedImage sightImg = GameModel.getSightImg();
+    private static BufferedImage sightImg = GameModel.getSightImg();
+    private static BufferedImage healthBarImg = GameModel.getHealthBarImg();
     URL blueUrl = this.getClass().getResource("/images/blue_fire.gif");
     Image blueFeverFire = new ImageIcon(Objects.requireNonNull(blueUrl)).getImage();
     URL redUrl = this.getClass().getResource("/images/red_fire.gif");
@@ -57,7 +54,7 @@ public class GameView {
     public static void drawBack(Graphics2D g2d) throws IOException {
         g2d.setFont(font);
         g2d.setColor(Color.darkGray);
-        g2d.drawImage(GameModel.stage(0).getBackgroundImg(), 0, 0, Framework.getFrameWidth(), Framework.getFrameHeight(), null);
+        g2d.drawImage(GameModel.stage(GameConfig.getStage()).getBackgroundImg(), 0, 0, Framework.getFrameWidth(), Framework.getFrameHeight(), null);
         MovingBossObject boss = GameController.getBoss();
         if (boss != null) {
             boss.draw(g2d);
@@ -70,7 +67,7 @@ public class GameView {
         }
     }
 
-    public void drawCombo(Graphics2D g2d, Point mousePosition) throws IOException {
+    public void drawCombo(Graphics2D g2d, Point mousePosition) {
         if (showShotEffect) {
             rotationCenterX = Framework.getFrameWidth() + (double) frog.getXChange();
             rotationCenterY = Framework.getFrameHeight() + (double) frog.getYChange();
@@ -106,9 +103,9 @@ public class GameView {
             g2d.drawImage(GameModel.getGunEffectImg(), Framework.getFrameWidth() - frogImg.getWidth() + x + frog.getXChange(), Framework.getFrameHeight()  - frogImg.getHeight() + y + frog.getYChange(), null);
             g2d.setTransform(old);
         }
-        BufferedImage combo1stDigitImg = GameModel.getCombo1stDigitImg();
-        BufferedImage combo2ndDigitImg = GameModel.getCombo2ndDigitImg();
-        BufferedImage combo3rdDigitImg = GameModel.getCombo3rdDigitImg();
+        BufferedImage combo1stDigitImg = GameModel.getComboDigitImg(1);
+        BufferedImage combo2ndDigitImg = GameModel.getComboDigitImg(2);
+        BufferedImage combo3rdDigitImg = GameModel.getComboDigitImg(3);
         if (combo1stDigitImg != null) {
             g2d.drawImage(combo1stDigitImg, (int) mousePosition.getX() - 50, (int) mousePosition.getY() - 80, null);
             g2d.drawImage(combo2ndDigitImg, (int) mousePosition.getX() - 20, (int) mousePosition.getY() - 80, null);
@@ -127,7 +124,7 @@ public class GameView {
         double scoreMultiplier = GameController.getScoreMultiplier();
         int feverCnt = GameController.getFeverCnt();
         g2d.drawString("HP: " + GameController.getHealth() + " | " + "KILLS: " + GameController.getKilledObjects() + " | " + "SHOOTS: " + GameController.getShoots() + " | " + "SCORE: " + GameController.getScore() + " | " + "BULLETS: " + Guns.getBullets(GameConfig.getGunType()) + "/" + Guns.getDefaultBullets(GameConfig.getGunType()), 10, 21);
-        g2d.drawString("FEVERx" + scoreMultiplier, Framework.getFrameWidth() - GameModel.getFeverBarImg().getWidth(), 80 + GameModel.getFeverBarImg().getHeight());
+        g2d.drawString("FEVERx" + scoreMultiplier, Framework.getFrameWidth() - GameModel.getFeverBarImg(0).getWidth(), 80 + GameModel.getFeverBarImg(0).getHeight());
         if (scoreMultiplier > 1) {
             g2d.setFont(new Font("SanSerif", Font.BOLD, 30));
             if (feverCnt >= 9) {
@@ -139,10 +136,8 @@ public class GameView {
             }
             g2d.drawString("x" + scoreMultiplier, mousePosition.x + 30, mousePosition.y);
         }
-
+        BufferedImage feverBarImg = GameModel.getFeverBarImg(feverCnt);
         BufferedImage grassImg = GameModel.stage(GameConfig.getStage()).getGrassImg();
-        BufferedImage healthBarImg = GameModel.getHealthBarImg();
-        BufferedImage feverBarImg = GameModel.getFeverBarImg();
 
         g2d.drawImage(grassImg, 0, Framework.getFrameHeight() - grassImg.getHeight(), Framework.getFrameWidth(), grassImg.getHeight(), null);
         g2d.drawImage(sightImg, mousePosition.x - sightImgMiddleWidth, mousePosition.y - sightImgMiddleHeight, null);
@@ -237,16 +232,17 @@ public class GameView {
         int feverCnt = GameController.getFeverCnt();
 
         if (feverCnt >= 100) {
-            URL combo1stDigitUrl = this.getClass().getResource("/images/number" + (feverCnt / 100) + ".png");
-            GameModel.setCombo1stDigitImg(ImageIO.read(Objects.requireNonNull(combo1stDigitUrl)));
+            GameModel.setComboDigitImg(1, feverCnt / 100);
         } else {
-            GameModel.setCombo1stDigitImg(null);
+            GameModel.setComboDigitImg(1, -1);
         }
         if (feverCnt >= 10) {
-            URL combo2ndDigitUrl = this.getClass().getResource("/images/number" + ((feverCnt % 100) / 10) + ".png");
-            GameModel.setCombo2ndDigitImg(ImageIO.read(Objects.requireNonNull(combo2ndDigitUrl)));
+            GameModel.setComboDigitImg(2, (feverCnt % 100) / 10);
         } else {
-            GameModel.setCombo2ndDigitImg(null);
+            GameModel.setComboDigitImg(2, -1);
+        }
+        if (feverCnt > 0) {
+            GameModel.setComboDigitImg(3, feverCnt % 10);
         }
         if (feverCnt >= 9) {
             GameController.setScoreMultiplier(2.5);
@@ -261,16 +257,14 @@ public class GameView {
             GameController.setScoreMultiplier(1);
             GameModel.setFeverFireGif(null);
             if (feverCnt == 0) {
-                GameModel.setCombo3rdDigitImg(null);
+                GameModel.setComboDigitImg(3, -1);
             }
         }
 
         exec2 = new ScheduledThreadPoolExecutor(1);
         exec2.schedule(new Runnable() {
             public void run() {
-                GameModel.setCombo1stDigitImg(null);
-                GameModel.setCombo2ndDigitImg(null);
-                GameModel.setCombo3rdDigitImg(null);
+                GameModel.resetComboDigitImgs();
             }
         }, 500, TimeUnit.MILLISECONDS);
     }
@@ -286,7 +280,6 @@ public class GameView {
         g2d.setColor(Color.black);
         g2d.fillRect(0, 0, Framework.getFrameWidth() , Framework.getFrameHeight());
         g2d.setColor(Color.WHITE);
-        log.info("Drawing Score Board...");
         int stage = GameConfig.getStage();
         g2d.drawString("Stage " + stage + " best result: " + ScoreBoard.getScore(stage), Framework.getFrameWidth()  / 2 - 39, (int)(Framework.getFrameHeight() * 0.65) + 1);
     }
