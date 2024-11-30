@@ -5,34 +5,36 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public abstract class MovingObject {
-    public static Random random;
-    public static long timeBetweenObjects;
-    public int x;
-    public int y;
-    public static long lastObjectTime;
-    protected int speed;
-    public int score;
-    protected BufferedImage objectImg;
+    protected int x;
+    protected int y;
+    protected  int speed;
+    protected final BufferedImage objectImg;
+    protected int score;
+    protected Random random = new Random();
 
-    public MovingObject(int[][] objectLines,int nextObjectLines, BufferedImage objectImg)
+    protected MovingObject(BufferedImage objectImg)
     {
-        random = new Random();
-        this.x = objectLines[nextObjectLines][0] + random.nextInt(200);
-        this.y = objectLines[nextObjectLines][1];
-
-        this.speed = objectLines[nextObjectLines][2];
-
-        this.score = objectLines[nextObjectLines][3];
-
         this.objectImg = objectImg;
     }
 
-    public void Update()
+    public void update() //객체 위치 업데이트
     {
         x += speed;
     }
 
-    public void Draw(Graphics2D g2d)
+    public int getScore() {
+        return score;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void draw(Graphics2D g2d)
     {
         g2d.drawImage(objectImg, x, y, null);
     }
