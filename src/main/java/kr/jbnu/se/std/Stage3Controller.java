@@ -1,16 +1,8 @@
 package kr.jbnu.se.std;
 
-import javax.imageio.ImageIO;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Stage3Controller extends Stage2Controller {
     protected static ArrayList<Bat> movingBats = new ArrayList<>();
