@@ -13,7 +13,7 @@ public class Witch extends MovingObject {
                                        {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.5), -20, 200}
                                       };
 
-    public Witch() throws IOException {
+    public Witch() {
         super(GameModel.getWitchImg());
         this.x = objectLines[objectLine][0] + this.random.nextInt(200);
         this.y = objectLines[objectLine][1];

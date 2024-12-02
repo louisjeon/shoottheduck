@@ -136,7 +136,7 @@ public class GameView {
             }
             g2d.drawString("x" + scoreMultiplier, mousePosition.x + 30, mousePosition.y);
         }
-        BufferedImage feverBarImg = GameModel.getFeverBarImg(feverCnt);
+        BufferedImage feverBarImg = GameModel.getFeverBarImg(Math.min(feverCnt, 10));
         BufferedImage grassImg = GameModel.stage(GameConfig.getStage()).getGrassImg();
 
         g2d.drawImage(grassImg, 0, Framework.getFrameHeight() - grassImg.getHeight(), Framework.getFrameWidth(), grassImg.getHeight(), null);
@@ -272,7 +272,19 @@ public class GameView {
 
     public void draw(Graphics2D g2d, Point mousePosition) throws IOException {
         drawBack(g2d);
-
+        switch (GameConfig.getStage()) {
+            case 2:
+                Stage2Controller.draw(g2d);
+                break;
+            case 3:
+                Stage3Controller.draw(g2d);
+                break;
+            case 4:
+                Stage4Controller.draw(g2d);
+                break;
+            default:
+                break;
+        }
         drawFront(g2d, mousePosition);
     }
 

@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Stage3Controller extends Stage2Controller {
-    protected static ArrayList<Bat> movingBats = new ArrayList<>();;
+    protected static ArrayList<Bat> movingBats = new ArrayList<>();
 
     public Stage3Controller() {
         super();
@@ -21,13 +21,12 @@ public class Stage3Controller extends Stage2Controller {
     }
 
     public static void restartGame()  {
-        GameController.restartGame();
         movingBats.clear();
         Bat.setLastObjectTime(0);
     }
 
     protected static void checkShot(Point mousePosition) {
-        GameController.checkShot(mousePosition);
+        Stage2Controller.checkShot(mousePosition);
         for(int i = 0; i < movingBats.size(); i++)
         {
             if(new Rectangle(movingBats.get(i).getX(), movingBats.get(i).getY(), 40, 30).contains(mousePosition))
@@ -38,7 +37,8 @@ public class Stage3Controller extends Stage2Controller {
         }
     }
 
-    public static void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+    public static void updateGame() throws IOException {
+        Stage2Controller.updateGame();
         if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
             boss = new Crow();
             lastBossAttackTime = System.nanoTime();
@@ -62,11 +62,10 @@ public class Stage3Controller extends Stage2Controller {
                 ranAway();
             }
         }
-        GameController.updateGame(mousePosition);
     }
 
-    public void draw(Graphics2D g2d, Point mousePosition) throws IOException {
-        super.draw(g2d, mousePosition);
+    public static void draw(Graphics2D g2d) {
+        Stage2Controller.draw(g2d);
         for (Bat bat : movingBats) {
             bat.draw(g2d);
         }

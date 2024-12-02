@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class GameController {
+public abstract class GameController {
     private static int runawayObjects;
     private static int killedObjects;
     private static int score;
@@ -77,7 +77,7 @@ public class GameController {
         }
     }
 
-    public static void shot(ArrayList<? extends MovingObject> arrayList, int i) {
+    public static void shot(List<? extends MovingObject> arrayList, int i) {
         score += (int) Math.floor(arrayList.get(i).getScore() * scoreMultiplier);
         arrayList.remove(i);
         hit = true;
@@ -92,14 +92,23 @@ public class GameController {
         lastBossAttackTime = 0;
         bossAttacking = false;
         boss = null;
-        int stage  = GameConfig.getStage();
-        if (score > ScoreBoard.getScore(stage)) {
-            ScoreBoard.setScore(stage, score);
+        switch (GameConfig.getStage()) {
+            case 2:
+                Stage2Controller.restartGame();
+                break;
+            case 3:
+                Stage3Controller.restartGame();
+                break;
+            case 4:
+                Stage4Controller.restartGame();
+                break;
+            default:
+                break;
         }
+        saveScore();
+    }
 
-    };
-
-    public static void updateGame(Point mousePosition)throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+    private static void commonUpdate(Point mousePosition) throws IOException {
         ScheduledThreadPoolExecutor exec3;
         if (boss != null) {
             boolean case1 = false;
@@ -119,7 +128,6 @@ public class GameController {
                     break;
                 case 4:
                 case 5:
-                    yPlus = 0;
                     healthPlus = -0.5f;
                     break;
             }
@@ -253,6 +261,27 @@ public class GameController {
             Framework.setGameState(Framework.GameState.GAMEOVER);
     }
 
+    protected static void updateGame(Point mousePosition)throws IOException {
+        switch (GameConfig.getStage()) {
+            case 1:
+                Stage1Controller.updateGame();
+                break;
+            case 2:
+                Stage2Controller.updateGame();
+                break;
+            case 3:
+                Stage3Controller.updateGame();
+                break;
+            case 4:
+                Stage4Controller.updateGame();
+                break;
+            case 5:
+                Stage5Controller.updateGame();
+                break;
+        }
+        commonUpdate(mousePosition);
+    }
+
 
     protected static void checkShot(Point mousePosition) {
         for(int i = 0; i < movingDucks.size(); i++)
@@ -277,12 +306,23 @@ public class GameController {
             }
         }
         GameConfig.GunType gunType = GameConfig.getGunType();
-        if (boss != null && new Rectangle(boss.getX(), boss.getY(), boss.getWidth(), boss.getHeight()).contains(mousePosition)) {
-            if (boss.hit(gunType)) {
+        if (boss != null && new Rectangle(boss.getX(), boss.getY(), boss.getWidth(), boss.getHeight()).contains(mousePosition) && boss.hit(gunType)) {
                 score += (int) Math.floor(boss.getScore() * scoreMultiplier);
                 boss = null;
                 lastBossDeathTime = System.nanoTime();
-            }
+        }
+        switch (GameConfig.getStage()) {
+            case 2:
+                Stage2Controller.checkShot(mousePosition);
+                break;
+            case 3:
+                Stage3Controller.checkShot(mousePosition);
+                break;
+            case 4:
+                Stage4Controller.checkShot(mousePosition);
+                break;
+            default:
+                break;
         }
     }
 

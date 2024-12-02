@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Stage4Controller extends Stage3Controller {
-    protected static ArrayList<Witch> movingWitches = new ArrayList<>();;
+    protected static ArrayList<Witch> movingWitches = new ArrayList<>();
 
     public Stage4Controller() {
         super();
@@ -21,13 +21,12 @@ public class Stage4Controller extends Stage3Controller {
     }
 
     public static void restartGame() {
-        GameController.restartGame();
         movingWitches.clear();
         Witch.setLastObjectTime(0);
     }
 
     protected static void checkShot(Point mousePosition) {
-        GameController.checkShot(mousePosition);
+        Stage3Controller.checkShot(mousePosition);
         for(int i = 0; i < movingWitches.size(); i++)
         {
             if(new Rectangle(movingWitches.get(i).getX(), movingWitches.get(i).getY(), 400, 200).contains(mousePosition))
@@ -38,7 +37,8 @@ public class Stage4Controller extends Stage3Controller {
         }
     }
 
-    public static void updateGame(Point mousePosition) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+    public static void updateGame() throws IOException {
+        Stage3Controller.updateGame();
         if (boss == null && System.nanoTime() - lastBossDeathTime > Framework.SEC_IN_NANOSEC * 20) {
             boss = new Pumpkin();
             lastBossAttackTime = System.nanoTime();
@@ -62,13 +62,10 @@ public class Stage4Controller extends Stage3Controller {
                 ranAway();
             }
         }
-
-        GameController.updateGame(mousePosition);
     }
 
-    @Override
-    public void draw(Graphics2D g2d, Point mousePosition) throws IOException {
-        super.draw(g2d, mousePosition);
+    public static void draw(Graphics2D g2d) {
+        Stage3Controller.draw(g2d);
         for (Witch witch : movingWitches) {
             witch.draw(g2d);
         }
