@@ -87,8 +87,6 @@ public abstract class GameController {
         setInitialValues();
         movingDucks.clear();
         movingPotionDucks.clear();
-//        Duck.updateObjectLine();
-//        PotionDuck.setLastObjectTime(0);
         lastBossAttackTime = 0;
         bossAttacking = false;
         boss = null;
@@ -129,6 +127,8 @@ public abstract class GameController {
                 case 4:
                 case 5:
                     healthPlus = -0.5f;
+                    break;
+                default:
                     break;
             }
             if (case1) {

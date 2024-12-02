@@ -89,10 +89,10 @@ public class GameModel {
     }
 
     public static GameModel stage(int stage) throws IOException {
-        if (gameModels[stage] == null) {
-            gameModels[stage] = new GameModel(stage);
+        if (gameModels[stage-1] == null) {
+            gameModels[stage-1] = new GameModel(stage);
         }
-        return gameModels[stage];
+        return gameModels[stage-1];
     }
 
     public BufferedImage getDuckImg() {
@@ -157,16 +157,8 @@ public class GameModel {
         }
     }
 
-    public static void setFrogImg(BufferedImage img) {
-        frogImg = img;
-    }
-
     public static BufferedImage getFrogImg() {
         return frogImg;
-    }
-
-    public static void setWeaponsImg(BufferedImage img) {
-        weaponsImg = img;
     }
 
     public static BufferedImage getWeaponsImg() {

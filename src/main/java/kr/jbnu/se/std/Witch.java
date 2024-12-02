@@ -1,7 +1,5 @@
 package kr.jbnu.se.std;
 
-import java.io.IOException;
-
 public class Witch extends MovingObject {
     private static final long TIME_BETWEEN_OBJECTS = Framework.SEC_IN_NANOSEC;
     private static long lastObjectTime;
