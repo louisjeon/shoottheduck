@@ -12,16 +12,13 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public abstract class GameController {
-    private static int runawayObjects;
     private static int killedObjects;
     private static int score;
     private static int shoots;
     private static int feverCnt;
     private static float health;
     private static double scoreMultiplier;
-
     private static boolean hit = false;
-
     private static long lastTimeShoot;
     private static long lastTimeReload;
     private static long timeBetweenShots;
@@ -31,12 +28,12 @@ public abstract class GameController {
     protected static long lastBossAttackTime;
     protected static long lastBossDeathTime;
     private static boolean canShoot;
-    private static boolean showShotEffect;
     protected static MovingBossObject boss;
     private static boolean bossAttacking;
 
+    private GameController() {}
+
     public static void setInitialValues() {
-        runawayObjects = 0;
         killedObjects = 0;
         score = 0;
         scoreMultiplier = 1;
@@ -48,8 +45,6 @@ public abstract class GameController {
         lastTimeReload = 0;
         timeBetweenShots = Framework.SEC_IN_NANOSEC / 3;
         timeBetweenReload = (long) (Framework.SEC_IN_NANOSEC / 1.5);
-
-        showShotEffect = false;
 
         movingDucks = new ArrayList<>();
         movingPotionDucks = new ArrayList<>();
@@ -327,7 +322,6 @@ public abstract class GameController {
     }
 
     public static void ranAway() throws IOException {
-        runawayObjects++;
         health -= 1f;
         feverCnt = 0;
         GameView.instance().drawFever();
