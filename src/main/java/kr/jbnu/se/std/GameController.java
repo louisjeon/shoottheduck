@@ -31,7 +31,7 @@ public abstract class GameController {
     protected static MovingBossObject boss;
     private static boolean bossAttacking;
 
-    private GameController() {}
+    protected GameController() {}
 
     public static void setInitialValues() {
         killedObjects = 0;
