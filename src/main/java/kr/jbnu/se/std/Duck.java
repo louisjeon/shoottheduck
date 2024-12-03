@@ -8,11 +8,11 @@ public class Duck extends MovingObject {
     private static long lastObjectTime;
     private static int objectLine = 0;
     private static final int[][] objectLines = {
-                                       {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.60), -8, 20},
-                                       {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.65), -9, 30},
-                                       {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.70), -10, 40},
-                                       {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.78), -11, 50}
-                                      };
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.60), -8, 20},
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.65), -9, 30},
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.70), -10, 40},
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.78), -11, 50}
+    };
 
     public Duck() throws IOException {
         super(GameModel.stage(GameConfig.getStage()).getDuckImg());

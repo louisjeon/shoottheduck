@@ -13,6 +13,7 @@ public class FastDuck extends Duck {
                                        {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.78), -23, 52}
                                       };
 
+
     public FastDuck() throws IOException {
         super(GameModel.stage(GameConfig.getStage()).getDuckImg());
         this.x = objectLines[objectLine][0] + this.random.nextInt(200);

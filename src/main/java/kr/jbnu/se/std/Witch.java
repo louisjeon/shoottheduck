@@ -1,5 +1,6 @@
 package kr.jbnu.se.std;
 
+
 public class Witch extends MovingObject {
     private static final long TIME_BETWEEN_OBJECTS = Framework.SEC_IN_NANOSEC;
     private static long lastObjectTime;
@@ -10,6 +11,7 @@ public class Witch extends MovingObject {
                                        {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.4), -20, 200},
                                        {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.5), -20, 200}
                                       };
+
 
     public Witch() {
         super(GameModel.getWitchImg());
