@@ -44,6 +44,10 @@ public class GameView {
         return gameView;
     }
 
+    public static void reset() {
+        maxFever = 0;
+    }
+
     private static BufferedImage flip(BufferedImage img) {
         AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
         tx.translate(0, -img.getHeight(null));
@@ -107,13 +111,16 @@ public class GameView {
         BufferedImage combo2ndDigitImg = GameModel.getComboDigitImg(2);
         BufferedImage combo3rdDigitImg = GameModel.getComboDigitImg(3);
         if (combo1stDigitImg != null) {
+            System.out.println("A");
             g2d.drawImage(combo1stDigitImg, (int) mousePosition.getX() - 50, (int) mousePosition.getY() - 80, null);
             g2d.drawImage(combo2ndDigitImg, (int) mousePosition.getX() - 20, (int) mousePosition.getY() - 80, null);
             g2d.drawImage(combo3rdDigitImg, (int) mousePosition.getX() + 10, (int) mousePosition.getY() - 80, null);
         } else if (combo2ndDigitImg != null) {
+            System.out.println("B");
             g2d.drawImage(combo2ndDigitImg, (int) mousePosition.getX() - 35, (int) mousePosition.getY() - 80, null);
             g2d.drawImage(combo3rdDigitImg, (int) mousePosition.getX() -5, (int) mousePosition.getY() - 80, null);
         } else if (combo3rdDigitImg != null) {
+            System.out.println("C");
             g2d.drawImage(combo3rdDigitImg, (int) mousePosition.getX()-20 , (int) mousePosition.getY() - 80, null);
         }
     }

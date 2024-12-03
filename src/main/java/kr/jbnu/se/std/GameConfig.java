@@ -10,6 +10,7 @@ public class GameConfig {
 
     public static void setStage(int n) {
         stage = n;
+        gunType = GunType.REVOLVER;
     }
 
     public static int getStage() {
