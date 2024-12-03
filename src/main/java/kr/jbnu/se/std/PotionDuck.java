@@ -1,22 +1,25 @@
 package kr.jbnu.se.std;
 
-import java.awt.image.BufferedImage;
+import java.io.IOException;
 
-public class PotionDuck extends MovingObject {
-    public static long lastObjectTime;
-    public static long timeBetweenObjects = Framework.secInNanosec * 10;
+public class PotionDuck extends Duck {
+    private static final long TIME_BETWEEN_OBJECTS = Framework.SEC_IN_NANOSEC * 10;
+    private static long lastObjectTime;
 
-    public static int nextObjectLines = 0;
-
-    public static int[][] objectLines = {
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.60), -10, 50},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.65), -10, 50},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.70), -10, 50},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.78), -10, 50}
-    };
-
-    public PotionDuck(BufferedImage objectImg)
+    public PotionDuck() throws IOException
     {
-        super(objectLines, nextObjectLines, objectImg);
+        super(GameModel.stage(GameConfig.getStage()).getPotionDuckImg());
+    }
+
+    public static long getLastObjectTime() {
+        return lastObjectTime;
+    }
+
+    public static void setLastObjectTime(long time) {
+        lastObjectTime = time;
+    }
+
+    public static long getTimeBetweenObjects() {
+        return TIME_BETWEEN_OBJECTS;
     }
 }
