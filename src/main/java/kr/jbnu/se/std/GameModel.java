@@ -153,7 +153,7 @@ public class GameModel {
 
     public static void resetComboDigitImgs() {
         for (int i = 0; i < 3; i++) {
-            comboDigitImgs[i] = null;
+            currentCombiDigitImgs[i] = null;
         }
     }
 

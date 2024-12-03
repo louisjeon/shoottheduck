@@ -24,6 +24,10 @@ public class Guns {
         bullets[type.ordinal()]--;
     }
 
+    public static void resetBullets() {
+        System.arraycopy(defaultBullets, 0, bullets, 0, bullets.length);
+    }
+
     public static String getGunName(GameConfig.GunType type) {
         return gunNames[type.ordinal()];
     }

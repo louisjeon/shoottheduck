@@ -44,6 +44,10 @@ public class GameView {
         return gameView;
     }
 
+    public static void reset() {
+        maxFever = 0;
+    }
+
     private static BufferedImage flip(BufferedImage img) {
         AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
         tx.translate(0, -img.getHeight(null));

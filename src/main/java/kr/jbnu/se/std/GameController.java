@@ -51,6 +51,7 @@ public abstract class GameController {
         boss = null;
         canShoot = true;
         lastBossDeathTime= System.nanoTime();
+        GameView.reset();
     }
 
     public static void initialize() {
