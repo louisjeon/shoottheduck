@@ -1,18 +1,16 @@
 package kr.jbnu.se.std;
 
-import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class UFO extends MovingBossObject {
-    public static int[][] objectLines = {
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.30), -17, 500},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.35), -16, 500},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.40), -15, 500},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.45), -14, 500}
+    private static final int[][] objectLines = {
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.30), -25, 500},
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.35), -25, 500},
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.40), -25, 500},
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.45), -25, 500}
     };
 
-    public UFO(BufferedImage objectImg) {
-        super(objectLines,nextObjectLines,objectImg);
-        INITIAL_HEALTH = 100;
-        this.health = INITIAL_HEALTH;
+    public UFO() throws IOException {
+        super(objectLines, 100, GameModel.stage(GameConfig.getStage()).getBossImg());
     }
 }
