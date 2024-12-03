@@ -1,18 +1,16 @@
 package kr.jbnu.se.std;
 
-import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class Eagle extends MovingBossObject {
-    public static int[][] objectLines = {
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.30), -17, 500},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.35), -16, 500},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.40), -15, 500},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.45), -14, 500}
+    private static final int[][] objectLines = {
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.30), -17, 500},
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.35), -16, 500},
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.40), -15, 500},
+            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.45), -14, 500}
     };
 
-    public Eagle(BufferedImage objectImg) {
-        super(objectLines,nextObjectLines,objectImg);
-        INITIAL_HEALTH = 50;
-        this.health = INITIAL_HEALTH;
+    public Eagle() throws IOException {
+        super(objectLines, 50, GameModel.stage(GameConfig.getStage()).getBossImg());
     }
 }
