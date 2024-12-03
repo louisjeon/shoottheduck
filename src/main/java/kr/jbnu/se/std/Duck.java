@@ -14,7 +14,7 @@ public class Duck extends MovingObject {
             {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.78), -11, 50}
     };
 
-    public Duck() throws IOException { //예외처리 추가
+    public Duck() throws IOException {
         super(GameModel.stage(GameConfig.getStage()).getDuckImg());
         this.x = objectLines[objectLine][0] + this.random.nextInt(200);
         this.y = objectLines[objectLine][1];
@@ -36,7 +36,7 @@ public class Duck extends MovingObject {
         return lastObjectTime;
     }
 
-    public static void setLastObjectTime(long time) { //get,set 배치
+    public static void setLastObjectTime(long time) {
         lastObjectTime = time;
     }
 

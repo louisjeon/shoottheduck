@@ -13,8 +13,8 @@ public class Hawk extends MovingObject {
             {Framework.getFrameWidth() , (int)(Framework.getFrameHeight() * 0.35), -14, 50}
     };
 
-    public Hawk() throws IOException { //예외처리
-        super(GameModel.stage(GameConfig.getStage()).getDuckImg());
+    public Hawk() {
+        super(GameModel.getHawkImg());
         this.x = objectLines[objectLine][0] + this.random.nextInt(200);
         this.y = objectLines[objectLine][1];
         this.speed = objectLines[objectLine][2];

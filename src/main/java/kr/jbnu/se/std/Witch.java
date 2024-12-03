@@ -1,7 +1,5 @@
 package kr.jbnu.se.std;
 
-import java.io.IOException;
-
 public class Witch extends MovingObject {
     private static final long TIME_BETWEEN_OBJECTS = Framework.SEC_IN_NANOSEC;
     private static long lastObjectTime;
@@ -13,7 +11,7 @@ public class Witch extends MovingObject {
             {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.5), -20, 200}
     };
 
-    public Witch() throws IOException { //예외
+    public Witch() {
         super(GameModel.getWitchImg());
         this.x = objectLines[objectLine][0] + this.random.nextInt(200);
         this.y = objectLines[objectLine][1];

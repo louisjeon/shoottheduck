@@ -17,7 +17,7 @@ public abstract class MovingObject {
         this.objectImg = objectImg;
     }
 
-    public void update() //객체 위치 업데이트
+    public void update()
     {
         x += speed;
     }

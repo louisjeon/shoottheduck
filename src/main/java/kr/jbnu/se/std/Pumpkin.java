@@ -1,18 +1,25 @@
 package kr.jbnu.se.std;
 
-import java.awt.image.BufferedImage;
+import java.io.IOException;
 
-public class Pumpkin extends MovingBossObject {
-    public static int[][] objectLines = {
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.10), -2, 2500},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.15), -3, 2500},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.20), -4, 2500},
-            {Framework.frameWidth, (int)(Framework.frameHeight * 0.25), -5, 2500}
-    }; // 초기 체력 설정
+public class PotionDuck extends Duck {
+    private static final long TIME_BETWEEN_OBJECTS = Framework.SEC_IN_NANOSEC * 10;
+    private static long lastObjectTime;
 
-    public Pumpkin(BufferedImage objectImg) {
-        super(objectLines,nextObjectLines,objectImg);
-        INITIAL_HEALTH = 300;
-        this.health = INITIAL_HEALTH;
+    public PotionDuck() throws IOException
+    {
+        super(GameModel.stage(GameConfig.getStage()).getPotionDuckImg());
+    }
+
+    public static long getLastObjectTime() {
+        return lastObjectTime;
+    }
+
+    public static void setLastObjectTime(long time) {
+        lastObjectTime = time;
+    }
+
+    public static long getTimeBetweenObjects() {
+        return TIME_BETWEEN_OBJECTS;
     }
 }
