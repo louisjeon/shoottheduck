@@ -1,15 +1,11 @@
 package kr.jbnu.se.std;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.*;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -19,36 +15,14 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class Framework extends Canvas {
-    public static int frameWidth;
-    public static int frameHeight;
-    public static final long secInNanosec = 1000000000L;
-    public static final long milisecInNanosec = 1000000L;
-
-    /**
-     * Possible states of the game
-     */
-    public static enum GameState{STARTING, VISUALIZING, GAME_CONTENT_LOADING, MAIN_MENU, OPTIONS, PLAYING, GAMEOVER, DESTROYED, UPDATE_FEVER}
-    public static enum GameStage{STAGE1, STAGE2, STAGE3, STAGE4, STAGE5}
-    /**
-     * Current state of the game
-     */
-    public static GameState gameState;
-    public static GameStage gameStage;
-    
-    /**
-     * Elapsed game time in nanoseconds.
-     */
-    private long gameTime;
-    // It is used for calculating elapsed time.
-    private long lastTime;
-    
-    // The actual game
+    private static int frameWidth;
+    private static int frameHeight;
+    public static final long SEC_IN_NANOSEC = 1000000000L;
+    public static final long MILISEC_IN_NANOSEC = 1000000L;
+    public enum GameState{STARTING, VISUALIZING, GAME_CONTENT_LOADING, MAIN_MENU, OPTIONS, PLAYING, GAMEOVER, DESTROYED, UPDATE_FEVER}
+    private static GameState gameState;
     private Game game;
-    
-    
-    /**
-     * Image for menu.
-     */
+
     private BufferedImage shootTheDuckMenuImg;
     private BufferedImage titleImg;
     private  BufferedImage stage1BtnImg;
@@ -61,43 +35,36 @@ public class Framework extends Canvas {
 
     public Framework () throws IOException, ExecutionException, InterruptedException {
         super();
+        ScoreBoard.getInstance();
         
         gameState = GameState.VISUALIZING;
-        
-        //We start game in new thread.
+
         Thread gameThread = new Thread() {
             @Override
             public void run(){
                 try {
                     GameLoop();
-                } catch (UnsupportedAudioFileException e) {
-                    throw new RuntimeException(e);
-                } catch (LineUnavailableException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } catch (InterruptedException e) {
+                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
         };
         gameThread.start();
     }
-    
-    
-   /**
-     * Set variables and objects.
-     * This method is intended to set the variables and objects for this class, variables and objects for the actual game can be set in kr.jbnu.se.std.Game.java.
-     */
+
     private void Initialize()
     {
         frog = Frog.getInstance();
     }
-    
-    /**
-     * Load files - images, sounds, ...
-     * This method is intended to load files for this class, files for the actual game can be loaded in kr.jbnu.se.std.Game.java.
-     */
+
+    public static int getFrameWidth() {
+        return frameWidth;
+    }
+
+    public static int getFrameHeight() {
+        return frameHeight;
+    }
+
     private void LoadContent()
     {
         try
@@ -121,15 +88,9 @@ public class Framework extends Canvas {
             Logger.getLogger(Framework.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    /**
-     * In specific intervals of time (GAME_UPDATE_PERIOD) the game/logic is updated and then the game is drawn on the screen.
-     */
+
     private void GameLoop() throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
-        // This two variables are used in VISUALIZING state of the game. We used them to wait some time so that we get correct frame/window resolution.
         long visualizingTime = 0, lastVisualizingTime = System.nanoTime();
-        
-        // This variables are used for calculating the time that defines for how long we should put threat to sleep to meet the GAME_FPS.
         long beginTime, timeTaken, timeLeft;
         
         while(true)
@@ -139,11 +100,7 @@ public class Framework extends Canvas {
             switch (gameState)
             {
                 case PLAYING:
-                    gameTime += System.nanoTime() - lastTime;
-                    
-                    game.UpdateGame(gameTime, mousePosition());
-                    
-                    lastTime = System.nanoTime();
+                    GameController.updateGame(mousePosition());
                 break;
                 case GAMEOVER:
                     //...
@@ -159,23 +116,15 @@ public class Framework extends Canvas {
                 break;
                 case STARTING:
                     Initialize();
-                    // Load files - images, sounds, ...
                     LoadContent();
-
-                    // When all things that are called above finished, we change game status to main menu.
                     gameState = GameState.MAIN_MENU;
                 break;
                 case VISUALIZING:
-                    // On Ubuntu OS (when I tested on my old computer) this.getWidth() method doesn't return the correct value immediately (eg. for frame that should be 800px width, returns 0 than 790 and at last 798px). 
-                    // So we wait one second for the window/frame to be set to its correct size. Just in case we
-                    // also insert 'this.getWidth() > 1' condition in case when the window/frame size wasn't set in time,
-                    // so that we although get approximately size.
-                    if(this.getWidth() > 1 && visualizingTime > secInNanosec)
+                    if(this.getWidth() > 1 && visualizingTime > SEC_IN_NANOSEC)
                     {
                         frameWidth = this.getWidth();
                         frameHeight = this.getHeight();
 
-                        // When we get size of frame we change status.
                         gameState = GameState.STARTING;
                     }
                     else
@@ -185,18 +134,13 @@ public class Framework extends Canvas {
                     }
                 break;
             }
-            
-            // Repaint the screen.
+
             repaint();
-            
-            // Here we calculate the time that defines for how long we should put threat to sleep to meet the GAME_FPS.
+
             timeTaken = System.nanoTime() - beginTime;
-            /**
-             * Pause between updates. It is in nanoseconds.
-             */
             int GAME_FPS = 60;
-            long GAME_UPDATE_PERIOD = secInNanosec / GAME_FPS;
-            timeLeft = (GAME_UPDATE_PERIOD - timeTaken) / milisecInNanosec; // In milliseconds
+            long GAME_UPDATE_PERIOD = SEC_IN_NANOSEC / GAME_FPS;
+            timeLeft = (GAME_UPDATE_PERIOD - timeTaken) / MILISEC_IN_NANOSEC; // In milliseconds
             // If the time is less than 10 milliseconds, then we will put thread to sleep for 10 millisecond so that some other thread can do some work.
             if (timeLeft < 10) 
                 timeLeft = 10; //set a minimum
@@ -206,19 +150,20 @@ public class Framework extends Canvas {
             } catch (InterruptedException ex) { }
         }
     }
-    
-    /**
-     * Draw the game to the screen. It is called through repaint() method in GameLoop() method.
-     */
+
+    public static void setGameState(GameState gs) {
+        gameState = gs;
+    }
+
     @Override
-    public void Draw(Graphics2D g2d) throws IOException, ExecutionException, InterruptedException {
+    public void Draw(Graphics2D g2d) throws IOException {
         switch (gameState)
         {
             case PLAYING:
-                game.Draw(g2d, mousePosition());
+                GameView.instance().draw(g2d, mousePosition());
             break;
             case GAMEOVER:
-                game.DrawGameOver(g2d, mousePosition());
+                GameView.instance().drawGameOver(g2d, mousePosition());
             break;
             case MAIN_MENU:
                 g2d.drawImage(shootTheDuckMenuImg, 0, 0, frameWidth, frameHeight, null);
@@ -239,56 +184,22 @@ public class Framework extends Canvas {
             break;
             case GAME_CONTENT_LOADING:
                 if (game != null) {
-                    game.DrawScoreWindow(g2d);
+                    GameView.instance().drawScoreWindow(g2d);
                 }
             break;
         }
     }
 
-    private void newGame(int stage) throws IOException, ExecutionException, InterruptedException {
-        // We set gameTime to zero and lastTime to current time for later calculations.
-        gameTime = 0;
-        lastTime = System.nanoTime();
-
-        switch (stage) {
-            case 1:
-                game = new Stage1();
-                break;
-            case 2:
-                game = new Stage2();
-                break;
-            case 3:
-                game = new Stage3();
-                break;
-            case 4:
-                game = new Stage4();
-                break;
-            case 5:
-                game = new Stage5();
-                break;
-        }
+    private void newGame() throws IOException, ExecutionException, InterruptedException {
+        game = new Game();
     }
-    
-    /**
-     *  Restart game - reset game time and call RestartGame() method of game object so that reset some variables.
-     */
-    private void restartGame() throws ExecutionException, InterruptedException {
-        // We set gameTime to zero and lastTime to current time for later calculations.
-        gameTime = 0;
-        lastTime = System.nanoTime();
-        
-        game.RestartGame();
-        
-        // We change game status so that the game can start.
+
+    private void restartGame() {
+        GameController.restartGame();
+
         gameState = GameState.PLAYING;
     }
-    
-    /**
-     * Returns the position of the mouse pointer in game frame/window.
-     * If mouse position is null than this method return 0,0 coordinate.
-     * 
-     * @return Point of mouse coordinates.
-     */
+
     private Point mousePosition()
     {
         try
@@ -305,19 +216,14 @@ public class Framework extends Canvas {
             return new Point(0, 0);
         }
     }
-    
-    /**
-     * This method is called when keyboard key is released.
-     * 
-     * @param e KeyEvent
-     */
+
     @Override
-    public void keyReleasedFramework(KeyEvent e) throws ExecutionException, InterruptedException {
+    public void keyReleasedFramework(KeyEvent e) {
         switch (gameState)
         {
             case GAMEOVER:
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    game.SaveScore();
+                    GameController.saveScore();
                     game = null;
                     gameState = GameState.MAIN_MENU;
                 }
@@ -326,7 +232,7 @@ public class Framework extends Canvas {
                 break;
             case PLAYING:
                 if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    game.SaveScore();
+                    GameController.saveScore();
                     game = null;
                     gameState = GameState.MAIN_MENU;
                 }
@@ -348,44 +254,32 @@ public class Framework extends Canvas {
             }
         }
     }
-    
-    /**
-     * This method is called when mouse button is clicked.
-     * 
-     * @param e MouseEvent
-     */
+
     @Override
     public void mouseClicked(MouseEvent e)
     {
         if (Objects.requireNonNull(gameState) == GameState.MAIN_MENU) {
             if (e.getButton() == MouseEvent.BUTTON1) {
+                boolean clicked = false;
                 if (new Rectangle(frameWidth / 2 - stage1BtnImg.getWidth() / 2, frameHeight / 2 - 160, stage1BtnImg.getWidth(), stage1BtnImg.getHeight()).contains(e.getPoint())) {
-                    try {
-                        newGame(1);
-                    } catch (IOException | ExecutionException | InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    GameConfig.setStage(1);
+                    clicked = true;
                 } else if (new Rectangle(frameWidth / 2 - stage2BtnImg.getWidth() / 2, frameHeight / 2 - 60, stage2BtnImg.getWidth(), stage2BtnImg.getHeight()).contains(e.getPoint())) {
-                    try {
-                        newGame(2);
-                    } catch (IOException | ExecutionException | InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    GameConfig.setStage(2);
+                    clicked = true;
                 } else if (new Rectangle(frameWidth / 2 - stage3BtnImg.getWidth() / 2, frameHeight / 2 + 40, stage3BtnImg.getWidth(), stage3BtnImg.getHeight()).contains(e.getPoint())) {
-                    try {
-                        newGame(3);
-                    } catch (IOException | ExecutionException | InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    GameConfig.setStage(3);
+                    clicked = true;
                 } else if (new Rectangle(frameWidth / 2 - stage4BtnImg.getWidth() / 2, frameHeight / 2 + 140, stage4BtnImg.getWidth(), stage4BtnImg.getHeight()).contains(e.getPoint())) {
-                    try {
-                        newGame(4);
-                    } catch (IOException | ExecutionException | InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    GameConfig.setStage(4);
+                    clicked = true;
                 } else if (new Rectangle(frameWidth / 2 - stage5BtnImg.getWidth() / 2, frameHeight / 2 + 240, stage5BtnImg.getWidth(), stage5BtnImg.getHeight()).contains(e.getPoint())) {
+                    GameConfig.setStage(5);
+                    clicked = true;
+                }
+                if (clicked) {
                     try {
-                        newGame(5);
+                        newGame();
                     } catch (IOException | ExecutionException | InterruptedException ex) {
                         throw new RuntimeException(ex);
                     }

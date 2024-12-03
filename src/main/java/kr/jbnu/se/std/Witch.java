@@ -6,11 +6,12 @@ public class Witch extends MovingObject {
     private static long lastObjectTime;
     private static int objectLine = 0;
     private static final int[][] objectLines = {
-            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.10), -20, 200},
-            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.3), -20, 200},
-            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.4), -20, 200},
-            {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.5), -20, 200}
-    };
+                                       {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.10), -20, 200},
+                                       {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.3), -20, 200},
+                                       {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.4), -20, 200},
+                                       {Framework.getFrameWidth(), (int)(Framework.getFrameHeight() * 0.5), -20, 200}
+                                      };
+
 
     public Witch() {
         super(GameModel.getWitchImg());

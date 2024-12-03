@@ -1,7 +1,6 @@
 package kr.jbnu.se.std;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -37,7 +36,7 @@ public class Window extends JFrame{
         }
         
         // Exit the application when user close frame.
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         
         this.setContentPane(new Framework());
         
